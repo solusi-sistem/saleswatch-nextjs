@@ -206,7 +206,7 @@ export default function TermsAndConditionsSection() {
                         return (
                             <div
                                 key={section.id}
-                                className="bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 overflow-hidden border border-gray-100"
+                                className="bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 overflow-hidden border border-gray-100 animate__animated animate__fadeInUp"
                             >
                                 <button
                                     onClick={() => toggleSection(section.id)}

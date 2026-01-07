@@ -89,10 +89,10 @@ export default function FAQPage() {
         <div className="max-w-7xl mx-auto px-6 sm:px-6 lg:px-8 pt-30 pb-16">
           {/* Title */}
           <div className="text-center mb-12">
-            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-[#061551] leading-tight">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-[#061551] leading-tight animate__animated animate__fadeInUp">
               Frequently Asked Questions
             </h1>
-            <p className="mt-4 text-gray-600 max-w-2xl mx-auto">
+            <p className="mt-4 text-gray-600 max-w-2xl mx-auto animate__animated animate__fadeInUp">
               Find answers about Sales Watch, security, pricing, and onboarding.
             </p>
           </div>
@@ -104,13 +104,13 @@ export default function FAQPage() {
                 { key: "company", label: "About Company" },
                 { key: "security", label: "Security" },
                 { key: "other", label: "Other FAQs" },
-              ].map((tab) => (
+              ].map((tab, index) => (
                 <button
                   key={tab.key}
                   onClick={() => setActiveTab(tab.key as any)}
-                  className={`whitespace-nowrap pb-3 text-sm sm:text-base font-medium transition ${activeTab === tab.key
-                      ? "border-b-2 border-[#061551] text-[#061551]"
-                      : "text-gray-500 hover:text-[#061551]"
+                  className={`whitespace-nowrap pb-3 text-sm sm:text-base font-medium transition animate__animated animate__fadeInUp ${activeTab === tab.key
+                    ? "border-b-2 border-[#061551] text-[#061551]"
+                    : "text-gray-500 hover:text-[#061551]"
                     }`}
                 >
                   {tab.label}
@@ -121,10 +121,10 @@ export default function FAQPage() {
 
           {/* FAQ List */}
           <div className="max-w-4xl mx-auto space-y-4">
-            {currentFAQs.map((faq) => (
+            {currentFAQs.map((faq, index) => (
               <div
                 key={faq.id}
-                className="border border-gray-200 rounded-xl bg-white shadow-sm"
+                className={`border border-gray-200 rounded-xl bg-white shadow-sm animate__animated animate__fadeInUp`}
               >
                 <button
                   className="w-full px-5 py-4 text-left flex justify-between items-center hover:bg-gray-50"
@@ -149,7 +149,7 @@ export default function FAQPage() {
           </div>
 
           {/* Support CTA */}
-          <div className="mt-16 text-center text-gray-600 text-sm sm:text-base">
+          <div className="mt-16 text-center text-gray-600 text-sm sm:text-base animate__animated animate__fadeInUp">
             Already a customer? Visit our{" "}
             <a href="/support" className="text-[#061551] underline font-medium">
               Support Center

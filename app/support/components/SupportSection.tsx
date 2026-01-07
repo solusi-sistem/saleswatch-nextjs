@@ -96,7 +96,7 @@ export default function SupportSection() {
                   const IconComponent = category.icon;
 
                   return (
-                    <div key={key} className="rounded-lg overflow-hidden border border-gray-200 bg-white">
+                    <div key={key} className="rounded-lg overflow-hidden border border-gray-200 bg-white animate__animated animate__fadeInUp">
                       <button
                         onClick={() => toggleCategory(key)}
                         className={`w-full flex items-center justify-between p-4 transition-all duration-200
@@ -122,9 +122,9 @@ export default function SupportSection() {
                               <button
                                 key={item.id}
                                 onClick={() => handleCategoryClick(key, item.id)}
-                                className={`w-full text-left px-6 py-3 text-sm transition-all border-b border-gray-100 
-                     last:border-b-0 group
-                     ${isItemActive ? 'bg-white text-[#061551] font-semibold border-l-4 border-l-[#061551]' : 'text-gray-600 hover:bg-white hover:text-[#061551]'}`}
+                                className={`w-full text-left px-6 py-3 text-sm transition-all border-b border-gray-100 animate__animated animate__fadeInUp 
+                      last:border-b-0 group
+                      ${isItemActive ? 'bg-white text-[#061551] font-semibold border-l-4 border-l-[#061551]' : 'text-gray-600 hover:bg-white hover:text-[#061551]'}`}
                               >
                                 <div className="flex items-center gap-2">
                                   <ChevronRight
@@ -150,7 +150,7 @@ export default function SupportSection() {
             {selectedCategory ? (
               <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-8">
                 {/* Breadcrumb */}
-                <div className="flex items-center gap-2 text-sm text-gray-500 mb-6">
+                <div className="flex items-center gap-2 text-sm text-gray-500 mb-6 animate__animated animate__fadeInUp">
                   <span>Support</span>
                   <ChevronRight className="w-4 h-4" />
                   <span className="text-[#061551] font-medium">{supportData[selectedCategory].title}</span>
@@ -161,13 +161,13 @@ export default function SupportSection() {
                   {supportData[selectedCategory].items.map((item, index) => (
                     <div
                       key={item.id}
-                      className="bg-white rounded-lg border-2 border-gray-200 hover:border-[#061551]/30 
+                      className="bg-white rounded-lg border-2 border-gray-200 hover:border-[#061551]/30 animate__animated animate__fadeInUp 
                                transition-all duration-200 overflow-hidden hover:shadow-md"
                     >
                       <button onClick={() => toggleAccordion(item.id)} className="w-full flex items-start justify-between p-6 text-left group">
                         <div className="flex-1 pr-4">
                           <h3 className="font-bold text-lg text-gray-800 group-hover:text-[#061551] transition-colors">{item.title}</h3>
-                        </div>  
+                        </div>
                         <div className={`transition-transform duration-300 mt-1 ${openAccordions[item.id] ? 'rotate-180' : ''}`}>
                           <ChevronDown className="w-6 h-6 text-[#061551]" />
                         </div>
@@ -184,10 +184,10 @@ export default function SupportSection() {
                 <div className="mt-10 p-6 bg-gray-50 rounded-xl border-2 border-gray-200">
                   <div className="flex items-start gap-4">
                     <div className="flex-1">
-                      <h3 className="font-bold text-gray-900 mb-1">Masih butuh bantuan?</h3>
-                      <p className="text-gray-600 text-sm mb-4">Tim support kami siap membantu Anda 24/7</p>
+                      <h3 className="font-bold text-gray-900 mb-1 animate__animated animate__fadeInUp">Masih butuh bantuan?</h3>
+                      <p className="text-gray-600 text-sm mb-4 animate__animated animate__fadeInUp">Tim support kami siap membantu Anda 24/7</p>
                       <button
-                        className="bg-[#061551] hover:bg-[#061551]/90 text-white font-semibold px-6 py-3 
+                        className="bg-[#061551] hover:bg-[#061551]/90 text-white font-semibold px-6 py-3 animate__animated animate__fadeInUp 
                                        rounded-lg transition-all duration-200 hover:shadow-lg"
                       >
                         Hubungi Support
@@ -203,13 +203,13 @@ export default function SupportSection() {
               >
                 <div className="text-center p-12">
                   <div
-                    className="w-24 h-24 bg-[#061551]/10 rounded-2xl 
+                    className="w-24 h-24 bg-[#061551]/10 rounded-2xl animate__animated animate__fadeInUp 
                                 flex items-center justify-center mx-auto mb-6"
                   >
                     <Book className="w-12 h-12 text-[#061551]" />
                   </div>
-                  <h3 className="text-2xl font-bold text-gray-900 mb-3">Pilih Kategori Bantuan</h3>
-                  <p className="text-gray-600 max-w-md mx-auto">Silakan pilih kategori di sidebar atau gunakan search bar untuk menemukan jawaban yang Anda butuhkan</p>
+                  <h3 className="text-2xl font-bold text-gray-900 mb-3 animate__animated animate__fadeInUp">Pilih Kategori Bantuan</h3>
+                  <p className="text-gray-600 max-w-md mx-auto animate__animated animate__fadeInUp">Silakan pilih kategori di sidebar atau gunakan search bar untuk menemukan jawaban yang Anda butuhkan</p>
                 </div>
               </div>
             )}

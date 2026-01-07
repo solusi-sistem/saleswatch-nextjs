@@ -5,13 +5,13 @@ export default function HeaderSupport() {
     <header className="relative w-full bg-[#061551] pt-12 pb-16 px-6 md:px-14 lg:px-18">
       <div className="relative w-full bg-white rounded-4xl pt-30 pb-10 flex items-center justify-center">
         <div className="text-center mb-12 px-4 md:px-8">
-          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4 animate__animated animate__fadeInUp">
             Support Center
           </h1>
 
-          <div className="w-24 h-1 bg-blue-200 mx-auto rounded-full mb-4"></div>
+          <div className="w-24 h-1 bg-blue-200 mx-auto rounded-full mb-4 animate__animated animate__fadeInUp"></div>
 
-          <p className="text-gray-600 text-lg max-w-2xl mx-auto mb-8">
+          <p className="text-gray-600 text-lg max-w-2xl mx-auto mb-8 animate__animated animate__fadeInUp">
             Find help and guidance for using SalesWatch
           </p>
 
@@ -20,7 +20,7 @@ export default function HeaderSupport() {
               onClick={() => window.open("/assets/docs/user_guide_en.pdf", "_blank")}
               className="flex items-center gap-3 bg-gray-100 hover:bg-gray-200 text-gray-800 font-medium 
                px-4 py-3 rounded-lg transition-colors duration-200
-               w-full sm:w-auto sm:max-w-md"
+               w-full sm:w-auto sm:max-w-md animate__animated animate__fadeInUp"
             >
               <svg
                 className="w-5 h-5 shrink-0"
@@ -46,7 +46,7 @@ export default function HeaderSupport() {
               }
               className="flex items-center gap-3 bg-gray-100 hover:bg-gray-200 text-gray-800 font-medium 
                px-4 py-3 rounded-lg transition-colors duration-200
-               w-full sm:w-auto sm:max-w-md"
+               w-full sm:w-auto sm:max-w-md animate__animated animate__fadeInUp"
             >
               <svg
                 className="w-5 h-5 shrink-0"
