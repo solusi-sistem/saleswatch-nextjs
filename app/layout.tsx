@@ -3,7 +3,7 @@ import { Geist, Geist_Mono, Inter } from 'next/font/google';
 import './globals.css';
 import Script from 'next/script';
 import { LayoutProvider } from '@/contexts/LayoutContext';
-import { Suspense } from "react";
+import { HomeProvider } from '@/contexts/HomeContext';
 
 const geistSans = Geist({
   subsets: ['latin'],
@@ -32,7 +32,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${inter.className} antialiased`}>
-        <LayoutProvider>{children}</LayoutProvider>
+        <LayoutProvider>
+          <HomeProvider>{children}</HomeProvider>
+        </LayoutProvider>
 
         <Script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></Script>
       </body>
