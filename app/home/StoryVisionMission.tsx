@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { usePathname } from 'next/navigation';
 import { useStoryVisionMission } from '@/contexts/HomeContext';
 import type { LangKey } from '@/types';
@@ -19,7 +19,7 @@ const iconComponents = {
     >
       <g>
         <path
-          d="M149.8,80l37.8-37.8c8.3-8.3,8.3-21.9,0-30.3s-21.9-8.3-30.3,0l-37.8,37.8c-8.3,8.3-8.3,21.9,0,30.3S141.4,88.3,149.8,80z"
+          d="M149.8,80l37.8-37.8c8.3-8.3,8.3-21.9,0-30.3s-21.9-8.3-30.3,0l-37.8,37.8c-8.3,8.3,8.3,21.9,0,30.3S141.4,88.3,149.8,80z"
           fill="currentColor"
         />
         <path
@@ -74,6 +74,35 @@ export default function StoryVisionMission() {
   const currentLang: LangKey = pathname.startsWith('/id') ? 'id' : 'en';
   const { data, loading } = useStoryVisionMission();
 
+  const card1Ref = useRef<HTMLDivElement>(null);
+  const card2Ref = useRef<HTMLDivElement>(null);
+  const card3Ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const observerOptions = {
+      threshold: 0.1,
+      rootMargin: '0px 0px -50px 0px'
+    };
+
+    const observerCallback = (entries: IntersectionObserverEntry[]) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('animate__animated', 'animate__fadeInUp');
+        }
+      });
+    };
+
+    const observer = new IntersectionObserver(observerCallback, observerOptions);
+
+    if (card1Ref.current) observer.observe(card1Ref.current);
+    if (card2Ref.current) observer.observe(card2Ref.current);
+    if (card3Ref.current) observer.observe(card3Ref.current);
+
+    return () => {
+      observer.disconnect();
+    };
+  }, [loading]);
+
   if (loading) {
     return (
       <section 
@@ -101,6 +130,7 @@ export default function StoryVisionMission() {
   }
 
   const items = data.story_vision_mission.items;
+  const cardRefs = [card1Ref, card2Ref, card3Ref];
 
   return (
     <section 
@@ -111,7 +141,15 @@ export default function StoryVisionMission() {
       <div className="max-w-6xl mx-auto">
         <div className="grid gap-12 md:gap-16 lg:gap-20 md:grid-cols-3 text-center">
           {items.map((item, index) => (
-            <div key={index} className="flex flex-col items-center space-y-4">
+            <div 
+              key={index} 
+              ref={cardRefs[index]}
+              className="flex flex-col items-center space-y-4 opacity-0"
+              style={{ 
+                animationDelay: `${index * 0.2}s`,
+                animationFillMode: 'both'
+              }}
+            >
               <div className="h-14 flex items-center justify-center">
                 {iconComponents[item.icon_type]}
               </div>

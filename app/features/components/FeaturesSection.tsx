@@ -1,11 +1,41 @@
 'use client';
 
+import { useEffect, useRef } from 'react';
 import Image from 'next/image';
 import CustomButton from '@/components/button/button';
 import { Monitor } from 'lucide-react';
 import { webFeatures, mobileFeatures, suiteModules, suiteButtons } from '@/lib/features';
 
 export default function FeaturesSection() {
+  const webFeaturesRef = useRef<HTMLDivElement>(null);
+  const mobileFeaturesRef = useRef<HTMLDivElement>(null);
+  const suiteModulesRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const observerOptions = {
+      threshold: 0.1,
+      rootMargin: '0px 0px -100px 0px'
+    };
+
+    const observerCallback = (entries: IntersectionObserverEntry[]) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('animate__animated', 'animate__fadeInUp');
+        }
+      });
+    };
+
+    const observer = new IntersectionObserver(observerCallback, observerOptions);
+
+    if (webFeaturesRef.current) observer.observe(webFeaturesRef.current);
+    if (mobileFeaturesRef.current) observer.observe(mobileFeaturesRef.current);
+    if (suiteModulesRef.current) observer.observe(suiteModulesRef.current);
+
+    return () => {
+      observer.disconnect();
+    };
+  }, []);
+
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
     if (element) {
@@ -23,7 +53,7 @@ export default function FeaturesSection() {
   return (
     <div className="container mx-auto py-10">
       <div className="grid grid-cols-1 md:grid-cols-2 md:gap-6 place-items-center">
-        <div className="w-full flex justify-end p-4">
+        <div className="w-full flex justify-end p-4 animate__animated animate__fadeInLeft">
           <div className="bg-[#061551] rounded-4xl w-full max-w-md px-10 py-8 flex flex-col min-h-[488px]">
             <div className="flex items-center justify-center gap-2">
               <Image src="/assets/images/character2.jpg" alt="Saleswatch Logo" width={60} height={60} priority className="rounded-full" />
@@ -41,7 +71,7 @@ export default function FeaturesSection() {
           </div>
         </div>
 
-        <div className="w-full flex justify-start p-4">
+        <div className="w-full flex justify-start p-4 animate__animated animate__fadeInRight">
           <div className="bg-[#061551] rounded-4xl w-full max-w-md px-10 py-8 flex flex-col items-center justify-center min-h-[460px]">
             <div className="flex items-center justify-center gap-2">
               <Image src="/assets/images/character2.jpg" alt="Saleswatch Logo" width={60} height={60} priority className="rounded-full" />
@@ -61,7 +91,11 @@ export default function FeaturesSection() {
         </div>
       </div>
 
-      <div id="web-features" className="py-10 scroll-mt-32 mt-10">
+      <div 
+        ref={webFeaturesRef}
+        id="web-features" 
+        className="py-10 scroll-mt-32 mt-10 opacity-0"
+      >
         <div className="flex justify-center items-center gap-3">
           <Monitor size={36} className="text-black" />
           <h3 className="text-[#061551] font-bold text-2xl md:text-4xl">Web Features</h3>
@@ -77,7 +111,11 @@ export default function FeaturesSection() {
         </div>
       </div>
 
-      <div id="mobile-features" className="py-10 scroll-mt-32">
+      <div 
+        ref={mobileFeaturesRef}
+        id="mobile-features" 
+        className="py-10 scroll-mt-32 opacity-0"
+      >
         <div className="flex justify-center items-center gap-3">
           <Image src="/svg/handphone.svg" alt="Mobile" width={30} height={30} priority style={{ filter: 'brightness(0)' }} />
           <h3 className="text-[#061551] font-bold text-2xl md:text-4xl">Mobile Features</h3>
@@ -93,7 +131,11 @@ export default function FeaturesSection() {
         </div>
       </div>
 
-      <div id="suite-modules" className="py-10 scroll-mt-32">
+      <div 
+        ref={suiteModulesRef}
+        id="suite-modules" 
+        className="py-10 scroll-mt-32 opacity-0"
+      >
         <div className="flex justify-center items-center gap-3">
           <Image src="/svg/suite-modules.svg" alt="Suite Modules" width={40} height={40} priority style={{ filter: 'brightness(0)' }} />
           <h3 className="text-[#061551] font-bold text-2xl md:text-4xl">Suite Modules</h3>
