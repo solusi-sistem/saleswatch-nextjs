@@ -45,21 +45,21 @@ export default async function BlogPost({ params }: { params: Promise<{ slug: str
                                     alt={post.title}
                                     width={800}
                                     height={450}
-                                    className="w-full object-cover"
+                                    className="w-full object-cover animate__animated animate__fadeInUp"
                                 />
                             </div>
 
                             {/* Meta: Author & Date */}
-                            <div className="text-sm text-gray-500 mb-6">
+                            <div className="text-sm text-gray-500 mb-6 animate__animated animate__fadeInUp">
                                 By {post.author} • {post.date}
                             </div>
 
                             {/* Title */}
-                            <h1 className="text-3xl font-bold mb-6">{post.title}</h1>
+                            <h1 className="text-3xl font-bold mb-6 animate__animated animate__fadeInUp">{post.title}</h1>
 
                             {/* Content */}
                             <div
-                                className="prose prose-lg max-w-none mb-10"
+                                className="prose prose-lg max-w-none mb-10 animate__animated animate__fadeInUp"
                                 dangerouslySetInnerHTML={{ __html: post.content }}
                             />
 
@@ -75,20 +75,20 @@ export default async function BlogPost({ params }: { params: Promise<{ slug: str
                         <div className="lg:w-1/3 space-y-8">
                             {/* Categories */}
                             <div className="bg-gray-50 p-6 rounded-lg">
-                                <h3 className="font-bold text-lg mb-4">Categories</h3>
+                                <h3 className="font-bold text-lg mb-4 animate__animated animate__fadeInUp">Categories</h3>
                                 <ul className="space-y-2">
-                                    <li><Link href="#" className="hover:text-blue-600">Business</Link></li>
-                                    <li><Link href="#" className="hover:text-blue-600">Apps Development</Link></li>
-                                    <li><Link href="#" className="hover:text-blue-600">Social Marketing</Link></li>
+                                    <li><Link href="#" className="hover:text-blue-600 animate__animated animate__fadeInUp">Business</Link></li>
+                                    <li><Link href="#" className="hover:text-blue-600 animate__animated animate__fadeInUp">Apps Development</Link></li>
+                                    <li><Link href="#" className="hover:text-blue-600 animate__animated animate__fadeInUp">Social Marketing</Link></li>
                                 </ul>
                             </div>
 
                             {/* Recent Posts */}
                             <div className="bg-gray-50 p-6 rounded-lg">
-                                <h3 className="font-bold text-lg mb-4">Recent Posts</h3>
+                                <h3 className="font-bold text-lg mb-4 animate__animated animate__fadeInUp">Recent Posts</h3>
                                 <div className="space-y-4">
                                     {relatedPosts.map((item) => (
-                                        <Link key={item.id} href={`/blog/${item.slug}`} className="flex gap-3 hover:opacity-75">
+                                        <Link key={item.id} href={`/blog/${item.slug}`} className="flex gap-3 hover:opacity-75 animate__animated animate__fadeInUp">
                                             {/* ✅ Gunakan Image dengan src dari item.image */}
                                             <div className="w-16 h-16 rounded overflow-hidden flex-shrink-0">
                                                 <Image
@@ -109,10 +109,10 @@ export default async function BlogPost({ params }: { params: Promise<{ slug: str
                             </div>
                             {/* Tags */}
                             <div className="bg-gray-50 p-6 rounded-lg">
-                                <h3 className="font-bold text-lg mb-4">Tags</h3>
+                                <h3 className="font-bold text-lg mb-4 animate__animated animate__fadeInUp">Tags</h3>
                                 <div className="flex flex-wrap gap-2">
                                     {['Security', 'Business', 'Digital',].map((tag) => (
-                                        <span key={tag} className="bg-white px-3 py-1 rounded text-sm border">
+                                        <span key={tag} className="bg-white px-3 py-1 rounded text-sm border animate__animated animate__fadeInUp">
                                             {tag}
                                         </span>
                                     ))}

@@ -9,7 +9,7 @@ export const metadata = {
     description: 'Insights on field sales management, fraud prevention, and productivity optimization.',
 };
 
-const POSTS_PER_PAGE = 6 ;
+const POSTS_PER_PAGE = 6;
 
 // 🔑 JADIKAN ASYNC dan AWAIT searchParams
 export default async function BlogPage({
@@ -45,8 +45,8 @@ export default async function BlogPage({
             <main className="flex-grow">
                 <section className="py-16 px-6 md:px-12 bg-gray-50">
                     <div className="container mx-auto max-w-4xl text-center">
-                        <h1 className="text-4xl md:text-5xl font-bold mb-6">Latest Insights</h1>
-                        <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+                        <h1 className="text-4xl md:text-5xl font-bold mb-6 animate__animated animate__fadeInUp">Latest Insights</h1>
+                        <p className="text-xl text-gray-600 max-w-3xl mx-auto animate__animated animate__fadeInUp">
                             Get deep insights on field sales management, productivity strategies, and innovative solutions for field challenges.
                         </p>
                     </div>
@@ -61,7 +61,7 @@ export default async function BlogPage({
                                     href={`/blog/${post.slug}`}
                                     className="block group"
                                 >
-                                    <article className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300 h-full">
+                                    <article className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300 h-full animate__animated animate__fadeInUp ">
                                         <div className="relative h-48">
                                             <Image
                                                 src={post.image}
@@ -116,8 +116,8 @@ export default async function BlogPage({
                                         key={pageNum}
                                         href={`/blog?page=${pageNum}`}
                                         className={`w-10 h-10 flex items-center justify-center rounded-lg text-sm transition ${currentPage === pageNum
-                                                ? 'bg-[#061551] text-white'
-                                                : 'bg-white border border-gray-300 text-gray-700 hover:bg-gray-50'
+                                            ? 'bg-[#061551] text-white'
+                                            : 'bg-white border border-gray-300 text-gray-700 hover:bg-gray-50'
                                             }`}
                                     >
                                         {pageNum}

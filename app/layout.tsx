@@ -4,6 +4,8 @@ import './globals.css';
 import Script from 'next/script';
 import { LayoutProvider } from '@/contexts/LayoutContext';
 import { HomeProvider } from '@/contexts/HomeContext';
+import 'animate.css';
+import Link from 'next/link';
 
 const geistSans = Geist({
   subsets: ['latin'],
@@ -31,6 +33,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        <Link
+          rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"
+        />
+      </head>
       <body className={`${inter.className} antialiased`}>
         <LayoutProvider>
           <HomeProvider>{children}</HomeProvider>
