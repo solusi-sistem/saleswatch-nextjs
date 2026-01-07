@@ -25,7 +25,6 @@ export function LayoutProvider({ children }: { children: ReactNode }) {
       const data = await getLayoutData();
       setLayoutData(data);
     } catch (err) {
-      console.error('❌ Error loading layout data:', err);
       setError(err instanceof Error ? err.message : 'Failed to load layout data');
     } finally {
       setLoading(false);

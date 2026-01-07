@@ -52,6 +52,38 @@ const LAYOUT_QUERY = `
       desc_footer {
         desc_footer_en,
         desc_footer_id
+      },
+      social_media[] {
+        platform,
+        url,
+        icon,
+        show_social_media
+      },
+      footer_columns[] {
+        column_title {
+          title_en,
+          title_id
+        },
+        links[] {
+          label {
+            label_en,
+            label_id
+          },
+          path,
+          show_link
+        },
+        show_column
+      },
+      footer_cta {
+        title {
+          title_en,
+          title_id
+        },
+        show_request_demo,
+        show_login
+      },
+      scroll_to_top {
+        show_button
       }
     }
   }
@@ -62,7 +94,6 @@ export async function getLayoutData(): Promise<LayoutData | null> {
     const data = await client.fetch<LayoutData>(LAYOUT_QUERY);
     return data;
   } catch (error) {
-    console.error('❌ Error fetching layout data:', error);
     return null;
   }
 }
@@ -71,12 +102,10 @@ export function listenToLayoutChanges(callback: (data: LayoutData) => void) {
   const subscription = client.listen<LayoutData>(LAYOUT_QUERY).subscribe({
     next: (update) => {
       if (update.result) {
-        console.log('🔄 Layout data updated in realtime');
         callback(update.result);
       }
     },
     error: (err) => {
-      console.error('❌ Realtime subscription error:', err);
     },
   });
 

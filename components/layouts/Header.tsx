@@ -5,7 +5,6 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter, usePathname } from 'next/navigation';
 import Nav from '../data/nav';
-import { Button } from '@/components/ui/button';
 import ScheduleDemoModal from '@/components/modals/ScheduleDemoModal';
 import { useLayout } from '@/contexts/LayoutContext';
 import { urlFor } from '@/lib/sanity.realtime';
@@ -27,7 +26,6 @@ export default function Header() {
 
   const { layoutData, loading } = useLayout();
 
-  // Deteksi bahasa dari pathname
   const currentLang: LangKey = pathname.startsWith('/id') ? 'id' : 'en';
 
   const logoUrl = useMemo(() => {
@@ -37,10 +35,32 @@ export default function Header() {
       const url = urlFor(layoutData.header.logo).width(170).fit('max').auto('format').url();
       return url;
     } catch (err) {
-      console.error('❌ Error generating logo URL:', err);
       return null;
     }
   }, [layoutData]);
+
+  const regularMenuItems = layoutData?.header?.menu_header
+    ?.filter(item => item.show_menu !== false)
+    ?.map(item => ({
+      label: currentLang === 'en' 
+        ? item.label_menu?.label_menu_en || '' 
+        : item.label_menu?.label_menu_id || '',
+      href: item.path_menu || '/'
+    })) || [];
+
+  const ctaButtons = layoutData?.header?.cta_buttons;
+  const showRequestDemo = ctaButtons?.request_demo_button?.show_button === true;
+  const showLogin = ctaButtons?.login_button?.show_button === true;
+
+  const requestDemoText = currentLang === 'en'
+    ? (ctaButtons?.request_demo_button?.text_en || 'Request Demo')
+    : (ctaButtons?.request_demo_button?.text_id || 'Minta Demo');
+
+  const loginText = currentLang === 'en'
+    ? (ctaButtons?.login_button?.text_en || 'Login')
+    : (ctaButtons?.login_button?.text_id || 'Masuk');
+
+  const loginUrl = ctaButtons?.login_button?.login_url || 'https://dash.saleswatch.id/login';
 
   const closeAll = () => {
     setMobileMenuOpen(false);
@@ -48,7 +68,6 @@ export default function Header() {
   };
 
   const handleLoginClick = () => {
-    const loginUrl = layoutData?.header?.cta_buttons?.login_button?.login_url || 'https://dash.saleswatch.id/login';
     window.location.href = loginUrl;
   };
 
@@ -57,14 +76,9 @@ export default function Header() {
     setIsModalOpen(true);
   };
 
-  // Handle language switch dengan redirect ke locale yang sesuai
   const handleLanguageSwitch = (newLang: LangKey) => {
     setLangOpen(false);
-    
-    // Jika sudah di locale yang sama, tidak perlu redirect
     if (newLang === currentLang) return;
-    
-    // Redirect ke locale baru
     router.push(`/${newLang}`);
   };
 
@@ -77,7 +91,6 @@ export default function Header() {
           closeAll();
         }
 
-        // Check if we're on a locale page
         const isLocalePage = pathname === '/en' || pathname === '/id';
 
         if (isLocalePage) {
@@ -140,16 +153,6 @@ export default function Header() {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  const requestDemoText = currentLang === 'en' 
-    ? layoutData?.header?.cta_buttons?.request_demo_button?.text_en || 'Request Demo' 
-    : layoutData?.header?.cta_buttons?.request_demo_button?.text_id || 'Minta Demo';
-
-  const loginText = currentLang === 'en' 
-    ? layoutData?.header?.cta_buttons?.login_button?.text_en || 'Login' 
-    : layoutData?.header?.cta_buttons?.login_button?.text_id || 'Masuk';
-
-  const showRequestDemo = layoutData?.header?.cta_buttons?.request_demo_button?.show_button !== false;
-  const showLogin = layoutData?.header?.cta_buttons?.login_button?.show_button !== false;
   const showLanguageSwitcher = layoutData?.header?.language_switcher?.show_language_switcher !== false;
 
   if (loading) {
@@ -166,8 +169,7 @@ export default function Header() {
     <>
       <header className="absolute top-0 left-0 right-0 text-white z-50 px-5 md:px-8 lg:px-12 pt-0">
         <div className="md:max-w-4xl lg:max-w-5xl xl:max-w-5xl 2xl:max-w-6xl mx-auto flex items-center justify-between py-5 px-6 lg:px-12 bg-[#061551] backdrop-blur-sm rounded-b-[50px]">
-          {/* Logo */}
-          <Link href={`/${currentLang}`} className="flex items-center">
+          <Link href={`/${currentLang}`} className="flex items-center flex-shrink-0">
             {logoUrl ? (
               <Image src={logoUrl} alt="Company Logo" width={170} height={41} priority className="h-auto" />
             ) : (
@@ -175,13 +177,11 @@ export default function Header() {
             )}
           </Link>
 
-          {/* DESKTOP NAV */}
-          <div className="hidden lg:flex">
-            <Nav onNavClick={handleNavClick} />
+          <div className="hidden lg:flex flex-1 justify-center">
+            <Nav onNavClick={handleNavClick} navItems={regularMenuItems} />
           </div>
 
-          {/* DESKTOP ACTIONS */}
-          <div className="hidden lg:flex items-center gap-4">
+          <div className="hidden lg:flex items-center gap-4 flex-shrink-0">
             {showLanguageSwitcher && (
               <div className="relative" ref={langRef}>
                 <button 
@@ -197,7 +197,7 @@ export default function Header() {
                 </button>
 
                 {langOpen && (
-                  <div className="absolute right-0 mt-2 w-32 bg-[#061551] border border-white/20 rounded-md overflow-hidden">
+                  <div className="absolute right-0 mt-2 w-32 bg-[#061551] border border-white/20 rounded-md overflow-hidden z-50">
                     {(Object.keys(LANGUAGES) as LangKey[]).map((key) => (
                       <button
                         key={key}
@@ -216,15 +216,21 @@ export default function Header() {
             )}
 
             {showRequestDemo && (
-              <Button onClick={handleRequestDemoClick} className="bg-[#6587A8] hover:bg-[#CFE3C0] hover:text-[#6587A8]">
+              <button
+                onClick={handleRequestDemoClick}
+                className="bg-[#6587A8] hover:bg-[#CFE3C0] hover:text-[#6587A8] px-4 py-2 rounded-md transition cursor-pointer text-white whitespace-nowrap"
+              >
                 {requestDemoText}
-              </Button>
+              </button>
             )}
 
             {showLogin && (
-              <Button onClick={handleLoginClick} className="bg-[#6587A8] hover:bg-[#CFE3C0] hover:text-[#6587A8] cursor-pointer">
+              <button
+                onClick={handleLoginClick}
+                className="bg-[#6587A8] hover:bg-[#CFE3C0] hover:text-[#6587A8] px-4 py-2 rounded-md transition cursor-pointer text-white whitespace-nowrap"
+              >
                 {loginText}
-              </Button>
+              </button>
             )}
           </div>
 
@@ -233,7 +239,6 @@ export default function Header() {
           </button>
         </div>
 
-        {/* MOBILE SIDEBAR */}
         {mobileMenuOpen && (
           <div className="fixed inset-0 z-50 bg-[#061551] lg:hidden">
             <div className="flex items-center justify-between px-6 py-5 border-b border-white/10">
@@ -248,7 +253,7 @@ export default function Header() {
             </div>
 
             <div className="px-6 py-6 space-y-2">
-              <Nav isMobile onNavClick={handleNavClick} />
+              <Nav isMobile onNavClick={handleNavClick} navItems={regularMenuItems} />
 
               {showLanguageSwitcher && (
                 <div className="flex gap-3 pt-4">
@@ -267,19 +272,27 @@ export default function Header() {
                 </div>
               )}
 
-              <div className="flex flex-col gap-4 pt-6">
-                {showRequestDemo && (
-                  <Button onClick={handleRequestDemoClick} className="w-full bg-[#6587A8] hover:bg-[#CFE3C0] hover:text-[#6587A8]">
-                    {requestDemoText}
-                  </Button>
-                )}
+              {(showRequestDemo || showLogin) && (
+                <div className="flex flex-col gap-4 pt-6">
+                  {showRequestDemo && (
+                    <button
+                      onClick={handleRequestDemoClick}
+                      className="w-full bg-[#6587A8] hover:bg-[#CFE3C0] hover:text-[#6587A8] px-4 py-2 rounded-md transition cursor-pointer text-white"
+                    >
+                      {requestDemoText}
+                    </button>
+                  )}
 
-                {showLogin && (
-                  <Button onClick={handleLoginClick} className="w-full bg-[#6587A8] hover:bg-[#CFE3C0] hover:text-[#6587A8] cursor-pointer">
-                    {loginText}
-                  </Button>
-                )}
-              </div>
+                  {showLogin && (
+                    <button
+                      onClick={handleLoginClick}
+                      className="w-full bg-[#6587A8] hover:bg-[#CFE3C0] hover:text-[#6587A8] px-4 py-2 rounded-md transition cursor-pointer text-white"
+                    >
+                      {loginText}
+                    </button>
+                  )}
+                </div>
+              )}
             </div>
           </div>
         )}
