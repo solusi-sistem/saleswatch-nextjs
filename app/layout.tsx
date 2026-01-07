@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { Geist, Geist_Mono, Inter } from 'next/font/google';
 import './globals.css';
 import Script from 'next/script';
+import 'animate.css';
 import { LayoutProvider } from '@/contexts/LayoutContext';
 import { HomeProvider } from '@/contexts/HomeContext';
 import 'animate.css';

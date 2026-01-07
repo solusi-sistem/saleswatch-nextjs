@@ -1,15 +1,57 @@
-import React from 'react';
+'use client';
+
+import React, { useEffect, useRef } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import CustomButton from '@/components/button/button';
 
 export default function WhyItWorks() {
+  const titleRef = useRef<HTMLHeadingElement>(null);
+  const fraudPreventionRef = useRef<HTMLDivElement>(null);
+  const performanceInsightsRef = useRef<HTMLDivElement>(null);
+  const fieldCompanionRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const observerOptions = {
+      threshold: 0.1,
+      rootMargin: '0px 0px -100px 0px'
+    };
+
+    const observerCallback = (entries: IntersectionObserverEntry[]) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('animate__animated', 'animate__fadeInUp');
+        }
+      });
+    };
+
+    const observer = new IntersectionObserver(observerCallback, observerOptions);
+
+    if (titleRef.current) observer.observe(titleRef.current);
+    if (fraudPreventionRef.current) observer.observe(fraudPreventionRef.current);
+    if (performanceInsightsRef.current) observer.observe(performanceInsightsRef.current);
+    if (fieldCompanionRef.current) observer.observe(fieldCompanionRef.current);
+
+    return () => {
+      observer.disconnect();
+    };
+  }, []);
+
   return (
     <section className="bg-[#f2f7ff] py-16 md:py-24 px-6">
       <div className="max-w-6xl mx-auto space-y-24">
-        <h2 className="text-center text-4xl sm:text-5xl md:text-6xl font-bold text-[#2f2e2e]">Why It Works</h2>
+        <h2 
+          ref={titleRef}
+          className="text-center text-4xl sm:text-5xl md:text-6xl font-bold text-[#2f2e2e] opacity-0"
+        >
+          Why It Works
+        </h2>
 
-        <div className="grid md:grid-cols-2 gap-10 items-center">
+        {/* Fraud Prevention Section */}
+        <div 
+          ref={fraudPreventionRef}
+          className="grid md:grid-cols-2 gap-10 items-center opacity-0"
+        >
           <div className="flex justify-center md:justify-end -mt-14 md:mt-0">
             <Image src="/img/undraw_my-current-location_tudq_edited_e.avif" alt="Fraud Prevention Illustration" width={320} height={320} className="w-[240px] sm:w-[280px] md:w-[320px] h-auto" />
           </div>
@@ -63,7 +105,11 @@ export default function WhyItWorks() {
           </div>
         </div>
 
-        <div className="grid md:grid-cols-2 gap-10 items-center">
+        {/* Performance Insights Section */}
+        <div 
+          ref={performanceInsightsRef}
+          className="grid md:grid-cols-2 gap-10 items-center opacity-0"
+        >
           <div className="flex justify-center md:justify-start md:order-2 -mt-12 md:mt-0">
             <Image src="/img/undraw_algorithm-execution_rksm_edited_p.avif" alt="Performance insights illustration" width={340} height={340} className="w-[260px] sm:w-[300px] md:w-[340px] h-auto" />
           </div>
@@ -117,7 +163,11 @@ export default function WhyItWorks() {
           </div>
         </div>
 
-        <div className="grid md:grid-cols-2 gap-10 items-center">
+        {/* Field Companion App Section */}
+        <div 
+          ref={fieldCompanionRef}
+          className="grid md:grid-cols-2 gap-10 items-center opacity-0"
+        >
           <div className="flex justify-center md:justify-end -mt-14 md:mt-0 mr-0 md:mr-10">
             <Image src="/img/image-qr.avif" alt="QR Code for Field Companion App" width={340} height={340} className="w-[260px] sm:w-[300px] md:w-[340px] h-auto rounded-xl bg-[#DFE1E4] p-2 md:p-4" />
           </div>
