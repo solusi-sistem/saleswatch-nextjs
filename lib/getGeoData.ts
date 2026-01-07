@@ -60,7 +60,6 @@ export async function getGeoData(): Promise<GeoData> {
             longitude,
         };
     } catch (error) {
-        console.error("Error fetching geo data:", error);
 
         return {
             ip: "Unknown",

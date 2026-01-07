@@ -46,6 +46,47 @@ export interface FooterData {
     desc_footer_en?: string;
     desc_footer_id?: string;
   };
+  social_media?: SocialMediaItem[];
+  footer_columns?: FooterColumn[];
+  footer_cta?: FooterCTA;
+  scroll_to_top?: ScrollToTop;
   copyright?: string;
-  links?: any[];
+}
+
+export interface SocialMediaItem {
+  platform?: string;
+  url?: string;
+  icon?: any;
+  show_social_media?: boolean;
+}
+
+export interface FooterColumn {
+  column_title?: {
+    title_en?: string;
+    title_id?: string;
+  };
+  links?: FooterLink[];
+  show_column?: boolean;
+}
+
+export interface FooterLink {
+  label?: {
+    label_en?: string;
+    label_id?: string;
+  };
+  path?: string;
+  show_link?: boolean;
+}
+
+export interface FooterCTA {
+  title?: {
+    title_en?: string;
+    title_id?: string;
+  };
+  show_request_demo?: boolean;
+  show_login?: boolean;
+}
+
+export interface ScrollToTop {
+  show_button?: boolean;
 }
