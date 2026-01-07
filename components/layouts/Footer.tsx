@@ -1,17 +1,48 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useMemo } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter, usePathname } from 'next/navigation';
 import { Facebook, Linkedin, Instagram, Youtube, ChevronUp } from 'lucide-react';
 import CustomButton from '@/components/button/button';
 import ScheduleDemoModal from '@/components/modals/ScheduleDemoModal';
+import { useLayout } from '@/contexts/LayoutContext';
+import { urlFor } from '@/lib/sanity.realtime';
 
 export default function Footer() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
+  const { layoutData, loading } = useLayout();
+
+  const footerLogoUrl = useMemo(() => {
+    console.log('📊 Layout Data:', layoutData);
+    console.log('📍 Footer object:', layoutData?.footer);
+    console.log('🖼️ Footer logo_footer:', layoutData?.footer?.logo_footer);
+    
+    if (!layoutData?.footer?.logo_footer) {
+      console.warn('⚠️ Footer logo not found in layout data');
+      return null;
+    }
+
+    try {
+      const url = urlFor(layoutData.footer.logo_footer)
+        .width(170)
+        .fit('max')
+        .auto('format')
+        .url();
+      
+      console.log('✅ Footer Logo URL generated:', url);
+      return url;
+    } catch (err) {
+      console.error('❌ Error generating footer logo URL:', err);
+      return null;
+    }
+  }, [layoutData]);
+
+  const footerDescription = layoutData?.footer?.desc_footer?.desc_footer_en || 
+    'Sales Watch is a sales rep monitoring solution developed by SSS (Software System Solutions), designed to empower distributors and companies with control over their sales teams in the field.';
 
   const handleLoginClick = () => {
     window.location.href = 'https://dash.saleswatch.id/login';
@@ -49,27 +80,6 @@ export default function Footer() {
     }
   };
 
-  useEffect(() => {
-    if (pathname === '/' && window.location.hash) {
-      const hash = window.location.hash.substring(1);
-      
-      setTimeout(() => {
-        const targetElement = document.getElementById(hash);
-        
-        if (targetElement) {
-          const headerOffset = 100;
-          const elementPosition = targetElement.getBoundingClientRect().top;
-          const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
-
-          window.scrollTo({
-            top: offsetPosition,
-            behavior: 'smooth'
-          });
-        }
-      }, 100);
-    }
-  }, [pathname]);
-
   return (
     <>
       <footer className="bg-[#061551] text-white py-25 px-6 md:px-12">
@@ -77,9 +87,20 @@ export default function Footer() {
           <div className="grid grid-cols-1 md:grid-cols-12 gap-10">
             <div className="md:col-span-5 pe-8">
               <Link href="/" className="flex items-center">
-                <Image src="/assets/images/SALESWATCH_LOGO.webp" alt="Saleswatch Logo" width={170} height={100} priority />
+                {!loading && footerLogoUrl ? (
+                  <Image 
+                    src={footerLogoUrl} 
+                    alt="Saleswatch Footer Logo" 
+                    width={170} 
+                    height={41}
+                    priority
+                    className="h-auto"
+                  />
+                ) : (
+                  <div className="w-[170px] h-[41px] bg-white/10 animate-pulse rounded"></div>
+                )}
               </Link>
-              <h1 className="my-5">Sales Watch is a sales rep monitoring solution developed by SSS (Software System Solutions), designed to empower distributors and companies with control over their sales teams in the field.</h1>
+              <h1 className="my-5">{footerDescription}</h1>
               <div className="mt-4 flex gap-4">
                 <Link href="https://facebook.com" target="_blank" className="flex h-9 w-9 items-center justify-center rounded-full bg-white/10 hover:bg-[#6587A8] transition">
                   <Facebook size={18} />
