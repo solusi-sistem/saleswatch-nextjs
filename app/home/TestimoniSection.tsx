@@ -8,7 +8,7 @@ import type { LangKey } from '@/types';
 
 export default function TestimoniSection() {
   const pathname = usePathname();
-  const currentLang: LangKey = pathname.startsWith('/id') ? 'id' : 'en';
+  const currentLang: LangKey = pathname.startsWith('/id') ? 'id' : '';
   const { data, loading } = useTestimonial();
 
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -97,19 +97,19 @@ export default function TestimoniSection() {
             style={{ transform: `translateX(-${currentIndex * 100}%)` }}
           >
             {testimonials.map((item, index) => {
-              const title = currentLang === 'en' ? item.title_en : item.title_id;
-              const quote = currentLang === 'en' ? item.quote_en : item.quote_id;
-              const company = currentLang === 'en' ? item.company_en : item.company_id;
-              const role = currentLang === 'en' ? item.client_role_en : item.client_role_id;
+              const title = currentLang === '' ? item.title_en : item.title_id;
+              const quote = currentLang === '' ? item.quote_en : item.quote_id;
+              const company = currentLang === '' ? item.company_en : item.company_id;
+              const role = currentLang === '' ? item.client_role_en : item.client_role_id;
               const logoUrl = item.company_logo?.asset?.url || '/assets/images/logo1.webp';
 
               return (
                 <div key={index} className="w-full flex-shrink-0">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-10 items-center text-center md:text-left">
-                    <div 
+                    <div
                       ref={index === currentIndex ? leftSideRef : null}
                       className="text-white flex flex-col items-center md:items-start opacity-0"
-                      style={{ 
+                      style={{
                         animationDelay: '0s',
                         animationFillMode: 'both'
                       }}
@@ -131,10 +131,10 @@ export default function TestimoniSection() {
                       </div>
                     </div>
 
-                    <div 
+                    <div
                       ref={index === currentIndex ? rightSideRef : null}
                       className="text-white opacity-0"
-                      style={{ 
+                      style={{
                         animationDelay: '0.2s',
                         animationFillMode: 'both'
                       }}

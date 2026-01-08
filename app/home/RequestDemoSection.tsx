@@ -4,12 +4,12 @@ import { useEffect, useRef, useState } from 'react';
 import { usePathname } from 'next/navigation';
 import CustomButton from '@/components/button/button';
 import ScheduleDemoModal from '@/components/modals/ScheduleDemoModal';
-import { useRequestDemo } from '@/contexts/HomeContext'; 
+import { useRequestDemo } from '@/contexts/HomeContext';
 import type { LangKey } from '@/types';
 
 export default function RequestDemoSection() {
   const pathname = usePathname();
-  const currentLang: LangKey = pathname.startsWith('/id') ? 'id' : 'en';
+  const currentLang: LangKey = pathname.startsWith('/id') ? 'id' : '';
   const { data, loading } = useRequestDemo();
 
   const sectionRef = useRef<HTMLElement>(null);
@@ -54,7 +54,7 @@ export default function RequestDemoSection() {
       entries.forEach((entry) => {
         if (entry.isIntersecting) {
           const target = entry.target;
-          
+
           if (target === badgeRef.current) {
             target.classList.add('animate__animated', 'animate__fadeInDown');
           } else if (target === titleContainerRef.current) {
@@ -103,11 +103,11 @@ export default function RequestDemoSection() {
   }
 
   const content = data.request_demo_content;
-  const badgeText = currentLang === 'en' ? content.badge_text_en : content.badge_text_id;
-  const buttonText = currentLang === 'en' ? content.cta_button.text_en : content.cta_button.text_id;
+  const badgeText = currentLang === '' ? content.badge_text_en : content.badge_text_id;
+  const buttonText = currentLang === '' ? content.cta_button.text_en : content.cta_button.text_id;
 
   const backgroundImage = content.background_image?.asset?.url || '';
-  
+
   return (
     <>
       <div
@@ -120,7 +120,7 @@ export default function RequestDemoSection() {
         <div className="relative z-10 flex justify-center px-4 text-[#DFE1E4]">
           <div className="w-full max-w-4xl text-center md:text-left">
             {/* Badge dengan Icon */}
-            <h2 
+            <h2
               ref={badgeRef}
               className="mb-4 text-lg sm:text-xl md:text-3xl font-semibold text-[#061551] flex items-center gap-3 ms-3 md:ms-0 opacity-0"
               style={{ animationDelay: '0s', animationFillMode: 'both' }}
@@ -132,14 +132,14 @@ export default function RequestDemoSection() {
             </h2>
 
             {/* Title Lines dengan Staggered Animation */}
-            <div 
+            <div
               ref={titleContainerRef}
               className="space-y-1 sm:space-y-2 opacity-0"
               style={{ animationDelay: '0.2s', animationFillMode: 'both' }}
             >
               {content.title_lines.map((line, index) => (
-                <p 
-                  key={index} 
+                <p
+                  key={index}
                   className="text-xl sm:text-2xl md:text-[50px] font-bold leading-tight"
                   style={{
                     animation: 'fadeInUp 0.8s ease-out forwards',
@@ -147,20 +147,20 @@ export default function RequestDemoSection() {
                     opacity: 0
                   }}
                 >
-                  {currentLang === 'en' ? line.text_en : line.text_id}
+                  {currentLang === '' ? line.text_en : line.text_id}
                 </p>
               ))}
             </div>
 
             {/* CTA Button dengan Zoom In */}
-            <div 
+            <div
               ref={buttonRef}
               className="mt-8 flex justify-center md:justify-center opacity-0"
               style={{ animationDelay: '0.8s', animationFillMode: 'both' }}
             >
-              <CustomButton 
-                size="lg" 
-                className="mt-3 hover:scale-110 transition-transform duration-300" 
+              <CustomButton
+                size="lg"
+                className="mt-3 hover:scale-110 transition-transform duration-300"
                 onClick={() => setIsModalOpen(true)}
               >
                 {buttonText}

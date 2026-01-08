@@ -7,7 +7,7 @@ import type { LangKey } from '@/types';
 
 const Faq = () => {
     const pathname = usePathname();
-    const currentLang: LangKey = pathname.startsWith('/id') ? 'id' : 'en';
+    const currentLang: LangKey = pathname.startsWith('/id') ? 'id' : '';
     const { data, loading } = useFaq();
 
     const [openId, setOpenId] = useState<number | null>(null);
@@ -91,8 +91,8 @@ const Faq = () => {
     }
 
     const content = data.faq_content;
-    const title = currentLang === 'en' ? content.title_en : content.title_id;
-    const description = currentLang === 'en' ? content.description_en : content.description_id;
+    const title = currentLang === '' ? content.title_en : content.title_id;
+    const description = currentLang === '' ? content.description_en : content.description_id;
     const sideImage = content.side_image?.asset?.url || '';
 
     return (
@@ -111,8 +111,8 @@ const Faq = () => {
 
                         <div ref={accordionRef} className="space-y-4 opacity-0" style={{ animationDelay: '0.3s', animationFillMode: 'both' }}>
                             {content.faq_items.map((item, index) => {
-                                const question = currentLang === 'en' ? item.question_en : item.question_id;
-                                const answer = currentLang === 'en' ? item.answer_en : item.answer_id;
+                                const question = currentLang === '' ? item.question_en : item.question_id;
+                                const answer = currentLang === '' ? item.answer_en : item.answer_id;
 
                                 return (
                                     <div key={index} className={`border rounded-xl overflow-hidden transition-all duration-300 ${openId === index ? 'border-[#061551] bg-white shadow-xl scale-[1.02]' : 'border-gray-200 bg-white/60 hover:bg-white'}`}>

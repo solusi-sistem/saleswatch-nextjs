@@ -7,15 +7,19 @@ import { ArrowRight } from 'lucide-react';
 import { getSectionData } from '@/hooks/getSectionData';
 import { Section } from '@/types/section';
 import { BlogItem } from '@/types/list/Blog';
+import { LangKey } from '@/types';
+import { usePathname } from 'next/navigation';
 
 interface BlogProps {
     id?: string;
 }
 
 export default function Blog({ id }: BlogProps) {
+    const pathname = usePathname();
     const [sectionData, setSectionData] = useState<Section | null>(null);
     const [loading, setLoading] = useState(true);
-    const [locale, setLocale] = useState<'en' | 'id'>('en');
+    // const [locale, setLocale] = useState<'' | 'id'>('');
+    const locale: LangKey = pathname.startsWith('/id') ? 'id' : '';
 
     useEffect(() => {
         const fetchSectionData = async () => {
@@ -81,7 +85,7 @@ export default function Blog({ id }: BlogProps) {
         );
     }
 
-    const title = locale === 'en'
+    const title = locale === ''
         ? blog_content.title_en || 'Read Latest Story'
         : blog_content.title_id || 'Baca Cerita Terbaru';
 
@@ -99,11 +103,11 @@ export default function Blog({ id }: BlogProps) {
                     {latestBlogs.map((blog: BlogItem, index: number) => {
                         // CRITICAL: Safe extraction dengan fallbacks
                         const blogSlug = blog.slug?.current || '';
-                        const blogTitle = blog.title?.[locale] || 'Untitled';
-                        const blogExcerpt = blog.excerpt?.[locale] || '';
-                        const blogCategory = blog.category?.[locale] || 'Uncategorized';
+                        const blogTitle = (locale === 'id' ? blog.title.id : blog.title.en) || 'Untitled';
+                        const blogExcerpt = (locale === 'id' ? blog.excerpt.id : blog.excerpt.en) || '';
+                        const blogCategory = (locale === 'id' ? blog.category.id : blog.category.en) || 'Uncategorized';
                         const imageUrl = blog.image?.asset?.url || '/placeholder.jpg';
-                        const imageAlt = blog.image?.alt?.[locale] || blogTitle;
+                        const imageAlt = (locale === 'id' ? blog.image?.alt?.id : blog.image?.alt?.en) || blogTitle;
                         const author = blog.author || 'Unknown';
 
                         // Validation: Skip jika slug kosong
@@ -148,7 +152,7 @@ export default function Blog({ id }: BlogProps) {
                                         {blog.date && (
                                             <span className="hover:text-[#061551] transition">
                                                 {new Date(blog.date).toLocaleDateString(
-                                                    locale === 'en' ? 'en-US' : 'id-ID',
+                                                    locale === '' ? 'en-US' : 'id-ID',
                                                     {
                                                         year: 'numeric',
                                                         month: 'short',
@@ -169,7 +173,7 @@ export default function Blog({ id }: BlogProps) {
                                         href={`/blog/${blogSlug}`}
                                         className="inline-flex items-center gap-2 text-sm font-medium text-black underline underline-offset-4 decoration-black transition hover:text-[#061551] hover:decoration-[#061551]"
                                     >
-                                        {locale === 'en' ? 'Learn More' : 'Pelajari Lebih Lanjut'}
+                                        {locale === '' ? 'Learn More' : 'Pelajari Lebih Lanjut'}
                                         <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
                                     </Link>
                                 </div>

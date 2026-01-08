@@ -23,7 +23,7 @@ export default function Nav({
   const [activeSection, setActiveSection] = useState('');
 
   // Deteksi bahasa dari pathname
-  const currentLang: LangKey = pathname.startsWith('/id') ? 'id' : 'en';
+  const currentLang: LangKey = pathname.startsWith('/id') ? 'id' : '';
 
   useEffect(() => {
     const handleScroll = () => {
@@ -88,22 +88,22 @@ export default function Nav({
     if (href === '/') {
       return `/${currentLang}`;
     }
-    
+
     // Jika href sudah punya locale, return as-is
     if (href.startsWith('/en') || href.startsWith('/id')) {
       return href;
     }
-    
+
     // Jika href adalah hash (#about), tambahkan locale
     if (href.startsWith('/#')) {
       return `/${currentLang}${href.substring(1)}`;
     }
-    
+
     // Jika href adalah path biasa (/features), tambahkan locale
     if (href.startsWith('/')) {
       return `/${currentLang}${href}`;
     }
-    
+
     return href;
   };
 
@@ -118,11 +118,10 @@ export default function Nav({
           key={`${item.href}-${index}`}
           href={normalizeHref(item.href)}
           onClick={(e) => handleClick(e, item.href)}
-          className={`block transition ${
-            isActive(item.href)
+          className={`block transition ${isActive(item.href)
               ? 'text-blue-300/60 font-semibold'
               : 'text-[#CFE3C0] hover:text-blue-200'
-          }`}
+            }`}
         >
           {item.label}
         </Link>
