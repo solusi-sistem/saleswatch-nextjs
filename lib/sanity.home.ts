@@ -1,5 +1,11 @@
 import { client } from './sanity.realtime';
-import type { StoryVisionMissionSection, RequestDemoSection, FaqSection } from '@/types/home';
+import type { 
+  StoryVisionMissionSection, 
+  RequestDemoSection, 
+  FaqSection, 
+  TestimonialSection,
+  WhyItWorksSection 
+} from '@/types/home';
 
 // ==========================================
 // STORY VISION MISSION
@@ -165,6 +171,133 @@ export function listenToFaqChanges(
       },
       error: (err) => {
         console.error('FAQ subscription error:', err);
+      },
+    });
+
+  return () => subscription.unsubscribe();
+}
+
+// ==========================================
+// TESTIMONIAL
+// ==========================================
+const TESTIMONIAL_QUERY = `
+  *[_type == "section" && type_section == "testimonial" && published_at == true][0] {
+    _id,
+    name_section,
+    type_section,
+    published_at,
+    testimonial_content {
+      testimonials[] {
+        title_en,
+        title_id,
+        quote_en,
+        quote_id,
+        company_en,
+        company_id,
+        client_name,
+        client_role_en,
+        client_role_id,
+        company_logo {
+          asset-> {
+            _id,
+            url
+          }
+        }
+      }
+    }
+  }
+`;
+
+export async function getTestimonialData(): Promise<TestimonialSection | null> {
+  try {
+    const data = await client.fetch<TestimonialSection>(TESTIMONIAL_QUERY);
+    return data;
+  } catch (error) {
+    console.error('Error fetching Testimonial data:', error);
+    return null;
+  }
+}
+
+export function listenToTestimonialChanges(
+  callback: (data: TestimonialSection) => void
+) {
+  const subscription = client
+    .listen<TestimonialSection>(TESTIMONIAL_QUERY)
+    .subscribe({
+      next: (update) => {
+        if (update.result) {
+          callback(update.result);
+        }
+      },
+      error: (err) => {
+        console.error('Testimonial subscription error:', err);
+      },
+    });
+
+  return () => subscription.unsubscribe();
+}
+
+// ==========================================
+// WHY IT WORKS
+// ==========================================
+const WHY_IT_WORKS_QUERY = `
+  *[_type == "section" && type_section == "whyItWorks" && published_at == true][0] {
+    _id,
+    name_section,
+    type_section,
+    published_at,
+    why_it_works {
+      section_title_en,
+      section_title_id,
+      features[] {
+        title_en,
+        title_id,
+        description_en,
+        description_id,
+        image {
+          asset-> {
+            _id,
+            url
+          }
+        },
+        image_position,
+        checklist_items[] {
+          text_en,
+          text_id
+        },
+        cta_button {
+          text_en,
+          text_id,
+          link
+        }
+      }
+    }
+  }
+`;
+
+export async function getWhyItWorksData(): Promise<WhyItWorksSection | null> {
+  try {
+    const data = await client.fetch<WhyItWorksSection>(WHY_IT_WORKS_QUERY);
+    return data;
+  } catch (error) {
+    console.error('Error fetching Why It Works data:', error);
+    return null;
+  }
+}
+
+export function listenToWhyItWorksChanges(
+  callback: (data: WhyItWorksSection) => void
+) {
+  const subscription = client
+    .listen<WhyItWorksSection>(WHY_IT_WORKS_QUERY)
+    .subscribe({
+      next: (update) => {
+        if (update.result) {
+          callback(update.result);
+        }
+      },
+      error: (err) => {
+        console.error('Why It Works subscription error:', err);
       },
     });
 
