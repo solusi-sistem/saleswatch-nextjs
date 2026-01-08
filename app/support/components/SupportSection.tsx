@@ -113,8 +113,14 @@ export default function SupportSection() {
                         </div>
                       </button>
 
-                      <div className={`transition-all duration-300 ease-in-out ${openCategories[key] ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'} overflow-hidden`}>
-                        <div className="bg-gray-50 border-t border-gray-200">
+                      <div 
+                        className={`transition-all duration-300 ease-in-out ${openCategories[key] ? 'opacity-100' : 'max-h-0 opacity-0'}`}
+                        style={{
+                          maxHeight: openCategories[key] ? `${category.items.length * 80 + 32}px` : '0',
+                          overflowY: openCategories[key] ? 'auto' : 'hidden'
+                        }}
+                      >
+                        <div className="bg-gray-50 border-t border-gray-200 pb-4">
                           {category.items.map((item) => {
                             const isItemActive = selectedItem === item.id;
 
@@ -173,7 +179,13 @@ export default function SupportSection() {
                         </div>
                       </button>
 
-                      <div className={`transition-all duration-300 ease-in-out ${openAccordions[item.id] ? 'max-h-[1000px] opacity-100' : 'max-h-0 opacity-0'} overflow-hidden`}>
+                      <div 
+                        className={`transition-all duration-300 ease-in-out ${openAccordions[item.id] ? 'opacity-100' : 'max-h-0 opacity-0'}`}
+                        style={{
+                          maxHeight: openAccordions[item.id] ? '3000px' : '0',
+                          overflow: openAccordions[item.id] ? 'visible' : 'hidden'
+                        }}
+                      >
                         <div className="px-6 pb-6 text-gray-700 leading-relaxed whitespace-pre-line border-t border-gray-200 pt-4 bg-gray-50">{item.content}</div>
                       </div>
                     </div>

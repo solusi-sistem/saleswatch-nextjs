@@ -195,7 +195,7 @@ export default function TermsAndConditionsSection() {
     ];
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
+        <div className="min-h-screen bg-gray-50">
             <div className="max-w-5xl mx-auto px-4 py-12 sm:px-6 lg:px-8">
                 {/* Sections */}
                 <div className="space-y-4">

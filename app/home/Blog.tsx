@@ -43,7 +43,7 @@ export default function BlogSection() {
   const cardRefs = [card1Ref, card2Ref, card3Ref];
 
   return (
-    <section className="bg-white py-16 md:py-20">
+    <section className="bg-gray-50 py-16 md:py-20">
       <div className="container mx-auto px-6 sm:px-6 lg:px-12 xl:px-24">
         <div 
           ref={headerRef}
