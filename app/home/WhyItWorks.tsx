@@ -10,7 +10,7 @@ import type { LangKey } from '@/types';
 
 export default function WhyItWorks() {
   const pathname = usePathname();
-  const currentLang: LangKey = pathname.startsWith('/id') ? 'id' : 'en';
+  const currentLang: LangKey = pathname.startsWith('/id') ? 'id' : '';
   const { data, loading } = useWhyItWorks();
 
   const titleRef = useRef<HTMLHeadingElement>(null);
@@ -73,13 +73,13 @@ export default function WhyItWorks() {
   }
 
   const content = data.why_it_works;
-  const sectionTitle = currentLang === 'en' ? content.section_title_en : content.section_title_id;
+  const sectionTitle = currentLang === '' ? content.section_title_en : content.section_title_id;
   const features = content.features || [];
 
   return (
     <section className="bg-[#f2f7ff] py-16 md:py-24 px-6">
       <div className="max-w-6xl mx-auto space-y-24">
-        <h2 
+        <h2
           ref={titleRef}
           className="text-center text-4xl sm:text-5xl md:text-6xl font-bold text-[#2f2e2e] opacity-0"
         >
@@ -87,14 +87,14 @@ export default function WhyItWorks() {
         </h2>
 
         {features.map((feature, index) => {
-          const title = currentLang === 'en' ? feature.title_en : feature.title_id;
-          const description = currentLang === 'en' ? feature.description_en : feature.description_id;
-          const buttonText = currentLang === 'en' ? feature.cta_button.text_en : feature.cta_button.text_id;
+          const title = currentLang === '' ? feature.title_en : feature.title_id;
+          const description = currentLang === '' ? feature.description_en : feature.description_id;
+          const buttonText = currentLang === '' ? feature.cta_button.text_en : feature.cta_button.text_id;
           const imageUrl = feature.image?.asset?.url || '/img/placeholder.avif';
           const isImageLeft = feature.image_position === 'left';
 
           return (
-            <div 
+            <div
               key={index}
               ref={(el) => { featureRefs.current[index] = el; }}
               className="grid md:grid-cols-2 gap-10 items-center opacity-0"
@@ -107,19 +107,18 @@ export default function WhyItWorks() {
                     : 'md:justify-center md:mr-30 md:order-2'
                 } -mt-14 md:mt-0 ${!isImageLeft ? 'mr-0 md:mr-10' : ''}`}
               >
-                <Image 
-                  src={imageUrl} 
-                  alt={title} 
-                  width={340} 
-                  height={340} 
-                  className="w-[260px] sm:w-[300px] md:w-[340px] h-auto rounded-xl" 
+                <Image
+                  src={imageUrl}
+                  alt={title}
+                  width={340}
+                  height={340}
+                  className="w-[260px] sm:w-[300px] md:w-[340px] h-auto rounded-xl"
                 />
               </div>
 
               {/* Content */}
-              <div className={`text-left max-w-[450px] mx-auto md:mx-0 ${
-                !isImageLeft ? 'md:justify-self-end pe-0 md:pe-10' : ''
-              }`}>
+              <div className={`text-left max-w-[450px] mx-auto md:mx-0 ${!isImageLeft ? 'md:justify-self-end pe-0 md:pe-10' : ''
+                }`}>
                 <h3 className="text-3xl md:text-4xl font-bold text-[#2f2e2e] mb-6">
                   {title}
                 </h3>
@@ -130,7 +129,7 @@ export default function WhyItWorks() {
                 {/* Checklist */}
                 <div className="space-y-3 mb-8">
                   {feature.checklist_items.map((item, itemIndex) => {
-                    const checklistText = currentLang === 'en' ? item.text_en : item.text_id;
+                    const checklistText = currentLang === '' ? item.text_en : item.text_id;
                     return (
                       <div key={itemIndex} className="flex items-start gap-3">
                         <div className="w-6 h-6 rounded-full bg-[#4A6FA5] flex items-center justify-center flex-shrink-0">

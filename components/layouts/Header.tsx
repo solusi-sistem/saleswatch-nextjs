@@ -11,7 +11,7 @@ import { urlFor } from '@/lib/sanity.realtime';
 import type { LangKey, LanguageMap } from '@/types';
 
 const LANGUAGES: LanguageMap = {
-  en: { label: 'English', flag: '/assets/images/EN.svg' },
+  '': { label: 'English', flag: '/assets/images/EN.svg' },
   id: { label: 'Indonesia', flag: '/assets/images/IN.webp' },
 };
 
@@ -26,7 +26,7 @@ export default function Header() {
 
   const { layoutData, loading } = useLayout();
 
-  const currentLang: LangKey = pathname.startsWith('/id') ? 'id' : 'en';
+  const currentLang: LangKey = pathname.startsWith('/id') ? 'id' : '';
 
   const logoUrl = useMemo(() => {
     if (!layoutData?.header?.logo) return null;
@@ -43,7 +43,7 @@ export default function Header() {
     layoutData?.header?.menu_header
       ?.filter((item) => item.show_menu !== false)
       ?.map((item) => ({
-        label: currentLang === 'en' ? item.label_menu?.label_menu_en || '' : item.label_menu?.label_menu_id || '',
+        label: currentLang === '' ? item.label_menu?.label_menu_en || '' : item.label_menu?.label_menu_id || '',
         href: item.path_menu || '/',
       })) || [];
 
@@ -51,9 +51,9 @@ export default function Header() {
   const showRequestDemo = ctaButtons?.request_demo_button?.show_button === true;
   const showLogin = ctaButtons?.login_button?.show_button === true;
 
-  const requestDemoText = currentLang === 'en' ? ctaButtons?.request_demo_button?.text_en || 'Request Demo' : ctaButtons?.request_demo_button?.text_id || 'Minta Demo';
+  const requestDemoText = currentLang === '' ? ctaButtons?.request_demo_button?.text_en || 'Request Demo' : ctaButtons?.request_demo_button?.text_id || 'Minta Demo';
 
-  const loginText = currentLang === 'en' ? ctaButtons?.login_button?.text_en || 'Login' : ctaButtons?.login_button?.text_id || 'Masuk';
+  const loginText = currentLang === '' ? ctaButtons?.login_button?.text_en || 'Login' : ctaButtons?.login_button?.text_id || 'Masuk';
 
   const loginUrl = ctaButtons?.login_button?.login_url || 'https://dash.saleswatch.id/login';
 

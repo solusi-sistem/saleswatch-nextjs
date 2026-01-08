@@ -1,4 +1,4 @@
-export type LangKey = 'en' | 'id';
+export type LangKey = '' | 'id';
 
 export interface Language {
   label: string;
