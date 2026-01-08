@@ -2,8 +2,6 @@
 
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { 
-  getHeroData,
-  listenToHeroChanges,
   getTestimonialData,
   listenToTestimonialChanges,
   getWhyItWorksData,
@@ -16,7 +14,6 @@ import {
   listenToRequestDemoChanges,
 } from '@/lib/sanity.home';
 import type { 
-  HeroSection,
   TestimonialSection,
   WhyItWorksSection,
   StoryVisionMissionSection, 
@@ -25,11 +22,6 @@ import type {
 } from '@/types/home';
 
 interface HomeContextType {
-  hero: {
-    data: HeroSection | null;
-    loading: boolean;
-    error: string | null;
-  };
   testimonial: {
     data: TestimonialSection | null;
     loading: boolean;
@@ -62,9 +54,6 @@ const HomeContext = createContext<HomeContextType | undefined>(undefined);
 
 export function HomeProvider({ children }: { children: ReactNode }) {
   // Hero State
-  const [hero, setHero] = useState<HeroSection | null>(null);
-  const [heroLoading, setHeroLoading] = useState(true);
-  const [heroError, setHeroError] = useState<string | null>(null);
 
   // Testimonial State
   const [testimonial, setTestimonial] = useState<TestimonialSection | null>(null);
@@ -95,18 +84,7 @@ export function HomeProvider({ children }: { children: ReactNode }) {
     // Fetch semua data secara PARALLEL (bersamaan) sesuai urutan page
     await Promise.allSettled([
       // 1. Hero
-      (async () => {
-        try {
-          setHeroLoading(true);
-          setHeroError(null);
-          const heroData = await getHeroData();
-          setHero(heroData);
-        } catch (err) {
-          setHeroError(err instanceof Error ? err.message : 'Failed to load Hero');
-        } finally {
-          setHeroLoading(false);
-        }
-      })(),
+ 
 
       // 2. Testimonial
       (async () => {
@@ -184,11 +162,6 @@ export function HomeProvider({ children }: { children: ReactNode }) {
     // Fetch data immediately saat component mount
     fetchAllData();
 
-    // Setup real-time listeners
-    const unsubscribeHero = listenToHeroChanges((newData) => {
-      setHero(newData);
-    });
-
     const unsubscribeTestimonial = listenToTestimonialChanges((newData) => {
       setTestimonial(newData);
     });
@@ -210,7 +183,6 @@ export function HomeProvider({ children }: { children: ReactNode }) {
     });
 
     return () => {
-      unsubscribeHero();
       unsubscribeTestimonial();
       unsubscribeWhyItWorks();
       unsubscribeStory();
@@ -222,11 +194,7 @@ export function HomeProvider({ children }: { children: ReactNode }) {
   return (
     <HomeContext.Provider
       value={{
-        hero: {
-          data: hero,
-          loading: heroLoading,
-          error: heroError,
-        },
+
         testimonial: {
           data: testimonial,
           loading: testimonialLoading,
@@ -269,10 +237,6 @@ export function useHome() {
 }
 
 // Custom hooks untuk setiap section (sesuai urutan page)
-export function useHero() {
-  const { hero } = useHome();
-  return hero;
-}
 
 export function useTestimonial() {
   const { testimonial } = useHome();
