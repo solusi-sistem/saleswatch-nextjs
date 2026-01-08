@@ -32,7 +32,7 @@ export default function TestimoniSection() {
 
     const observerOptions = {
       threshold: 0.15,
-      rootMargin: '0px 0px -80px 0px'
+      rootMargin: '0px 0px -80px 0px',
     };
 
     const observerCallback = (entries: IntersectionObserverEntry[]) => {
@@ -54,9 +54,7 @@ export default function TestimoniSection() {
   }, [loading, currentIndex]);
 
   const prevSlide = () => {
-    setCurrentIndex((prev) =>
-      prev === 0 ? testimonials.length - 1 : prev - 1
-    );
+    setCurrentIndex((prev) => (prev === 0 ? testimonials.length - 1 : prev - 1));
   };
 
   const nextSlide = () => {
@@ -92,10 +90,7 @@ export default function TestimoniSection() {
     <section className="relative w-full bg-[#2D2D2F] py-16 md:py-24 overflow-hidden">
       <div className="mx-auto max-w-6xl px-6">
         <div className="relative overflow-hidden">
-          <div
-            className="flex transition-transform duration-700 ease-in-out"
-            style={{ transform: `translateX(-${currentIndex * 100}%)` }}
-          >
+          <div className="flex transition-transform duration-700 ease-in-out" style={{ transform: `translateX(-${currentIndex * 100}%)` }}>
             {testimonials.map((item, index) => {
               const title = currentLang === '' ? item.title_en : item.title_id;
               const quote = currentLang === '' ? item.quote_en : item.quote_id;
@@ -111,23 +106,17 @@ export default function TestimoniSection() {
                       className="text-white flex flex-col items-center md:items-start opacity-0"
                       style={{
                         animationDelay: '0s',
-                        animationFillMode: 'both'
+                        animationFillMode: 'both',
                       }}
                     >
-                      <p className="text-sm md:text-xl text-white/70 mb-6 max-w-md">
-                        {title}
-                      </p>
+                      <p className="text-sm md:text-xl text-white/70 mb-6 max-w-md">{title}</p>
 
-                      <div className="flex flex-col items-center md:items-start gap-3">
-                        <div className="w-20 h-20 rounded-full flex items-center justify-center transition-transform duration-500 hover:scale-110">
-                          <img
-                            src={logoUrl}
-                            alt={company}
-                            className="w-full h-full object-contain"
-                          />
+                      <div className="flex flex-col gap-3">
+                        <div className="w-20 h-20 overflow-hidden transition-transform duration-500 hover:scale-110 self-center md:self-start md:-ml-1">
+                          <img src={logoUrl} alt={company} className="w-full h-full object-contain" />
                         </div>
 
-                        <p className="font-semibold">{company}</p>
+                        <p className="font-semibold text-center md:text-left">{company}</p>
                       </div>
                     </div>
 
@@ -136,12 +125,10 @@ export default function TestimoniSection() {
                       className="text-white opacity-0"
                       style={{
                         animationDelay: '0.2s',
-                        animationFillMode: 'both'
+                        animationFillMode: 'both',
                       }}
                     >
-                      <blockquote className="text-lg md:text-base leading-relaxed">
-                        {quote}
-                      </blockquote>
+                      <blockquote className="text-lg md:text-base leading-relaxed">{quote}</blockquote>
 
                       <div className="mt-6">
                         <p className="font-semibold">{item.client_name}</p>
@@ -158,19 +145,11 @@ export default function TestimoniSection() {
 
         {testimonials.length > 1 && (
           <>
-            <button
-              onClick={prevSlide}
-              className="absolute left-4 md:left-10 top-1/2 -translate-y-1/2 text-white/60 hover:text-white hover:scale-110 transition-all duration-300 hidden lg:block"
-              aria-label="Previous testimonial"
-            >
+            <button onClick={prevSlide} className="absolute left-4 md:left-10 top-1/2 -translate-y-1/2 text-white/60 hover:text-white hover:scale-110 transition-all duration-300 hidden lg:block" aria-label="Previous testimonial">
               <ChevronLeft className="w-8 h-8" strokeWidth={1.5} />
             </button>
 
-            <button
-              onClick={nextSlide}
-              className="absolute right-4 md:right-10 top-1/2 -translate-y-1/2 text-white/60 hover:text-white hover:scale-110 transition-all duration-300 hidden lg:block"
-              aria-label="Next testimonial"
-            >
+            <button onClick={nextSlide} className="absolute right-4 md:right-10 top-1/2 -translate-y-1/2 text-white/60 hover:text-white hover:scale-110 transition-all duration-300 hidden lg:block" aria-label="Next testimonial">
               <ChevronRight className="w-8 h-8" strokeWidth={1.5} />
             </button>
           </>

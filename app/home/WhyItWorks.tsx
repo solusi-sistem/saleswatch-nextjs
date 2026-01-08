@@ -100,11 +100,12 @@ export default function WhyItWorks() {
               className="grid md:grid-cols-2 gap-10 items-center opacity-0"
             >
               {/* Image */}
-              <div
-                className={`flex justify-center ${isImageLeft
-                  ? 'md:justify-end'
-                  : 'md:justify-start md:order-2'
-                  } -mt-14 md:mt-0 ${!isImageLeft ? 'mr-0 md:mr-10' : ''}`}
+              <div 
+                className={`flex justify-center ${
+                  isImageLeft 
+                    ? 'md:justify-center' 
+                    : 'md:justify-center md:mr-30 md:order-2'
+                } -mt-14 md:mt-0 ${!isImageLeft ? 'mr-0 md:mr-10' : ''}`}
               >
                 <Image
                   src={imageUrl}

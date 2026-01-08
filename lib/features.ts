@@ -77,4 +77,4 @@ export const suiteModules = [
   }
 ];
 
-export const suiteButtons = ['SENDWATCH', 'STOKWATCH', 'STOREWATCH', 'STAFFWATCH', 'CASHWATCH'];
+export const suiteButtons = ['SENDWATCH', 'STOCKWATCH', 'STOREWATCH', 'STAFFWATCH', 'CASHWATCH'];
