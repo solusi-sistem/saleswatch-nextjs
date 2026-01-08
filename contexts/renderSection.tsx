@@ -10,7 +10,7 @@ import StoryVisionMission from "@/components/Sections/About/StoryVisionMission";
 import Testimonial from "@/components/Sections/Testimonial/Testimonial";
 import Faq from "@/components/Sections/Faq/Faq";
 import Blog from "@/components/Sections/Blog/Blog";
-// import RequestDemo from "@/components/Sections/Demo/RequestDemo";
+import RequestDemoSection from "@/components/Sections/Demo/RequestDemoSection";
 // import Features from "@/components/Sections/Features/Features";
 // import Pricing from "@/components/Sections/Pricing/Pricing";
 // import SupportSection from "@/components/Sections/Support/SupportSection";
@@ -46,8 +46,8 @@ export function renderSection(section: Section, index: number): JSX.Element | nu
             return <Faq {...sectionProps} />;
         case 'blog':
             return <Blog {...sectionProps} />;
-        // case 'requestDemo':
-        //     return <RequestDemo {...sectionProps} />;
+        case 'requestDemo':
+            return <RequestDemoSection {...sectionProps} />;
         // case 'features':
         //     return <Features {...sectionProps} />;
         // case 'pricing':

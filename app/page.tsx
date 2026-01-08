@@ -1,11 +1,4 @@
 import Header from '@/components/layouts/Header';
-import HeroUtama from '@/components/Sections/Hero/HeroUtama';
-import TestimoniSection from '@/contexts/home/TestimoniContext';
-import StoryVisionMission from '@/components/Sections/About/StoryVisionMission';
-import WhyItWorks from '@/components/Sections/About/WhyItWorks';
-import Faq from '@/components/Sections/Faq/Faq';
-import RequestDemoSection from './home/RequestDemoSection';
-import Blog from '@/components/Sections/Blog/Blog';
 import Footer from '@/components/layouts/Footer';
 
 import { cookies } from 'next/headers';
@@ -26,9 +19,9 @@ export const revalidate = 0;
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   // Await params karena sekarang adalah Promise di Next.js 15+
   const resolvedParams = await params;
-  console.log("resolvedParams", resolvedParams);
+  // console.log("resolvedParams", resolvedParams);
   const slug = resolvedParams.slug ? `/${resolvedParams.slug}` : '/';
-  console.log("slug", slug);
+  // console.log("slug", slug);
   const pageData = await getPageData(slug);
 
   if (!pageData) {
@@ -72,9 +65,9 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 export default async function EnglishPage({ params }: PageProps) {
   // Await params karena sekarang adalah Promise di Next.js 15+
   const resolvedParams = await params;
-  console.log('Resolved Params:', resolvedParams);
+  // console.log('Resolved Params:', resolvedParams);
   const slug = resolvedParams.slug ? `/${resolvedParams.slug}` : '/';
-  console.log('Slug:', slug);
+  // console.log('Slug:', slug);
   const pageData = await getPageData(slug);
 
   // Jika data tidak ditemukan

@@ -1,9 +1,10 @@
 'use client';
 
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { usePathname } from 'next/navigation';
-import { useStoryVisionMission } from '@/contexts/HomeContext';
 import type { LangKey } from '@/types';
+import { SectionProps, StoryVisionMissionContent } from '@/types/section';
+import { getSectionData } from '@/hooks/getSectionData';
 
 const iconComponents = {
     cross: (
@@ -69,16 +70,40 @@ const iconComponents = {
     ),
 };
 
-export default function StoryVisionMission() {
+export default function StoryVisionMission({ id }: SectionProps) {
     const pathname = usePathname();
     const currentLang: LangKey = pathname.startsWith('/id') ? 'id' : '';
-    const { data, loading } = useStoryVisionMission();
+
+    const [content, setContent] = useState<StoryVisionMissionContent | null>(null);
+    const [loading, setLoading] = useState(true);
 
     const card1Ref = useRef<HTMLDivElement>(null);
     const card2Ref = useRef<HTMLDivElement>(null);
     const card3Ref = useRef<HTMLDivElement>(null);
 
+    // Fetch data dari Sanity
     useEffect(() => {
+        async function fetchContent() {
+            if (!id) return;
+
+            try {
+                setLoading(true);
+                const sectionData = await getSectionData(id);
+                if (sectionData?.story_vision_mission) {
+                    setContent(sectionData.story_vision_mission);
+                }
+            } catch (error) {
+                console.error('Error fetching story vision mission content:', error);
+            } finally {
+                setLoading(false);
+            }
+        }
+        fetchContent();
+    }, [id]);
+
+    useEffect(() => {
+        if (loading) return;
+
         const observerOptions = {
             threshold: 0.1,
             rootMargin: '0px 0px -50px 0px'
@@ -125,11 +150,11 @@ export default function StoryVisionMission() {
         );
     }
 
-    if (!data || !data.story_vision_mission?.items) {
+    if (!content?.items || content.items.length === 0) {
         return null;
     }
 
-    const items = data.story_vision_mission.items;
+    const items = content.items;
     const cardRefs = [card1Ref, card2Ref, card3Ref];
 
     return (
@@ -140,29 +165,34 @@ export default function StoryVisionMission() {
         >
             <div className="max-w-6xl mx-auto">
                 <div className="grid gap-12 md:gap-16 lg:gap-20 md:grid-cols-3 text-center">
-                    {items.map((item, index) => (
-                        <div
-                            key={index}
-                            ref={cardRefs[index]}
-                            className="flex flex-col items-center space-y-4 opacity-0"
-                            style={{
-                                animationDelay: `${index * 0.2}s`,
-                                animationFillMode: 'both'
-                            }}
-                        >
-                            <div className="h-14 flex items-center justify-center">
-                                {iconComponents[item.icon_type]}
+                    {items.map((item, index) => {
+                        const title = currentLang === 'id' ? item.title_id : item.title_en;
+                        const description = currentLang === 'id' ? item.description_id : item.description_en;
+
+                        return (
+                            <div
+                                key={index}
+                                ref={cardRefs[index]}
+                                className="flex flex-col items-center space-y-4 opacity-0"
+                                style={{
+                                    animationDelay: `${index * 0.2}s`,
+                                    animationFillMode: 'both'
+                                }}
+                            >
+                                <div className="h-14 flex items-center justify-center">
+                                    {iconComponents[item.icon_type as keyof typeof iconComponents]}
+                                </div>
+
+                                <h3 className="text-xl font-bold text-[#6587A8]">
+                                    {title}
+                                </h3>
+
+                                <p className="text-[#5B5B5C] text-sm leading-relaxed max-w-xs">
+                                    {description}
+                                </p>
                             </div>
-
-                            <h3 className="text-xl font-bold text-[#6587A8]">
-                                {currentLang === '' ? item.title_en : item.title_id}
-                            </h3>
-
-                            <p className="text-[#5B5B5C] text-sm leading-relaxed max-w-xs">
-                                {currentLang === '' ? item.description_en : item.description_id}
-                            </p>
-                        </div>
-                    ))}
+                        );
+                    })}
                 </div>
             </div>
         </section>

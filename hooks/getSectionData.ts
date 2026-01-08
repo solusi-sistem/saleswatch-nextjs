@@ -192,8 +192,6 @@ export async function getSectionData(sectionId: string): Promise<Section | null>
 
         // FAQ Content
         faq_content {
-            badge_text_en,
-            badge_text_id,
             title_en,
             title_id,
             description_en,
