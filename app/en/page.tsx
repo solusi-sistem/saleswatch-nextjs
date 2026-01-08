@@ -1,6 +1,6 @@
 import Header from '@/components/layouts/Header';
 import HeroSection from '../home/HeroSection';
-import AboutSection from '../home/AboutSection';
+import TestimoniSection from '../home/TestimoniSection';
 import StoryVisionMission from '../home/StoryVisionMission';
 import WhyItWorks from '../home/WhyItWorks';
 import Faq from '../home/Faq';
@@ -18,7 +18,7 @@ export default function EnglishHome() {
     <div lang="en">
       <Header />
       <HeroSection />
-      <AboutSection />
+      <TestimoniSection />
       <WhyItWorks />
       <StoryVisionMission />
       <Faq />
