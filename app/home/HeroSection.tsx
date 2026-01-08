@@ -83,21 +83,21 @@ export default function HeroSection() {
           <div className="absolute inset-0 bg-[#061551]/50 rounded-4xl" />
 
           <div className="relative z-10 flex flex-col items-center justify-center px-4 py-12 md:py-20 mt-5 md:mt-0 text-center text-[#DFE1E4]">
-            <h1 className="mb-4 text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl lg:text-5xl animate__animated animate__fadeIn">Increase Visibility.</h1>
-            <h1 className="mb-4 text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl lg:text-5xl animate__animated animate__fadeIn">Strengthen Sales. Predict</h1>
-            <h1 className="mb-4 text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl lg:text-5xl animate__animated animate__fadeIn">Demand. Built in</h1>
-            <h1 className="mb-4 text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl lg:text-5xl animate__animated animate__fadeIn">Collaboration with Major</h1>
-            <h1 className="mb-4 text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl lg:text-5xl animate__animated animate__fadeIn">FMCG Players.</h1>
+            <h1 className="md:mb-4 text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl lg:text-5xl animate__animated animate__fadeIn">Increase Visibility.</h1>
+            <h1 className="md:mb-4 text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl lg:text-5xl animate__animated animate__fadeIn">Strengthen Sales. Predict</h1>
+            <h1 className="md:mb-4 text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl lg:text-5xl animate__animated animate__fadeIn">Demand. Built in</h1>
+            <h1 className="md:mb-4 text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl lg:text-5xl animate__animated animate__fadeIn">Collaboration with Major</h1>
+            <h1 className="md:mb-4 text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl lg:text-5xl animate__animated animate__fadeIn">FMCG Players.</h1>
 
-            <div className="mt-6 mb-8">
-              <p className="max-w-2xl text-md text-gray-200 sm:text-xl animate__animated animate__fadeIn">Sales Watch is a sales rep monitoring solution developed by SSS</p>
-              <p className="max-w-2xl text-md text-gray-200 sm:text-xl animate__animated animate__fadeIn">(Software System Solutions), designed to empower distributors and</p>
-              <p className="max-w-2xl text-md text-gray-200 sm:text-xl animate__animated animate__fadeIn">companies with control over their sales teams in the field.</p>
+            <div className="mt-4 md:mt-6 mb-6 md:mb-8">
+              <p className="max-w-2xl text-md text-gray-200 text-md md:text-xl animate__animated animate__fadeIn">Sales Watch is a sales rep monitoring solution developed by SSS</p>
+              <p className="max-w-2xl text-md text-gray-200 text-md md:text-xl animate__animated animate__fadeIn">(Software System Solutions), designed to empower distributors and</p>
+              <p className="max-w-2xl text-md text-gray-200 tex-md md:text-xl animate__animated animate__fadeIn">companies with control over their sales teams in the field.</p>
             </div>
 
             <div className="relative mb-6 w-full max-w-md mx-auto animate__animated animate__fadeIn">
               <div className="relative rounded-3xl bg-[#CFE3C0] px-4 py-3 sm:px-6">
-                <p className="text-left text-sm text-[#6587A8] sm:text-md md:text-lg">
+                <p className="text-left text-sm text-[#6587A8] text-md md:text-lg">
                   <span className="block">
                     See how <span className="font-bold">SALESWATCH</span> can eliminate
                   </span>
@@ -113,13 +113,13 @@ export default function HeroSection() {
               </div>
             </div>
 
-            <div className="flex gap-4 mt-0 mb-9 animate__animated animate__fadeIn">
+            <div className="flex gap-4 mt-0 mb-3 md:mb-9 animate__animated animate__fadeIn">
               <CustomButton size="lg" className="mt-3" onClick={() => setIsModalOpen(true)}>
                 Schedule Demo
               </CustomButton>
             </div>
 
-            <div className={`relative w-full max-w-[1200px] h-[250px] md:h-[450px] overflow-hidden transition-all duration-1000 ease-out ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0'}`}>
+            <div className={`relative w-full max-w-[1200px] h-[200px] md:h-[250px] md:h-[450px] overflow-hidden transition-all duration-1000 ease-out ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0'}`}>
               <div className={`flex h-full ${isTransitioning ? 'transition-transform duration-1000 ease-in-out' : ''}`} style={{ transform: `translateX(-${currentImageIndex * 100}%)` }}>
                 {images.map((src, index) => (
                   <div key={index} className="relative min-w-full h-full flex items-center justify-center px-4">
@@ -157,60 +157,60 @@ export default function HeroSection() {
           ref={statsRef}
           className="relative z-10 flex flex-col items-center justify-center px-6 pt-12 pb-8 md:py-20 text-center text-[#DFE1E4]"
         >
-          <div className="flex flex-wrap justify-center items-start gap-6 md:gap-8 lg:gap-16 xl:gap-20 max-w-6xl mx-auto">
+          <div className="grid grid-cols-2 md:flex md:flex-wrap md:justify-center md:items-start gap-6 md:gap-8 lg:gap-16 xl:gap-20 max-w-6xl mx-auto w-full">
             {/* Stat Card 1 */}
             <div 
               ref={stat1Ref}
-              className="flex flex-col items-center text-center opacity-0 min-w-[120px] md:min-w-[150px]"
+              className="flex flex-col items-center text-center opacity-0 md:min-w-[120px] lg:min-w-[150px]"
               style={{ animationDelay: '0s', animationFillMode: 'both' }}
             >
-              <h1 className="mb-2 md:mb-4 text-2xl font-bold tracking-tight sm:text-4xl md:text-5xl lg:text-6xl">
+              <h1 className="mb-2 md:mb-4 text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl lg:text-6xl">
                 500+
               </h1>
-              <p className="font-normal text-sm md:text-base lg:text-lg leading-tight">
-                Sales Activities<br className="hidden sm:inline" /> Tracked
+              <p className="font-normal text-sm md:text-base lg:text-lg leading-tight whitespace-nowrap">
+                Sales Activities Tracked
               </p>
             </div>
 
             {/* Stat Card 2 */}
             <div 
               ref={stat2Ref}
-              className="flex flex-col items-center text-center opacity-0 min-w-[120px] md:min-w-[150px]"
+              className="flex flex-col items-center text-center opacity-0 md:min-w-[120px] lg:min-w-[150px]"
               style={{ animationDelay: '0.1s', animationFillMode: 'both' }}
             >
-              <h1 className="mb-2 md:mb-4 text-2xl font-bold tracking-tight sm:text-4xl md:text-5xl lg:text-6xl">
+              <h1 className="mb-2 md:mb-4 text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl lg:text-6xl">
                 50+
               </h1>
-              <p className="font-normal text-sm md:text-base lg:text-lg leading-tight">
-                Verified Sales<br className="hidden sm:inline" /> Visits
+              <p className="font-normal text-sm md:text-base lg:text-lg leading-tight whitespace-nowrap">
+                Verified Sales Visits
               </p>
             </div>
 
             {/* Stat Card 3 */}
             <div 
               ref={stat3Ref}
-              className="flex flex-col items-center text-center opacity-0 min-w-[120px] md:min-w-[150px]"
+              className="flex flex-col items-center text-center opacity-0 md:min-w-[120px] lg:min-w-[150px]"
               style={{ animationDelay: '0.2s', animationFillMode: 'both' }}
             >
-              <h1 className="mb-2 md:mb-4 text-2xl font-bold tracking-tight sm:text-4xl md:text-5xl lg:text-6xl">
+              <h1 className="mb-2 md:mb-4 text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl lg:text-6xl">
                 100+
               </h1>
-              <p className="font-normal text-sm md:text-base lg:text-lg leading-tight">
-                Companies<br className="hidden sm:inline" /> Using
+              <p className="font-normal text-sm md:text-base lg:text-lg leading-tight whitespace-nowrap">
+                Companies Using
               </p>
             </div>
 
             {/* Stat Card 4 */}
             <div 
               ref={stat4Ref}
-              className="flex flex-col items-center text-center opacity-0 min-w-[120px] md:min-w-[150px]"
+              className="flex flex-col items-center text-center opacity-0 md:min-w-[120px] lg:min-w-[150px]"
               style={{ animationDelay: '0.3s', animationFillMode: 'both' }}
             >
-              <h1 className="mb-2 md:mb-4 text-2xl font-bold tracking-tight sm:text-4xl md:text-5xl lg:text-6xl">
+              <h1 className="mb-2 md:mb-4 text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl lg:text-6xl">
                 97%+
               </h1>
-              <p className="font-normal text-sm md:text-base lg:text-lg leading-tight">
-                Customer<br className="hidden sm:inline" /> Satisfaction
+              <p className="font-normal text-sm md:text-base lg:text-lg leading-tight whitespace-nowrap">
+                Customer Satisfaction
               </p>
             </div>
           </div>

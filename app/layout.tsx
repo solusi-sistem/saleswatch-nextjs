@@ -1,25 +1,16 @@
 import type { Metadata } from 'next';
-import { Geist, Geist_Mono, Inter } from 'next/font/google';
+import { Inter } from 'next/font/google';
 import './globals.css';
 import Script from 'next/script';
 import 'animate.css';
 import { LayoutProvider } from '@/contexts/LayoutContext';
 import { HomeProvider } from '@/contexts/HomeContext';
-import 'animate.css';
-import Link from 'next/link';
-
-const geistSans = Geist({
-  subsets: ['latin'],
-});
-
-const geistMono = Geist_Mono({
-  subsets: ['latin'],
-});
 
 const inter = Inter({
   subsets: ['latin'],
-  variable: '--font-sans',
+  variable: '--font-inter',
   display: 'swap',
+  weight: ['300', '400', '500', '600', '700'],
 });
 
 export const metadata: Metadata = {
@@ -33,9 +24,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" className={inter.variable}>
       <head>
-        <Link
+        <link
           rel="stylesheet"
           href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"
         />

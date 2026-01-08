@@ -103,8 +103,8 @@ export default function WhyItWorks() {
               <div 
                 className={`flex justify-center ${
                   isImageLeft 
-                    ? 'md:justify-end' 
-                    : 'md:justify-start md:order-2'
+                    ? 'md:justify-center' 
+                    : 'md:justify-center md:mr-30 md:order-2'
                 } -mt-14 md:mt-0 ${!isImageLeft ? 'mr-0 md:mr-10' : ''}`}
               >
                 <Image 
