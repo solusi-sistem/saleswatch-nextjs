@@ -24,7 +24,7 @@ export default function Footer() {
   const pathname = usePathname();
   const { layoutData, loading } = useLayout();
 
-  const currentLang: LangKey = pathname.startsWith('/id') ? 'id' : 'en';
+  const currentLang: LangKey = pathname.startsWith('/id') ? 'id' : '';
 
   const footerLogoUrl = useMemo(() => {
     if (!layoutData?.footer?.logo_footer) return null;
@@ -37,7 +37,7 @@ export default function Footer() {
     }
   }, [layoutData]);
 
-  const footerDescription = currentLang === 'en' ? layoutData?.footer?.desc_footer?.desc_footer_en || '' : layoutData?.footer?.desc_footer?.desc_footer_id || '';
+  const footerDescription = currentLang === '' ? layoutData?.footer?.desc_footer?.desc_footer_en || '' : layoutData?.footer?.desc_footer?.desc_footer_id || '';
 
   const socialMediaLinks =
     layoutData?.footer?.social_media
@@ -52,12 +52,12 @@ export default function Footer() {
     layoutData?.footer?.footer_columns
       ?.filter((col) => col.show_column !== false)
       ?.map((col) => ({
-        title: currentLang === 'en' ? col.column_title?.title_en || '' : col.column_title?.title_id || '',
+        title: currentLang === '' ? col.column_title?.title_en || '' : col.column_title?.title_id || '',
         links:
           col.links
             ?.filter((link) => link.show_link !== false)
             ?.map((link) => ({
-              label: currentLang === 'en' ? link.label?.label_en || '' : link.label?.label_id || '',
+              label: currentLang === '' ? link.label?.label_en || '' : link.label?.label_id || '',
               path: link.path || '/',
             })) || [],
       })) || [];
@@ -140,10 +140,25 @@ export default function Footer() {
           <div className="grid grid-cols-1 md:grid-cols-12 gap-9">
             <div className="md:col-span-5 pe-8">
               <Link href={`/${currentLang}`} className="flex items-center">
-                {!loading && footerLogoUrl ? <Image src={footerLogoUrl} alt="Saleswatch Footer Logo" width={170} height={41} priority className="h-auto" /> : <div className="w-[170px] h-[41px] bg-white/10 animate-pulse rounded"></div>}
+                {!loading && footerLogoUrl ? (
+                  <Image
+                    src={footerLogoUrl}
+                    alt="Saleswatch Footer Logo"
+                    width={170}
+                    height={41}
+                    priority
+                    className="h-auto"
+                  />
+                ) : (
+                  <div className="w-[170px] h-[41px] bg-white/10 animate-pulse rounded"></div>
+                )}
               </Link>
 
-              {footerDescription && <p className="my-5 text-sm leading-relaxed">{footerDescription}</p>}
+              {footerDescription && (
+                <p className="my-5 text-sm leading-relaxed">
+                  {footerDescription}
+                </p>
+              )}
 
               {socialMediaLinks.length > 0 && (
                 <div className="mt-4 flex gap-4">
@@ -183,6 +198,40 @@ export default function Footer() {
                 )}
               </div>
             ))}
+            {footerCTA && (showRequestDemo || showLogin) && (
+              <div className="md:col-span-3 ms-0 md:ms-7">
+                {ctaTitle && (
+                  <>
+                    <h1 className="font-semibold mb-2 text-xl">{ctaTitle}</h1>
+                    <div className="flex justify-start gap-1">
+                      <div className="w-14 h-[2px] bg-[#6587A8] mb-4"></div>
+                      <div className="w-14 h-[2px] bg-[#6587A8] mb-4"></div>
+                    </div>
+                  </>
+                )}
+                <div className="flex flex-col items-start gap-1">
+                  {showRequestDemo && (
+                    <CustomButton
+                      size="lg"
+                      className="mt-2 !font-normal !text-base"
+                      onClick={() => setIsModalOpen(true)}
+                    >
+                      {requestDemoText}
+                    </CustomButton>
+                  )}
+
+                  {showLogin && (
+                    <CustomButton
+                      size="lg"
+                      onClick={handleLoginClick}
+                      className="mt-3 !font-normal !text-base"
+                    >
+                      {loginText}
+                    </CustomButton>
+                  )}
+                </div>
+              </div>
+            )}
           </div>
         </div>
 

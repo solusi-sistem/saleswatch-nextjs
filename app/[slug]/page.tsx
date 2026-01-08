@@ -3,124 +3,17 @@ import Image from "next/image";
 import Link from "next/link";
 import { Metadata } from "next";
 
-// Import semua komponen section
-import HeroUtama from "@/components/Sections/Hero/HeroUtama";
-import HeroUmum from "@/components/Sections/Hero/HeroUmum";
-import SupportHeader from "@/components/Sections/Support/SupportHeader";
-import WhyItWorks from "@/components/Sections/About/WhyItWorks";
-import StoryVisionMission from "@/components/Sections/About/StoryVisionMission";
-import Testimonial from "@/components/Sections/Testimonial/Testimonial";
-import Faq from "@/components/Sections/Faq/Faq";
-import Blog from "@/components/Sections/Blog/Blog";
-// import RequestDemo from "@/components/Sections/Demo/RequestDemo";
-// import Features from "@/components/Sections/Features/Features";
-// import Pricing from "@/components/Sections/Pricing/Pricing";
-// import SupportSection from "@/components/Sections/Support/SupportSection";
-// import PrivacyPolicySection from "@/components/Sections/Legal/PrivacyPolicySection";
-// import TermsAndConditionsSection from "@/components/Sections/Legal/TermsAndConditionsSection";
-import FaqSection from "@/components/Sections/Faq/FaqSection";
-import BlogListSection from "@/components/Sections/Blog/BlogListSection";
 import Header from "@/components/layouts/Header";
 import Footer from "@/components/layouts/Footer";
-import { JSX } from "react";
-import { client } from "@/lib/sanity";
+
+import { PageProps } from "@/types/page";
+import { getPageData } from "@/hooks/getPageData";
+import { isPagePublished, isSectionPublished } from "@/lib/isPublished";
+import { renderSection } from "@/contexts/renderSection";
 
 // Force dynamic rendering
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
-
-// Type definitions
-interface SeoTitle {
-    seo_title_en?: string;
-    seo_title_id?: string;
-}
-
-interface SeoDescription {
-    seo_description_en?: string;
-    seo_description_id?: string;
-}
-
-interface SeoKeyword {
-    seo_keyword_en?: string;
-    seo_keyword_id?: string;
-}
-
-interface SeoIcon {
-    secure_url?: string;
-    url?: string;
-}
-
-interface Section {
-    _id: string;
-    _type: string;
-    name_section?: string;
-    type_section: string;
-    published_at?: string | boolean;
-}
-
-interface PageData {
-    _id: string;
-    _type: string;
-    name_page?: string;
-    slug_page?: {
-        current: string;
-    };
-    published_at?: string | boolean;
-    seo_title?: SeoTitle;
-    seo_description?: SeoDescription;
-    seo_keyword?: SeoKeyword;
-    seo_icon?: SeoIcon;
-    section_list?: Section[];
-}
-
-interface PageProps {
-    params: Promise<{
-        slug?: string[];
-    }>;
-}
-
-// Fungsi untuk fetch data page berdasarkan slug
-async function getPageData(slug: string): Promise<PageData | null> {
-    const current_slug = `${slug}`;
-    const query = groq`*[_type == "page" && slug_page.current == $current_slug][0]{
-        _id,
-        _type,
-        name_page,
-        slug_page,
-        published_at,
-
-        seo_title {
-            seo_title_en,
-            seo_title_id
-        },
-        seo_description {
-            seo_description_en,
-            seo_description_id
-        },
-        seo_keyword {
-            seo_keyword_en,
-            seo_keyword_id
-        },
-        seo_icon,
-        
-        section_list[]->{
-            _id,
-            _type,
-            name_section,
-            type_section,
-            published_at
-        }
-    }`;
-
-    try {
-        const result = await client.fetch(query, { current_slug }, { cache: "no-store" });
-        console.log("result slug " + current_slug, result);
-        return result || null;
-    } catch (error) {
-        console.error("Error fetching page data:", error);
-        return null;
-    }
-}
 
 // Generate Metadata untuk SEO (SSR)
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
@@ -167,89 +60,6 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
             }
             : undefined,
     };
-}
-
-// Fungsi untuk check apakah page sudah published
-function isPagePublished(pageData: PageData | null): boolean {
-    if (!pageData) return false;
-
-    // Jika published_at adalah boolean
-    if (typeof pageData.published_at === 'boolean') {
-        return pageData.published_at;
-    }
-
-    // Jika published_at adalah string (tanggal)
-    if (typeof pageData.published_at === 'string') {
-        const publishDate = new Date(pageData.published_at);
-        const now = new Date();
-        return publishDate <= now;
-    }
-
-    return false;
-}
-
-// Fungsi untuk check apakah section sudah published
-function isSectionPublished(section: Section): boolean {
-    // Jika published_at adalah boolean
-    if (typeof section.published_at === 'boolean') {
-        return section.published_at;
-    }
-
-    // Jika published_at adalah string (tanggal)
-    if (typeof section.published_at === 'string') {
-        const publishDate = new Date(section.published_at);
-        const now = new Date();
-        return publishDate <= now;
-    }
-
-    return false;
-}
-
-// Komponen untuk render section
-function renderSection(section: Section, index: number): JSX.Element | null {
-    if (!isSectionPublished(section)) {
-        return null;
-    }
-
-    const sectionProps = { id: section._id, key: index };
-
-    switch (section.type_section) {
-        case 'heroUtama':
-            return <HeroUtama {...sectionProps} />;
-        case 'heroUmum':
-            return <HeroUmum {...sectionProps} />;
-        case 'supportHeader':
-            return <SupportHeader {...sectionProps} />;
-        case 'whyItWorks':
-            return <WhyItWorks {...sectionProps} />;
-        case 'storyVisionMission':
-            return <StoryVisionMission {...sectionProps} />;
-        case 'testimonial':
-            return <Testimonial {...sectionProps} />;
-        case 'faq':
-            return <Faq {...sectionProps} />;
-        case 'blog':
-            return <Blog {...sectionProps} />;
-        // case 'requestDemo':
-        //     return <RequestDemo {...sectionProps} />;
-        // case 'features':
-        //     return <Features {...sectionProps} />;
-        // case 'pricing':
-        //     return <Pricing {...sectionProps} />;
-        // case 'supportSection':
-        //     return <SupportSection {...sectionProps} />;
-        // case 'privacyPolicySection':
-        //     return <PrivacyPolicySection {...sectionProps} />;
-        // case 'termsAndConditionsSection':
-        //     return <TermsAndConditionsSection {...sectionProps} />;
-        case 'faqSection':
-            return <FaqSection {...sectionProps} />;
-        case 'blogListSection':
-            return <BlogListSection {...sectionProps} />;
-        default:
-            console.warn(`Unknown section type: ${section.type_section}`);
-            return null;
-    }
 }
 
 // Main Page Component (Server Component)

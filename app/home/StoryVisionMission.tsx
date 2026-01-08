@@ -71,7 +71,7 @@ const iconComponents = {
 
 export default function StoryVisionMission() {
   const pathname = usePathname();
-  const currentLang: LangKey = pathname.startsWith('/id') ? 'id' : 'en';
+  const currentLang: LangKey = pathname.startsWith('/id') ? 'id' : '';
   const { data, loading } = useStoryVisionMission();
 
   const card1Ref = useRef<HTMLDivElement>(null);
@@ -105,8 +105,8 @@ export default function StoryVisionMission() {
 
   if (loading) {
     return (
-      <section 
-        id="about" 
+      <section
+        id="about"
         className="bg-[#DFE1E4] py-16 md:py-24 px-4"
         style={{ scrollMarginTop: '100px' }}
       >
@@ -133,19 +133,19 @@ export default function StoryVisionMission() {
   const cardRefs = [card1Ref, card2Ref, card3Ref];
 
   return (
-    <section 
-      id="about" 
+    <section
+      id="about"
       className="bg-[#DFE1E4] py-16 md:py-24 px-4"
       style={{ scrollMarginTop: '100px' }}
     >
       <div className="max-w-6xl mx-auto">
         <div className="grid gap-12 md:gap-16 lg:gap-20 md:grid-cols-3 text-center">
           {items.map((item, index) => (
-            <div 
-              key={index} 
+            <div
+              key={index}
               ref={cardRefs[index]}
               className="flex flex-col items-center space-y-4 opacity-0"
-              style={{ 
+              style={{
                 animationDelay: `${index * 0.2}s`,
                 animationFillMode: 'both'
               }}
@@ -155,11 +155,11 @@ export default function StoryVisionMission() {
               </div>
 
               <h3 className="text-xl font-bold text-[#6587A8]">
-                {currentLang === 'en' ? item.title_en : item.title_id}
+                {currentLang === '' ? item.title_en : item.title_id}
               </h3>
 
               <p className="text-[#5B5B5C] text-sm leading-relaxed max-w-xs">
-                {currentLang === 'en' ? item.description_en : item.description_id}
+                {currentLang === '' ? item.description_en : item.description_id}
               </p>
             </div>
           ))}

@@ -8,7 +8,7 @@ import type { LangKey } from '@/types';
 
 export default function TestimoniSection() {
   const pathname = usePathname();
-  const currentLang: LangKey = pathname.startsWith('/id') ? 'id' : 'en';
+  const currentLang: LangKey = pathname.startsWith('/id') ? 'id' : '';
   const { data, loading } = useTestimonial();
 
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -97,10 +97,10 @@ export default function TestimoniSection() {
   }
 
   const currentTestimonial = testimonials[currentIndex];
-  const title = currentLang === 'en' ? currentTestimonial.title_en : currentTestimonial.title_id;
-  const quote = currentLang === 'en' ? currentTestimonial.quote_en : currentTestimonial.quote_id;
-  const company = currentLang === 'en' ? currentTestimonial.company_en : currentTestimonial.company_id;
-  const role = currentLang === 'en' ? currentTestimonial.client_role_en : currentTestimonial.client_role_id;
+  const title = currentLang === '' ? currentTestimonial.title_en : currentTestimonial.title_id;
+  const quote = currentLang === '' ? currentTestimonial.quote_en : currentTestimonial.quote_id;
+  const company = currentLang === '' ? currentTestimonial.company_en : currentTestimonial.company_id;
+  const role = currentLang === '' ? currentTestimonial.client_role_en : currentTestimonial.client_role_id;
   const logoUrl = currentTestimonial.company_logo?.asset?.url || '/assets/images/logo1.webp';
 
   return (
@@ -108,10 +108,10 @@ export default function TestimoniSection() {
       <div className="mx-auto max-w-6xl px-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-10 items-center text-center md:text-left">
           {/* Left Side */}
-          <div 
+          <div
             ref={leftSideRef}
             className="text-white flex flex-col items-center md:items-start opacity-0"
-            style={{ 
+            style={{
               animationDelay: '0.1s',
               animationFillMode: 'both'
             }}
@@ -134,10 +134,10 @@ export default function TestimoniSection() {
           </div>
 
           {/* Right Side */}
-          <div 
+          <div
             ref={rightSideRef}
             className="text-white opacity-0"
-            style={{ 
+            style={{
               animationDelay: '0.2s',
               animationFillMode: 'both'
             }}

@@ -71,7 +71,7 @@ const iconComponents = {
 
 export default function StoryVisionMission() {
     const pathname = usePathname();
-    const currentLang: LangKey = pathname.startsWith('/id') ? 'id' : 'en';
+    const currentLang: LangKey = pathname.startsWith('/id') ? 'id' : '';
     const { data, loading } = useStoryVisionMission();
 
     const card1Ref = useRef<HTMLDivElement>(null);
@@ -155,11 +155,11 @@ export default function StoryVisionMission() {
                             </div>
 
                             <h3 className="text-xl font-bold text-[#6587A8]">
-                                {currentLang === 'en' ? item.title_en : item.title_id}
+                                {currentLang === '' ? item.title_en : item.title_id}
                             </h3>
 
                             <p className="text-[#5B5B5C] text-sm leading-relaxed max-w-xs">
-                                {currentLang === 'en' ? item.description_en : item.description_id}
+                                {currentLang === '' ? item.description_en : item.description_id}
                             </p>
                         </div>
                     ))}

@@ -45,7 +45,7 @@ export default function BlogSection() {
   return (
     <section className="bg-gray-50 py-16 md:py-20">
       <div className="container mx-auto px-6 sm:px-6 lg:px-12 xl:px-24">
-        <div 
+        <div
           ref={headerRef}
           className="mb-12 flex flex-col items-center text-center gap-4 opacity-0"
           style={{ animationDelay: '0s', animationFillMode: 'both' }}
@@ -61,18 +61,19 @@ export default function BlogSection() {
               className="
                 group w-full overflow-hidden rounded-2xl border border-gray-200 bg-white
                 shadow-lg shadow-md sm:shadow-sm transition hover:shadow-xl opacity-0"
-              style={{ 
+              style={{
                 animationDelay: `${0.1 + (index * 0.15)}s`,
                 animationFillMode: 'both'
               }}
             >
 
               <Link href={`/blog/${blog.slug}`} className="relative block aspect-[4/3] overflow-hidden">
-                <Image 
-                  src={blog.image} 
-                  alt={blog.title} 
-                  fill 
-                  className="object-cover transition-transform duration-500 group-hover:scale-105" 
+                <Image
+                  src={blog.image}
+                  alt={blog.title}
+                  fill
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                  className="object-cover transition-transform duration-500 group-hover:scale-105"
                 />
 
                 <span className="absolute left-4 top-4 rounded-full bg-black/80 px-3 py-1 text-xs font-medium text-white transition group-hover:bg-[#061551]">
@@ -90,8 +91,8 @@ export default function BlogSection() {
                   <Link href={`/blog/${blog.slug}`}>{blog.title}</Link>
                 </h3>
 
-                <Link 
-                  href={`/blog/${blog.slug}`} 
+                <Link
+                  href={`/blog/${blog.slug}`}
                   className="inline-flex items-center gap-2 text-sm font-medium text-black underline underline-offset-4 decoration-black transition hover:text-[#061551] hover:decoration-[#061551]"
                 >
                   Learn More
