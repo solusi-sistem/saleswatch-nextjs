@@ -11,7 +11,7 @@ export interface RequestDemoButton {
 export interface RequestDemoContent {
   badge_text_en: string;
   badge_text_id: string;
-  title_lines: RequestDemoTitleLine[];
+  title_lines: RequestDemoTitleLine;
   cta_button: RequestDemoButton;
   background_image?: {
     asset?: {

@@ -74,7 +74,18 @@ export default function Header() {
   const handleLanguageSwitch = (newLang: LangKey) => {
     setLangOpen(false);
     if (newLang === currentLang) return;
-    router.push(`/${newLang}`);
+
+    // Dapatkan path tanpa prefix bahasa
+    let pathWithoutLang = pathname;
+    if (currentLang === 'id' && pathname.startsWith('/id')) {
+      // Hapus /id dari awal path
+      pathWithoutLang = pathname.substring(3) || '/';
+    }
+
+    // Buat path baru dengan bahasa yang dipilih
+    const newPath = newLang === '' ? pathWithoutLang : `/id${pathWithoutLang}`;
+
+    router.push(newPath);
   };
 
   const handleNavClick = (href: string) => {
@@ -86,7 +97,7 @@ export default function Header() {
           closeAll();
         }
 
-        const isLocalePage = pathname === '/en' || pathname === '/id';
+        const isLocalePage = pathname === '/' || pathname === '/id';
 
         if (isLocalePage) {
           const targetElement = document.getElementById(hash);
@@ -116,7 +127,7 @@ export default function Header() {
   };
 
   useEffect(() => {
-    const isLocalePage = pathname === '/en' || pathname === '/id';
+    const isLocalePage = pathname === '/' || pathname === '/id';
 
     if (isLocalePage && window.location.hash) {
       const hash = window.location.hash.substring(1);

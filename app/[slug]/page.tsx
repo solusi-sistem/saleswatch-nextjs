@@ -1,5 +1,3 @@
-import { groq } from "next-sanity";
-import Image from "next/image";
 import Link from "next/link";
 import { Metadata } from "next";
 
@@ -19,9 +17,9 @@ export const revalidate = 0;
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
     // Await params karena sekarang adalah Promise di Next.js 15+
     const resolvedParams = await params;
-    console.log("resolvedParams", resolvedParams);
+    // console.log("resolvedParams", resolvedParams);
     const slug = resolvedParams.slug ? `/${resolvedParams.slug}` : '/';
-    console.log("slug", slug);
+    // console.log("slug", slug);
     const pageData = await getPageData(slug);
 
     if (!pageData) {
@@ -66,9 +64,9 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 export default async function Page({ params }: PageProps) {
     // Await params karena sekarang adalah Promise di Next.js 15+
     const resolvedParams = await params;
-    console.log('Resolved Params:', resolvedParams);
+    // console.log('Resolved Params:', resolvedParams);
     const slug = resolvedParams.slug ? `/${resolvedParams.slug}` : '/';
-    console.log('Slug:', slug);
+    // console.log('Slug:', slug);
     const pageData = await getPageData(slug);
 
     // Jika data tidak ditemukan

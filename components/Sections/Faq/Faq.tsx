@@ -2,14 +2,16 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { usePathname } from 'next/navigation';
-import { useFaq } from '@/contexts/HomeContext';
 import type { LangKey } from '@/types';
+import { SectionProps, FaqContent } from '@/types/section';
+import { getSectionData } from '@/hooks/getSectionData';
 
-const Faq = () => {
+const Faq = ({ id }: SectionProps) => {
     const pathname = usePathname();
     const currentLang: LangKey = pathname.startsWith('/id') ? 'id' : '';
-    const { data, loading } = useFaq();
 
+    const [content, setContent] = useState<FaqContent | null>(null);
+    const [loading, setLoading] = useState(true);
     const [openId, setOpenId] = useState<number | null>(null);
 
     const badgeRef = useRef<HTMLDivElement>(null);
@@ -17,6 +19,26 @@ const Faq = () => {
     const descriptionRef = useRef<HTMLParagraphElement>(null);
     const accordionRef = useRef<HTMLDivElement>(null);
     const imageRef = useRef<HTMLDivElement>(null);
+
+    // Fetch data dari Sanity
+    useEffect(() => {
+        async function fetchContent() {
+            if (!id) return;
+
+            try {
+                setLoading(true);
+                const sectionData = await getSectionData(id);
+                if (sectionData?.faq_content) {
+                    setContent(sectionData.faq_content);
+                }
+            } catch (error) {
+                console.error('Error fetching faq content:', error);
+            } finally {
+                setLoading(false);
+            }
+        }
+        fetchContent();
+    }, [id]);
 
     useEffect(() => {
         if (loading) return;
@@ -86,14 +108,14 @@ const Faq = () => {
         );
     }
 
-    if (!data || !data.faq_content) {
+    if (!content) {
         return null;
     }
 
-    const content = data.faq_content;
-    const title = currentLang === '' ? content.title_en : content.title_id;
-    const description = currentLang === '' ? content.description_en : content.description_id;
+    const title = currentLang === 'id' ? content.title_id : content.title_en;
+    const description = currentLang === 'id' ? content.description_id : content.description_en;
     const sideImage = content.side_image?.asset?.url || '';
+    const faqItems = content.faq_items || [];
 
     return (
         <section className="py-24 px-6 md:px-10 bg-gray-50 overflow-hidden relative">
@@ -105,14 +127,16 @@ const Faq = () => {
                             {title}
                         </h2>
 
-                        <p ref={descriptionRef} className="text-gray-600 mb-10 text-lg max-w-lg opacity-0" style={{ animationDelay: '0.2s', animationFillMode: 'both' }}>
-                            {description}
-                        </p>
+                        {description && (
+                            <p ref={descriptionRef} className="text-gray-600 mb-10 text-lg max-w-lg opacity-0" style={{ animationDelay: '0.2s', animationFillMode: 'both' }}>
+                                {description}
+                            </p>
+                        )}
 
                         <div ref={accordionRef} className="space-y-4 opacity-0" style={{ animationDelay: '0.3s', animationFillMode: 'both' }}>
-                            {content.faq_items.map((item, index) => {
-                                const question = currentLang === '' ? item.question_en : item.question_id;
-                                const answer = currentLang === '' ? item.answer_en : item.answer_id;
+                            {faqItems.map((item, index) => {
+                                const question = currentLang === 'id' ? item.question_id : item.question_en;
+                                const answer = currentLang === 'id' ? item.answer_id : item.answer_en;
 
                                 return (
                                     <div key={index} className={`border rounded-xl overflow-hidden transition-all duration-300 ${openId === index ? 'border-[#061551] bg-white shadow-xl scale-[1.02]' : 'border-gray-200 bg-white/60 hover:bg-white'}`}>

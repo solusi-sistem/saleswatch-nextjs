@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
@@ -16,11 +16,17 @@ interface BlogProps {
 
 export default function Blog({ id }: BlogProps) {
     const pathname = usePathname();
-    const [sectionData, setSectionData] = useState<Section | null>(null);
-    const [loading, setLoading] = useState(true);
-    // const [locale, setLocale] = useState<'' | 'id'>('');
     const locale: LangKey = pathname.startsWith('/id') ? 'id' : '';
 
+    const [sectionData, setSectionData] = useState<Section | null>(null);
+    const [loading, setLoading] = useState(true);
+
+    const headerRef = useRef<HTMLDivElement>(null);
+    const card1Ref = useRef<HTMLElement>(null);
+    const card2Ref = useRef<HTMLElement>(null);
+    const card3Ref = useRef<HTMLElement>(null);
+
+    // Fetch data dari Sanity
     useEffect(() => {
         const fetchSectionData = async () => {
             if (!id) return;
@@ -28,7 +34,6 @@ export default function Blog({ id }: BlogProps) {
             setLoading(true);
             try {
                 const data = await getSectionData(id);
-                console.log('Blog section data:', data);
                 setSectionData(data);
             } catch (error) {
                 console.error('Error fetching section data:', error);
@@ -39,6 +44,35 @@ export default function Blog({ id }: BlogProps) {
 
         fetchSectionData();
     }, [id]);
+
+    // Setup Intersection Observer SETELAH data di-load
+    useEffect(() => {
+        if (loading || !sectionData?.blog_content) return;
+
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observerCallback = (entries: IntersectionObserverEntry[]) => {
+            entries.forEach((entry) => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('animate__animated', 'animate__fadeInUp');
+                }
+            });
+        };
+
+        const observer = new IntersectionObserver(observerCallback, observerOptions);
+
+        if (headerRef.current) observer.observe(headerRef.current);
+        if (card1Ref.current) observer.observe(card1Ref.current);
+        if (card2Ref.current) observer.observe(card2Ref.current);
+        if (card3Ref.current) observer.observe(card3Ref.current);
+
+        return () => {
+            observer.disconnect();
+        };
+    }, [loading, sectionData]);
 
     if (loading) {
         return (
@@ -71,7 +105,7 @@ export default function Blog({ id }: BlogProps) {
     );
 
     const latestBlogs = publishedBlogs.slice(0, 3);
-    console.log('Latest Blogs (unique):', latestBlogs);
+    const cardRefs = [card1Ref, card2Ref, card3Ref];
 
     if (latestBlogs.length === 0) {
         return (
@@ -85,15 +119,16 @@ export default function Blog({ id }: BlogProps) {
         );
     }
 
-    const title = locale === ''
-        ? blog_content.title_en || 'Read Latest Story'
-        : blog_content.title_id || 'Baca Cerita Terbaru';
+    const title = locale === 'id'
+        ? blog_content.title_id || 'Baca Cerita Terbaru'
+        : blog_content.title_en || 'Read Latest Story';
 
     return (
         <section id={id} className="bg-white py-16 md:py-20">
             <div className="container mx-auto px-6 sm:px-6 lg:px-12 xl:px-24">
                 <div
-                    className="mb-12 flex flex-col items-center text-center gap-4"
+                    ref={headerRef}
+                    className="mb-12 flex flex-col items-center text-center gap-4 opacity-0"
                     style={{ animationDelay: '0s', animationFillMode: 'both' }}
                 >
                     <h2 className="text-2xl md:text-3xl font-bold text-gray-900">{title}</h2>
@@ -101,10 +136,9 @@ export default function Blog({ id }: BlogProps) {
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
                     {latestBlogs.map((blog: BlogItem, index: number) => {
-                        // CRITICAL: Safe extraction dengan fallbacks
+                        // Safe extraction dengan fallbacks
                         const blogSlug = blog.slug?.current || '';
                         const blogTitle = (locale === 'id' ? blog.title.id : blog.title.en) || 'Untitled';
-                        const blogExcerpt = (locale === 'id' ? blog.excerpt.id : blog.excerpt.en) || '';
                         const blogCategory = (locale === 'id' ? blog.category.id : blog.category.en) || 'Uncategorized';
                         const imageUrl = blog.image?.asset?.url || '/placeholder.jpg';
                         const imageAlt = (locale === 'id' ? blog.image?.alt?.id : blog.image?.alt?.en) || blogTitle;
@@ -118,10 +152,11 @@ export default function Blog({ id }: BlogProps) {
 
                         return (
                             <article
-                                key={`blog-${index}`} // CRITICAL: Unique key tanpa index
+                                key={`blog-${blogSlug}-${index}`}
+                                ref={cardRefs[index]}
                                 className="
                                 group w-full overflow-hidden rounded-2xl border border-gray-200 bg-white
-                                shadow-lg shadow-md sm:shadow-sm transition hover:shadow-xl"
+                                shadow-lg shadow-md sm:shadow-sm transition hover:shadow-xl opacity-0"
                                 style={{
                                     animationDelay: `${0.1 + (index * 0.15)}s`,
                                     animationFillMode: 'both'
@@ -152,7 +187,7 @@ export default function Blog({ id }: BlogProps) {
                                         {blog.date && (
                                             <span className="hover:text-[#061551] transition">
                                                 {new Date(blog.date).toLocaleDateString(
-                                                    locale === '' ? 'en-US' : 'id-ID',
+                                                    locale === 'id' ? 'id-ID' : 'en-US',
                                                     {
                                                         year: 'numeric',
                                                         month: 'short',
@@ -173,7 +208,7 @@ export default function Blog({ id }: BlogProps) {
                                         href={`/blog/${blogSlug}`}
                                         className="inline-flex items-center gap-2 text-sm font-medium text-black underline underline-offset-4 decoration-black transition hover:text-[#061551] hover:decoration-[#061551]"
                                     >
-                                        {locale === '' ? 'Learn More' : 'Pelajari Lebih Lanjut'}
+                                        {locale === 'id' ? 'Pelajari Lebih Lanjut' : 'Learn More'}
                                         <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
                                     </Link>
                                 </div>
