@@ -11,11 +11,11 @@ import Testimonial from "@/components/Sections/Testimonial/Testimonial";
 import Faq from "@/components/Sections/Faq/Faq";
 import Blog from "@/components/Sections/Blog/Blog";
 import RequestDemoSection from "@/components/Sections/Demo/RequestDemoSection";
-// import Features from "@/components/Sections/Features/Features";
-// import Pricing from "@/components/Sections/Pricing/Pricing";
-// import SupportSection from "@/components/Sections/Support/SupportSection";
-// import PrivacyPolicySection from "@/components/Sections/Legal/PrivacyPolicySection";
-// import TermsAndConditionsSection from "@/components/Sections/Legal/TermsAndConditionsSection";
+import Features from "@/components/Sections/Features/Features";
+import PricingSection from "@/components/Sections/Pricing/PricingSection";
+import SupportSection from "@/components/Sections/Support/SupportSection";
+import PrivacyPolicySection from "@/components/Sections/Legal/PrivacyPolicySection";
+import TermsConditionsSection from "@/components/Sections/Legal/TermsConditionsSection";
 import FaqSection from "@/components/Sections/Faq/FaqSection";
 import BlogListSection from "@/components/Sections/Blog/BlogListSection";
 
@@ -48,16 +48,16 @@ export function renderSection(section: Section, index: number): JSX.Element | nu
             return <Blog {...sectionProps} />;
         case 'requestDemo':
             return <RequestDemoSection {...sectionProps} />;
-        // case 'features':
-        //     return <Features {...sectionProps} />;
-        // case 'pricing':
-        //     return <Pricing {...sectionProps} />;
-        // case 'supportSection':
-        //     return <SupportSection {...sectionProps} />;
-        // case 'privacyPolicySection':
-        //     return <PrivacyPolicySection {...sectionProps} />;
-        // case 'termsAndConditionsSection':
-        //     return <TermsAndConditionsSection {...sectionProps} />;
+        case 'features':
+            return <Features {...sectionProps} />;
+        case 'pricing':
+            return <PricingSection {...sectionProps} />;
+        case 'supportSection':
+            return <SupportSection {...sectionProps} />;
+        case 'privacyPolicySection':
+            return <PrivacyPolicySection {...sectionProps} />;
+        case 'termsAndConditionsSection':
+            return <TermsConditionsSection {...sectionProps} />;
         case 'faqSection':
             return <FaqSection {...sectionProps} />;
         case 'blogListSection':

@@ -18,11 +18,11 @@ function PortableTextRenderer({ blocks }: { blocks: SupportBlock[] }) {
             <div key={block._key || index} className="my-6">
               {block.asset?.url && (
                 <div className="relative w-full h-64">
-                  <Image 
-                    src={block.asset.url} 
-                    alt={block.alt || 'Support Image'} 
-                    fill 
-                    className="object-contain rounded-lg" 
+                  <Image
+                    src={block.asset.url}
+                    alt={block.alt || 'Support Image'}
+                    fill
+                    className="object-contain rounded-lg"
                   />
                 </div>
               )}
@@ -40,39 +40,34 @@ function PortableTextRenderer({ blocks }: { blocks: SupportBlock[] }) {
           const isListItem = block.listItem;
 
           const children = block.children?.map((child, childIndex) => {
-            let text = child.text;
-            const marks = child.marks || [];
+            let el: React.ReactNode = child.text;
 
-            if (marks.includes('strong')) {
-              text = <strong key={childIndex}>{text}</strong>;
-            }
-            if (marks.includes('em')) {
-              text = <em key={childIndex}>{text}</em>;
-            }
-            if (marks.includes('code')) {
-              text = (
+            if (child.marks?.includes('strong')) el = <strong key={childIndex}>{el}</strong>;
+            if (child.marks?.includes('em')) el = <em key={childIndex}>{el}</em>;
+            if (child.marks?.includes('code')) {
+              el = (
                 <code key={childIndex} className="bg-gray-100 px-1 py-0.5 rounded text-sm">
-                  {text}
+                  {el}
                 </code>
               );
             }
 
-            const linkMark = block.markDefs?.find((def) => marks.includes(def._key));
+            const linkMark = block.markDefs?.find((def) => child.marks?.includes(def._key));
             if (linkMark && linkMark.href) {
               return (
-                <a 
-                  key={childIndex} 
-                  href={linkMark.href} 
-                  className="text-blue-600 hover:text-blue-700 underline" 
-                  target="_blank" 
+                <a
+                  key={childIndex}
+                  href={linkMark.href}
+                  className="text-blue-600 hover:text-blue-700 underline"
+                  target="_blank"
                   rel="noopener noreferrer"
                 >
-                  {text}
+                  {el}
                 </a>
               );
             }
 
-            return <span key={childIndex}>{text}</span>;
+            return <span key={childIndex}>{el}</span>;
           });
 
           if (isListItem) {
@@ -232,8 +227,8 @@ export default function SupportSection() {
                   const title = currentLang === 'id' ? item.title.id : item.title.en;
 
                   return (
-                    <div 
-                      key={item._id} 
+                    <div
+                      key={item._id}
                       className="rounded-lg overflow-hidden border border-gray-200 bg-white animate__animated animate__fadeInUp"
                     >
                       <button
@@ -243,28 +238,24 @@ export default function SupportSection() {
                       >
                         <div className="flex items-center gap-3">
                           {item.icon?.asset?.url && (
-                            <div className={`p-2 rounded-lg transition-colors ${
-                              isActive ? 'bg-[#061551] text-white' : 'bg-gray-100 text-gray-600'
-                            }`}>
-                              <img 
-                                src={item.icon.asset.url} 
+                            <div className={`p-2 rounded-lg transition-colors ${isActive ? 'bg-[#061551] text-white' : 'bg-gray-100 text-gray-600'
+                              }`}>
+                              <img
+                                src={item.icon.asset.url}
                                 alt={title}
                                 className={`w-5 h-5 ${isActive ? 'brightness-0 invert' : ''}`}
                               />
                             </div>
                           )}
-                          <span className={`font-semibold transition-colors ${
-                            isActive ? 'text-[#061551]' : 'text-gray-700'
-                          }`}>
+                          <span className={`font-semibold transition-colors ${isActive ? 'text-[#061551]' : 'text-gray-700'
+                            }`}>
                             {title}
                           </span>
                         </div>
-                        <div className={`transition-transform duration-200 ${
-                          openCategories[item.key] ? 'rotate-180' : ''
-                        }`}>
-                          <ChevronDown className={`w-5 h-5 ${
-                            isActive ? 'text-[#061551]' : 'text-gray-400'
-                          }`} />
+                        <div className={`transition-transform duration-200 ${openCategories[item.key] ? 'rotate-180' : ''
+                          }`}>
+                          <ChevronDown className={`w-5 h-5 ${isActive ? 'text-[#061551]' : 'text-gray-400'
+                            }`} />
                         </div>
                       </button>
 
@@ -280,8 +271,8 @@ export default function SupportSection() {
                                 onClick={() => handleCategoryClick(item.key, subItem._key)}
                                 className={`w-full text-left px-6 py-3 text-sm transition-all border-b border-gray-100 
                                   animate__animated animate__fadeInUp last:border-b-0 group
-                                  ${isItemActive 
-                                    ? 'bg-white text-[#061551] font-semibold border-l-4 border-l-[#061551]' 
+                                  ${isItemActive
+                                    ? 'bg-white text-[#061551] font-semibold border-l-4 border-l-[#061551]'
                                     : 'text-gray-600 hover:bg-white hover:text-[#061551]'
                                   }`}
                               >
@@ -328,8 +319,8 @@ export default function SupportSection() {
                         className="bg-white rounded-lg border-2 border-gray-200 hover:border-[#061551]/30 
                           animate__animated animate__fadeInUp transition-all duration-200 overflow-hidden hover:shadow-md"
                       >
-                        <button 
-                          onClick={() => toggleAccordion(subItem._key)} 
+                        <button
+                          onClick={() => toggleAccordion(subItem._key)}
                           className="w-full flex items-start justify-between p-6 text-left group"
                         >
                           <div className="flex-1 pr-4">
@@ -337,9 +328,8 @@ export default function SupportSection() {
                               {subTitle}
                             </h3>
                           </div>
-                          <div className={`transition-transform duration-300 mt-1 ${
-                            openAccordions[subItem._key] ? 'rotate-180' : ''
-                          }`}>
+                          <div className={`transition-transform duration-300 mt-1 ${openAccordions[subItem._key] ? 'rotate-180' : ''
+                            }`}>
                             <ChevronDown className="w-6 h-6 text-[#061551]" />
                           </div>
                         </button>
@@ -362,8 +352,8 @@ export default function SupportSection() {
                         {currentLang === 'id' ? 'Masih butuh bantuan?' : 'Still need help?'}
                       </h3>
                       <p className="text-gray-600 text-sm mb-4 animate__animated animate__fadeInUp">
-                        {currentLang === 'id' 
-                          ? 'Tim support kami siap membantu Anda 24/7' 
+                        {currentLang === 'id'
+                          ? 'Tim support kami siap membantu Anda 24/7'
                           : 'Our support team is ready to help you 24/7'
                         }
                       </p>
@@ -390,7 +380,7 @@ export default function SupportSection() {
                     {currentLang === 'id' ? 'Pilih Kategori Bantuan' : 'Select Help Category'}
                   </h3>
                   <p className="text-gray-600 max-w-md mx-auto animate__animated animate__fadeInUp">
-                    {currentLang === 'id' 
+                    {currentLang === 'id'
                       ? 'Silakan pilih kategori di sidebar untuk menemukan jawaban yang Anda butuhkan'
                       : 'Please select a category in the sidebar to find the answers you need'
                     }

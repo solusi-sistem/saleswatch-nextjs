@@ -1,66 +1,128 @@
-"use client";
+'use client';
 
-export default function SupportHeader() {
+import { useEffect, useState } from 'react';
+import { usePathname } from 'next/navigation';
+import {
+    Download,
+    Youtube,
+    BookOpen,
+    PlayCircle,
+    ExternalLink,
+} from 'lucide-react';
+
+import { getSectionData } from '@/hooks/getSectionData';
+import type { Section, SectionProps } from '@/types/section';
+
+/* =========================================
+   ICON MAPPER
+========================================= */
+function getIcon(iconType?: string) {
+    switch (iconType) {
+        case 'download':
+            return <Download className="w-5 h-5 shrink-0" />;
+        case 'youtube':
+            return <Youtube className="w-5 h-5 shrink-0" />;
+        case 'book':
+            return <BookOpen className="w-5 h-5 shrink-0" />;
+        case 'play':
+            return <PlayCircle className="w-5 h-5 shrink-0" />;
+        case 'external':
+            return <ExternalLink className="w-5 h-5 shrink-0" />;
+        default:
+            return <ExternalLink className="w-5 h-5 shrink-0" />;
+    }
+}
+
+/* =========================================
+   SUPPORT HEADER
+========================================= */
+export default function SupportHeader({ id }: SectionProps) {
+    const pathname = usePathname();
+    const lang = pathname.startsWith('/id') ? 'id' : 'en';
+
+    const [section, setSection] = useState<Section | null>(null);
+    const [loading, setLoading] = useState(true);
+
+    /* =========================================
+       FETCH SANITY DATA
+    ========================================= */
+    useEffect(() => {
+        async function fetchData() {
+            if (!id) return;
+            const res = await getSectionData(id);
+            setSection(res);
+            setLoading(false);
+        }
+        fetchData();
+    }, [id]);
+
+    const header = section?.support_header_content;
+
+    if (loading || !header) return null;
+
+    /* =========================================
+       HANDLER BUTTON CLICK
+    ========================================= */
+    const handleClick = (btn: any) => {
+        let url = btn.link_url;
+
+        if (btn.button_type === 'pdf_download') {
+            url =
+                lang === 'id'
+                    ? btn.file_pdf?.file_pdf_id?.asset?.url
+                    : btn.file_pdf?.file_pdf_en?.asset?.url;
+        }
+
+        if (!url) return;
+
+        window.open(url, btn.open_in_new_tab ? '_blank' : '_self');
+    };
+
+    /* =========================================
+       RENDER
+    ========================================= */
     return (
         <header className="relative w-full bg-[#061551] pt-12 pb-16 px-6 md:px-14 lg:px-18">
             <div className="relative w-full bg-white rounded-4xl pt-30 pb-10 flex items-center justify-center">
                 <div className="text-center mb-12 px-4 md:px-8">
+
+                    {/* TITLE */}
                     <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4 animate__animated animate__fadeInUp">
-                        Support Center
+                        {lang === 'id' ? header.title?.id : header.title?.en}
                     </h1>
 
-                    <div className="w-24 h-1 bg-blue-200 mx-auto rounded-full mb-4 animate__animated animate__fadeInUp"></div>
+                    <div className="w-24 h-1 bg-blue-200 mx-auto rounded-full mb-4 animate__animated animate__fadeInUp" />
 
+                    {/* DESCRIPTION */}
                     <p className="text-gray-600 text-lg max-w-2xl mx-auto mb-8 animate__animated animate__fadeInUp">
-                        Find help and guidance for using SalesWatch
+                        {lang === 'id'
+                            ? header.description?.id
+                            : header.description?.en}
                     </p>
 
-                    <div className="flex flex-col md:flex-row gap-4 justify-center items-stretch mx-auto">
-                        <button
-                            onClick={() => window.open("/assets/docs/user_guide_en.pdf", "_blank")}
-                            className="flex items-center gap-3 bg-gray-100 hover:bg-gray-200 text-gray-800 font-medium 
-               px-4 py-3 rounded-lg transition-colors duration-200
-               w-full sm:w-auto sm:max-w-md animate__animated animate__fadeInUp"
-                        >
-                            <svg
-                                className="w-5 h-5 shrink-0"
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24"
-                            >
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-                                    d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                            </svg>
+                    {/* BUTTONS */}
+                    {header.buttons && (
+                        <div className="flex flex-col md:flex-row gap-4 justify-center items-stretch mx-auto">
+                            {header.buttons.map((btn, idx) => (
+                                <button
+                                    key={idx}
+                                    onClick={() => handleClick(btn)}
+                                    className="flex items-center gap-3 bg-gray-100 hover:bg-gray-200 text-gray-800 font-medium 
+                    px-4 py-3 rounded-lg transition-colors duration-200
+                    w-full sm:w-auto sm:max-w-md animate__animated animate__fadeInUp"
+                                >
+                                    {getIcon(btn.icon_type)}
 
-                            <span className="text-xs leading-snug text-center sm:text-left">
-                                Download our complete Support Center guide (PDF version)
-                            </span>
-                        </button>
+                                    <span className="text-xs leading-snug text-center sm:text-left">
+                                        {lang === 'id'
+                                            ? btn.button_text.id
+                                            : btn.button_text.en}
+                                    </span>
+                                </button>
+                            ))}
+                        </div>
+                    )}
 
-                        <button
-                            onClick={() =>
-                                window.open(
-                                    "https://www.youtube.com/watch?v=paXWO1aMG7Q&list=PLNfbf5gyZF4WENxlcWKqZuwx8h6KZFlza",
-                                    "_blank"
-                                )
-                            }
-                            className="flex items-center gap-3 bg-gray-100 hover:bg-gray-200 text-gray-800 font-medium 
-               px-4 py-3 rounded-lg transition-colors duration-200
-               w-full sm:w-auto sm:max-w-md animate__animated animate__fadeInUp"
-                        >
-                            <svg
-                                className="w-5 h-5 shrink-0"
-                                fill="currentColor"
-                                viewBox="0 0 24 24"
-                            >
-                                <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" />
-                            </svg>
-
-                            <span className="text-xs leading-snug text-center sm:text-left">
-                                Watch our Onboarding and How-to guides in video format
-                            </span>
-                        </button>
-                    </div>
                 </div>
             </div>
         </header>

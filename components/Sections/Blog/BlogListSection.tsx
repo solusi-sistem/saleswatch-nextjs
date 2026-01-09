@@ -40,8 +40,6 @@ export default async function BlogListSection({
 
     return (
         <div className="min-h-screen bg-white flex flex-col pt-16">
-            <Header />
-
             <main className="flex-grow">
                 <section className="py-16 px-6 md:px-12 bg-gray-50">
                     <div className="container mx-auto max-w-4xl text-center">
@@ -137,8 +135,6 @@ export default async function BlogListSection({
                     </div>
                 </section>
             </main>
-
-            <Footer />
         </div>
     );
 }

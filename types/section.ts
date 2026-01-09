@@ -1,9 +1,8 @@
 // ==========================================
 // BASE INTERFACES
-
+// ==========================================
 import { BlogItem } from "./list/Blog";
 
-// ==========================================
 export interface LocalizedText {
     en: string;
     id: string;
@@ -33,7 +32,10 @@ export interface SectionProps {
 export interface FaqItem {
     _id: string;
     question: LocalizedText;
-    answer: LocalizedText;
+    answer: {
+        en: any; // Rich text / Portable Text
+        id: any; // Rich text / Portable Text
+    };
 }
 
 // ==========================================
@@ -67,12 +69,15 @@ export interface FeatureItem {
 // ==========================================
 export interface SupportPlan {
     _id: string;
-    category_name: LocalizedText;
-    category_description: LocalizedText;
-    icon_type: string;
-    faqs: {
-        question: LocalizedText;
-        answer: LocalizedText;
+    key: string;
+    title: LocalizedText;
+    icon: SanityImage;
+    support_items: {
+        _key: string;
+        title_en: string;
+        title_id: string;
+        content_en: any; // Rich text / Portable Text
+        content_id: any; // Rich text / Portable Text
     }[];
 }
 
@@ -291,33 +296,39 @@ export interface SupportSectionContent {
 }
 
 // ==========================================
+// PRIVACY POLICY ITEM INTERFACE
+// ==========================================
+export interface PrivacyPolicyItem {
+    _id: string;
+    title: LocalizedText;
+    icon_type?: SanityImage;
+    content_en: any; // Portable Text
+    content_id: any; // Portable Text
+    published_at?: boolean;
+}
+
+// ==========================================
 // PRIVACY POLICY CONTENT
 // ==========================================
 export interface PrivacyPolicyContent {
-    privacy_policy?: {
-        _id: string;
-        title: LocalizedText;
-        content: LocalizedText;
-        last_updated: string;
-    };
+    privacy_policy?: PrivacyPolicyItem[];
 }
 
 // ==========================================
 // TERMS AND CONDITIONS CONTENT
 // ==========================================
 export interface TermsAndConditionsContent {
-    terms_and_conditions?: {
-        _id: string;
-        title: LocalizedText;
-        content: LocalizedText;
-        last_updated: string;
-    };
+    terms_and_conditions?: PrivacyPolicyItem[]; // Menggunakan interface yang sama
 }
 
 // ==========================================
 // FAQ SECTION CONTENT
 // ==========================================
 export interface FaqSectionContent {
+    title_en: string;
+    title_id: string;
+    description_en?: string;
+    description_id?: string;
     category_tabs?: {
         category_key: string;
         category_label: LocalizedText;
@@ -335,7 +346,7 @@ export interface FaqSectionContent {
 export interface BlogListSectionContent {
     title_section?: LocalizedText;
     desc_section?: LocalizedText;
-    list_blogs?: BlogItem;
+    list_blogs?: BlogItem[];
 }
 
 // ==========================================
