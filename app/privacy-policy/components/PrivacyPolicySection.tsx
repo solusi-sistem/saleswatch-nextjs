@@ -1,289 +1,201 @@
 'use client';
 
 import React, { useState } from 'react';
-import { ChevronDown, ChevronUp, Database, MapPin, Users, FileText, Scale, Share2, Lock, Shield, RefreshCw, Mail } from 'lucide-react';
+import { usePathname } from 'next/navigation';
+import { ChevronDown, ChevronUp } from 'lucide-react';
+import { usePrivacyPolicy } from '@/contexts/PrivacyPolicyContext';
+import type { LangKey } from '@/types';
+import type { PrivacyPolicyBlock } from '@/types/privacyPolicy';
+import Image from 'next/image';
+
+// Portable Text Renderer Component
+function PortableTextRenderer({ blocks }: { blocks: PrivacyPolicyBlock[] }) {
+  return (
+    <div className="space-y-4">
+      {blocks.map((block, index) => {
+        if (block._type === 'image') {
+          return (
+            <div key={block._key || index} className="my-6">
+              {block.asset?.url && (
+                <div className="relative w-full h-64">
+                  <Image src={block.asset.url} alt={block.alt || 'Privacy Policy Image'} fill className="object-contain rounded-lg" />
+                </div>
+              )}
+              {block.caption && <p className="text-sm text-gray-500 text-center mt-2 italic">{block.caption}</p>}
+            </div>
+          );
+        }
+
+        if (block._type === 'block') {
+          const style = block.style || 'normal';
+          const isListItem = block.listItem;
+
+          const children = block.children?.map((child, childIndex) => {
+            let text: React.ReactNode = child.text;
+            const marks = child.marks || [];
+
+            // Apply text decorations
+            if (marks.includes('strong')) {
+              text = <strong>{text}</strong>;
+            }
+            if (marks.includes('em')) {
+              text = <em>{text}</em>;
+            }
+            if (marks.includes('code')) {
+              text = <code className="bg-gray-100 px-1 py-0.5 rounded text-sm">{text}</code>;
+            }
+
+            // Check for links
+            const linkMark = block.markDefs?.find((def) => marks.includes(def._key));
+            if (linkMark && linkMark.href) {
+              return (
+                <a key={childIndex} href={linkMark.href} className="text-blue-600 hover:text-blue-700 underline" target="_blank" rel="noopener noreferrer">
+                  {text}
+                </a>
+              );
+            }
+
+            return <span key={childIndex}>{text}</span>;
+          });
+
+          // Render based on style
+          if (isListItem) {
+            return (
+              <li key={block._key || index} className="ml-6 text-gray-700">
+                {children}
+              </li>
+            );
+          }
+
+          switch (style) {
+            case 'h2':
+              return (
+                <h2 key={block._key || index} className="text-2xl font-bold text-gray-900 mt-6 mb-3">
+                  {children}
+                </h2>
+              );
+            case 'h3':
+              return (
+                <h3 key={block._key || index} className="text-xl font-semibold text-gray-900 mt-4 mb-2">
+                  {children}
+                </h3>
+              );
+            case 'h4':
+              return (
+                <h4 key={block._key || index} className="text-lg font-semibold text-gray-900 mt-3 mb-2">
+                  {children}
+                </h4>
+              );
+            case 'blockquote':
+              return (
+                <blockquote key={block._key || index} className="border-l-4 border-blue-500 pl-4 italic text-gray-700 my-4">
+                  {children}
+                </blockquote>
+              );
+            default:
+              return (
+                <p key={block._key || index} className="text-gray-700 leading-relaxed">
+                  {children}
+                </p>
+              );
+          }
+        }
+
+        return null;
+      })}
+    </div>
+  );
+}
 
 export default function PrivacyPolicySection() {
-    const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set(['introduction']));
+  const pathname = usePathname();
+  const currentLang: LangKey = pathname.startsWith('/id') ? 'id' : '';
+  const { data, loading } = usePrivacyPolicy();
+  const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set());
 
-    const toggleSection = (sectionId: string) => {
-        const newExpanded = new Set(expandedSections);
-        if (newExpanded.has(sectionId)) {
-            newExpanded.delete(sectionId);
-        } else {
-            newExpanded.add(sectionId);
-        }
-        setExpandedSections(newExpanded);
-    };
+  const toggleSection = (sectionId: string) => {
+    const newExpanded = new Set(expandedSections);
+    if (newExpanded.has(sectionId)) {
+      newExpanded.delete(sectionId);
+    } else {
+      newExpanded.add(sectionId);
+    }
+    setExpandedSections(newExpanded);
+  };
 
-    const sections = [
-        {
-            id: 'introduction',
-            icon: FileText,
-            title: 'Introduction',
-            content: (
-                <p className="text-gray-700 leading-relaxed">
-                    Software System Solutions ("we", "our", "us") provides a web-based and Android application used by companies to monitor and manage field sales representatives (Sales Watch). This Privacy Policy (01/10/2025) explains how we collect, use, share, and protect personal data in accordance with Indonesia's Personal Data Protection Law (Law No. 27 of 2022 on Personal Data Protection) and other applicable laws in Indonesia.
-                </p>
-            )
-        },
-        {
-            id: 'information',
-            icon: Database,
-            title: 'Information We Collect',
-            content: (
-                <div className="space-y-4">
-                    <div>
-                        <p className="text-gray-900 font-semibold mb-2">Sales Representative Data:</p>
-                        <ul className="space-y-2 ml-4">
-                            {[
-                                'GPS location (live and historical)',
-                                'Photos captured during store visits',
-                                'Time and date of visits',
-                                'Device information (model, OS version, etc.)',
-                                'And other information as specified on the Play Store privacy policy'
-                            ].map((item, index) => (
-                                <li key={index} className="flex items-start gap-2 text-gray-700">
-                                    <span className="text-blue-500 mt-1">•</span>
-                                    <span>{item}</span>
-                                </li>
-                            ))}
-                        </ul>
-                    </div>
-
-                    <div>
-                        <p className="text-gray-900 font-semibold mb-2">Client Admin Data:</p>
-                        <ul className="space-y-2 ml-4">
-                            {[
-                                'Names and contact details',
-                                'Uploaded store lists and visit schedules'
-                            ].map((item, index) => (
-                                <li key={index} className="flex items-start gap-2 text-gray-700">
-                                    <span className="text-blue-500 mt-1">•</span>
-                                    <span>{item}</span>
-                                </li>
-                            ))}
-                        </ul>
-                    </div>
-
-                    <div>
-                        <p className="text-gray-900 font-semibold mb-2">Automatically Collected Data:</p>
-                        <ul className="space-y-2 ml-4">
-                            {[
-                                'IP addresses and access logs',
-                                'Device/browser metadata',
-                                'Usage and performance statistics'
-                            ].map((item, index) => (
-                                <li key={index} className="flex items-start gap-2 text-gray-700">
-                                    <span className="text-blue-500 mt-1">•</span>
-                                    <span>{item}</span>
-                                </li>
-                            ))}
-                        </ul>
-                    </div>
-                </div>
-            )
-        },
-        {
-            id: 'usage',
-            icon: MapPin,
-            title: 'How We Use Data',
-            content: (
-                <div className="space-y-3">
-                    <p className="text-gray-700 mb-3">We use this information to:</p>
-                    <ul className="space-y-2 ml-4">
-                        {[
-                            'Track field team presence and schedule compliance',
-                            'Provide reports and insights to client companies',
-                            'Improve system performance and user experience',
-                            'Comply with applicable legal requirements'
-                        ].map((item, index) => (
-                            <li key={index} className="flex items-start gap-2 text-gray-700">
-                                <span className="text-blue-500 mt-1">•</span>
-                                <span>{item}</span>
-                            </li>
-                        ))}
-                    </ul>
-                </div>
-            )
-        },
-        {
-            id: 'legal',
-            icon: Scale,
-            title: 'Legal Basis for Processing',
-            content: (
-                <div className="space-y-3">
-                    <p className="text-gray-700 mb-3">Our processing is based on:</p>
-                    <ul className="space-y-2 ml-4">
-                        {[
-                            'Consent (where applicable)',
-                            'Contractual obligations',
-                            'Legal compliance',
-                            'Legitimate business interests'
-                        ].map((item, index) => (
-                            <li key={index} className="flex items-start gap-2 text-gray-700">
-                                <span className="text-blue-500 mt-1">•</span>
-                                <span>{item}</span>
-                            </li>
-                        ))}
-                    </ul>
-                </div>
-            )
-        },
-        {
-            id: 'sharing',
-            icon: Share2,
-            title: 'Data Sharing',
-            content: (
-                <div className="space-y-4">
-                    <p className="text-gray-700 leading-relaxed font-semibold">
-                        We do not sell your personal data.
-                    </p>
-                    <p className="text-gray-700 leading-relaxed">
-                        We may share data with:
-                    </p>
-                    <ul className="space-y-2 ml-4">
-                        {[
-                            'Your employer or client company',
-                            'Trusted service providers (e.g., cloud infrastructure) with prior client approval',
-                            'Government or regulatory agencies, when legally required'
-                        ].map((item, index) => (
-                            <li key={index} className="flex items-start gap-2 text-gray-700">
-                                <span className="text-blue-500 mt-1">•</span>
-                                <span>{item}</span>
-                            </li>
-                        ))}
-                    </ul>
-                </div>
-            )
-        },
-        {
-            id: 'retention',
-            icon: Lock,
-            title: 'Data Retention and Security',
-            content: (
-                <div className="space-y-3">
-                    <p className="text-gray-700 leading-relaxed">
-                        We retain data only as long as necessary for the purposes outlined above.
-                    </p>
-                    <p className="text-gray-700 leading-relaxed">
-                        We implement technical and organizational measures to ensure data security.
-                    </p>
-                </div>
-            )
-        },
-        {
-            id: 'rights',
-            icon: Shield,
-            title: 'Your Rights',
-            content: (
-                <div className="space-y-3">
-                    <p className="text-gray-700 mb-3">In accordance with Indonesian law, you have the right to:</p>
-                    <ul className="space-y-2 ml-4">
-                        {[
-                            'Access or correct your personal data',
-                            'Withdraw consent (where applicable)',
-                            'Request deletion of your data',
-                            'File complaints with data protection authorities',
-                            'Give opinion/input regarding software/applications'
-                        ].map((item, index) => (
-                            <li key={index} className="flex items-start gap-2 text-gray-700">
-                                <span className="text-blue-500 mt-1">•</span>
-                                <span>{item}</span>
-                            </li>
-                        ))}
-                    </ul>
-                </div>
-            )
-        },
-        {
-            id: 'international',
-            icon: Users,
-            title: 'International Data Transfers',
-            content: (
-                <p className="text-gray-700 leading-relaxed">
-                    If data is transferred outside Indonesia, we ensure it is protected in compliance with relevant data transfer regulations.
-                </p>
-            )
-        },
-        {
-            id: 'updates',
-            icon: RefreshCw,
-            title: 'Updates to This Policy',
-            content: (
-                <p className="text-gray-700 leading-relaxed">
-                    We may revise this Privacy Policy. Updates will be published on our website or app with a new effective date.
-                </p>
-            )
-        },
-        {
-            id: 'contact',
-            icon: Mail,
-            title: 'Contact Us',
-            content: (
-                <div className="">
-                    <p className="text-gray-700 mb-3">If you have questions or concerns:</p>
-                    <a
-                        href="mailto:support@saleswatch.id"
-                        className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-700 font-semibold text-lg transition-colors"
-                    >
-                        <Mail className="w-5 h-5" />
-                        support@saleswatch.id
-                    </a>
-                </div>
-            )
-        }
-    ];
-
+  if (loading) {
     return (
-        <div className="min-h-screen bg-gray-50">
-            <div className="max-w-5xl mx-auto px-4 py-12 sm:px-6 lg:px-8">
-                {/* Sections */}
-                <div className="space-y-4">
-                    {sections.map((section) => {
-                        const Icon = section.icon;
-                        const isExpanded = expandedSections.has(section.id);
-
-                        return (
-                            <div
-                                key={section.id}
-                                className="bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 overflow-hidden border border-gray-100 animate__animated animate__fadeInUp"
-                            >
-                                <button
-                                    onClick={() => toggleSection(section.id)}
-                                    className="w-full px-6 py-5 flex items-center justify-between text-left hover:bg-gray-50 transition-colors"
-                                >
-                                    <div className="flex items-center gap-4">
-                                        <div className="w-12 h-12 bg-[#061551] rounded-lg flex items-center justify-center flex-shrink-0">
-                                            <Icon className="w-6 h-6 text-white" />
-                                        </div>
-                                        <h2 className="text-xl font-semibold text-gray-900">
-                                            {section.title}
-                                        </h2>
-                                    </div>
-                                    <div className="flex-shrink-0">
-                                        {isExpanded ? (
-                                            <ChevronUp className="w-6 h-6 text-gray-400" />
-                                        ) : (
-                                            <ChevronDown className="w-6 h-6 text-gray-400" />
-                                        )}
-                                    </div>
-                                </button>
-
-                                {isExpanded && (
-                                    <div className="px-6 pb-6 pt-2 animate-fadeIn">
-                                        <div className="pl-16">
-                                            {section.content}
-                                        </div>
-                                    </div>
-                                )}
-                            </div>
-                        );
-                    })}
+      <div className="min-h-screen bg-gray-50">
+        <div className="max-w-5xl mx-auto px-4 py-12 sm:px-6 lg:px-8">
+          <div className="space-y-4">
+            {[1, 2, 3, 4, 5].map((i) => (
+              <div key={i} className="bg-white rounded-xl shadow-md p-6 animate-pulse">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 bg-gray-200 rounded-lg"></div>
+                  <div className="h-6 w-48 bg-gray-200 rounded"></div>
                 </div>
-            </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
 
-            <style jsx>{`
+  if (!data || !data.privacy_policy_content?.items) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <p className="text-gray-500">No privacy policy content available.</p>
+      </div>
+    );
+  }
+
+  const items = data.privacy_policy_content.items.filter((item) => item.published_at);
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      <div className="max-w-5xl mx-auto px-4 py-12 sm:px-6 lg:px-8">
+        <div className="space-y-4">
+          {items.map((item, index) => {
+            const isExpanded = expandedSections.has(item._id);
+            const title = currentLang === 'id' ? item.title.id : item.title.en;
+            const content = currentLang === 'id' ? item.content_id : item.content_en;
+
+            return (
+              <div
+                key={item._id}
+                className="bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 overflow-hidden border border-gray-100 animate__animated animate__fadeInUp"
+                style={{
+                  animationDelay: `${index * 0.1}s`,
+                  animationFillMode: 'both',
+                }}
+              >
+                <button onClick={() => toggleSection(item._id)} className="w-full px-6 py-5 flex items-center justify-between text-left hover:bg-gray-50 transition-colors">
+                  <div className="flex items-center gap-4">
+                    {item.icon_type?.asset?.url && (
+                      <div className="w-12 h-12 bg-[#061551] rounded-lg flex items-center justify-center flex-shrink-0 overflow-hidden">
+                        <img src={item.icon_type.asset.url} alt={title} className="w-6 h-6 brightness-0 invert" />
+                      </div>
+                    )}
+                    <h2 className="text-xl font-semibold text-gray-900">{title}</h2>
+                  </div>
+                  <div className="flex-shrink-0">{isExpanded ? <ChevronUp className="w-6 h-6 text-gray-400" /> : <ChevronDown className="w-6 h-6 text-gray-400" />}</div>
+                </button>
+
+                {isExpanded && content && (
+                  <div className="px-6 pb-6 pt-2 animate-fadeIn">
+                    <div className="pl-16">
+                      <PortableTextRenderer blocks={content} />
+                    </div>
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      <style jsx>{`
         @keyframes fadeIn {
           from {
             opacity: 0;
@@ -298,6 +210,6 @@ export default function PrivacyPolicySection() {
           animation: fadeIn 0.3s ease-out;
         }
       `}</style>
-        </div>
-    );
+    </div>
+  );
 }

@@ -65,8 +65,8 @@ const Faq = () => {
 
   if (loading) {
     return (
-      <section className="py-24 px-6 md:px-10 bg-gray-50 overflow-hidden relative">
-        <div className="max-w-6xl mx-auto relative">
+      <section className="py-24 px-6 md:px-10 bg-gray-50 overflow-hidden relative" style={{ scrollMarginTop: '300px' }}>
+        <div id="about" className="max-w-6xl mx-auto relative">
           <div className="grid lg:grid-cols-2 gap-12 items-start">
             <div className="relative z-10">
               <div className="mb-6 inline-flex">
@@ -96,12 +96,12 @@ const Faq = () => {
   const sideImage = content.side_image?.asset?.url || '';
 
   return (
-    <section className="py-24 px-6 md:px-10 bg-gray-50 overflow-hidden relative">
+    <section className="py-24 px-6 md:px-10 bg-gray-50 overflow-hidden relative" style={{ scrollMarginTop: '300px' }}>
       {/* Konten Utama Container */}
-      <div className="max-w-6xl mx-auto relative">
+      <div id="about" className="max-w-6xl mx-auto relative">
         <div className="grid lg:grid-cols-2 gap-12 items-start">
           <div className="relative z-10">
-            <h2 ref={titleRef} className="text-4xl md:text-5xl font-bold text-[#061551] mb-6 leading-tight opacity-0" style={{ animationDelay: '0.1s', animationFillMode: 'both' }}>
+            <h2 ref={titleRef} className="text-2xl md:text-5xl font-bold text-[#061551] mb-6 leading-tight opacity-0" style={{ animationDelay: '0.1s', animationFillMode: 'both' }}>
               {title}
             </h2>
 

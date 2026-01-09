@@ -96,7 +96,7 @@ export default function TestimoniSection() {
               const quote = currentLang === '' ? item.quote_en : item.quote_id;
               const company = currentLang === '' ? item.company_en : item.company_id;
               const role = currentLang === '' ? item.client_role_en : item.client_role_id;
-              const logoUrl = item.company_logo?.asset?.url || '/assets/images/logo1.webp';
+              const logoUrl = item.company_logo?.asset?.url || '';
 
               return (
                 <div key={index} className="w-full flex-shrink-0">

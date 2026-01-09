@@ -90,7 +90,7 @@ export default function WhyItWorks() {
           const title = currentLang === '' ? feature.title_en : feature.title_id;
           const description = currentLang === '' ? feature.description_en : feature.description_id;
           const buttonText = currentLang === '' ? feature.cta_button.text_en : feature.cta_button.text_id;
-          const imageUrl = feature.image?.asset?.url || '/img/placeholder.avif';
+          const imageUrl = feature.image?.asset?.url || '';
           const isImageLeft = feature.image_position === 'left';
 
           return (
