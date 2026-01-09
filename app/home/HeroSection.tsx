@@ -153,13 +153,13 @@ export default function HeroSection() {
         </div>
 
         {/* Stats Section dengan Staggered Animation */}
-        <div 
+        <div
           ref={statsRef}
           className="relative z-10 flex flex-col items-center justify-center px-6 pt-12 pb-8 md:py-20 text-center text-[#DFE1E4]"
         >
           <div className="grid grid-cols-2 md:flex md:flex-wrap md:justify-center md:items-start gap-6 md:gap-8 lg:gap-16 xl:gap-20 max-w-6xl mx-auto w-full">
             {/* Stat Card 1 */}
-            <div 
+            <div
               ref={stat1Ref}
               className="flex flex-col items-center text-center opacity-0 md:min-w-[120px] lg:min-w-[150px]"
               style={{ animationDelay: '0s', animationFillMode: 'both' }}
@@ -173,7 +173,7 @@ export default function HeroSection() {
             </div>
 
             {/* Stat Card 2 */}
-            <div 
+            <div
               ref={stat2Ref}
               className="flex flex-col items-center text-center opacity-0 md:min-w-[120px] lg:min-w-[150px]"
               style={{ animationDelay: '0.1s', animationFillMode: 'both' }}
@@ -187,7 +187,7 @@ export default function HeroSection() {
             </div>
 
             {/* Stat Card 3 */}
-            <div 
+            <div
               ref={stat3Ref}
               className="flex flex-col items-center text-center opacity-0 md:min-w-[120px] lg:min-w-[150px]"
               style={{ animationDelay: '0.2s', animationFillMode: 'both' }}
@@ -201,7 +201,7 @@ export default function HeroSection() {
             </div>
 
             {/* Stat Card 4 */}
-            <div 
+            <div
               ref={stat4Ref}
               className="flex flex-col items-center text-center opacity-0 md:min-w-[120px] lg:min-w-[150px]"
               style={{ animationDelay: '0.3s', animationFillMode: 'both' }}

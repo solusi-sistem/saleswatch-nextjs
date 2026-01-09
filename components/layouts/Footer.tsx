@@ -69,7 +69,7 @@ export default function Footer() {
       const hash = href.split('#')[1];
 
       if (hash) {
-        const isLocalePage = pathname === '/en' || pathname === '/id';
+        const isLocalePage = pathname === '/' || pathname === '/id';
 
         if (isLocalePage) {
           const targetElement = document.getElementById(hash);
@@ -110,24 +110,32 @@ export default function Footer() {
   };
 
   const normalizeHref = (href: string) => {
+    // Jika link eksternal, kembalikan langsung
     if (href.startsWith('http') || href.startsWith('https://dash.saleswatch.id')) {
       return href;
     }
 
+    // Jika link adalah root
     if (href === '/') {
-      return `/${currentLang}`;
+      return currentLang === '' ? '/' : '/id';
     }
 
-    if (href.startsWith('/en') || href.startsWith('/id')) {
-      return href;
+    // Jika sudah punya prefix bahasa /en atau /id, hapus dan buat ulang
+    let cleanPath = href;
+    if (href.startsWith('/en')) {
+      cleanPath = href.substring(3) || '/';
+    } else if (href.startsWith('/id')) {
+      cleanPath = href.substring(3) || '/';
     }
 
-    if (href.startsWith('/#')) {
-      return `/${currentLang}${href.substring(1)}`;
+    // Jika path dimulai dengan /#, tangani hash
+    if (cleanPath.startsWith('/#')) {
+      return currentLang === '' ? cleanPath : `/id${cleanPath}`;
     }
 
-    if (href.startsWith('/')) {
-      return `/${currentLang}${href}`;
+    // Jika path dimulai dengan /, tambahkan prefix bahasa jika perlu
+    if (cleanPath.startsWith('/')) {
+      return currentLang === '' ? cleanPath : `/id${cleanPath}`;
     }
 
     return href;
@@ -139,7 +147,7 @@ export default function Footer() {
         <div className="max-w-6xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-12 gap-9">
             <div className="md:col-span-5 pe-8">
-              <Link href={`/${currentLang}`} className="flex items-center">
+              <Link href={currentLang === '' ? '/' : '/id'} className="flex items-center">
                 {!loading && footerLogoUrl ? (
                   <Image
                     src={footerLogoUrl}
@@ -198,40 +206,6 @@ export default function Footer() {
                 )}
               </div>
             ))}
-            {footerCTA && (showRequestDemo || showLogin) && (
-              <div className="md:col-span-3 ms-0 md:ms-7">
-                {ctaTitle && (
-                  <>
-                    <h1 className="font-semibold mb-2 text-xl">{ctaTitle}</h1>
-                    <div className="flex justify-start gap-1">
-                      <div className="w-14 h-[2px] bg-[#6587A8] mb-4"></div>
-                      <div className="w-14 h-[2px] bg-[#6587A8] mb-4"></div>
-                    </div>
-                  </>
-                )}
-                <div className="flex flex-col items-start gap-1">
-                  {showRequestDemo && (
-                    <CustomButton
-                      size="lg"
-                      className="mt-2 !font-normal !text-base"
-                      onClick={() => setIsModalOpen(true)}
-                    >
-                      {requestDemoText}
-                    </CustomButton>
-                  )}
-
-                  {showLogin && (
-                    <CustomButton
-                      size="lg"
-                      onClick={handleLoginClick}
-                      className="mt-3 !font-normal !text-base"
-                    >
-                      {loginText}
-                    </CustomButton>
-                  )}
-                </div>
-              </div>
-            )}
           </div>
         </div>
 

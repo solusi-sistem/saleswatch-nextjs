@@ -23,6 +23,10 @@ export interface SanityFile {
     };
 }
 
+export interface SectionProps {
+    id?: string;
+}
+
 // ==========================================
 // FAQ INTERFACE
 // ==========================================
@@ -85,8 +89,8 @@ export interface HeroUtamaContent {
         text_id: string;
     };
     speech_bubble?: {
-        text_lines_en: string[];
-        text_lines_id: string[];
+        text_lines_en: string;
+        text_lines_id: string;
         character_image?: SanityImage;
     };
     cta_button?: {
@@ -196,7 +200,12 @@ export interface TestimonialContent {
         client_name: string;
         client_role_en: string;
         client_role_id: string;
-        company_logo?: SanityImage;
+        company_logo?: {
+            asset?: {
+                _id: string;
+                url: string;
+            };
+        };
     }[];
 }
 
@@ -204,8 +213,6 @@ export interface TestimonialContent {
 // FAQ CONTENT
 // ==========================================
 export interface FaqContent {
-    badge_text_en?: string;
-    badge_text_id?: string;
     title_en: string;
     title_id: string;
     description_en?: string;
