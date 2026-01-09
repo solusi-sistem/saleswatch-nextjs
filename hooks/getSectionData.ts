@@ -342,24 +342,18 @@ export async function getSectionData(sectionId: string): Promise<Section | null>
         support_section_content {
             support_plans[]->{
                 _id,
-                category_name {
+                key,
+                title {
                     en,
                     id
                 },
-                category_description {
-                    en,
-                    id
-                },
-                icon_type,
-                faqs[] {
-                    question {
-                        en,
-                        id
-                    },
-                    answer {
-                        en,
-                        id
-                    }
+                icon,
+                support_items[] {
+                    _key,   
+                    title_en,
+                    title_id,
+                    content_en,
+                    content_id
                 }
             },
             bottom_cta {
@@ -392,40 +386,52 @@ export async function getSectionData(sectionId: string): Promise<Section | null>
             }
         },
 
-        // Privacy Policy Section Content
+        // Privacy Policy Section Content (UPDATED - Array)
         privacy_policy_section_content {
-            privacy_policy->{
+            privacy_policy[]->{
                 _id,
                 title {
                     en,
                     id
                 },
-                content {
-                    en,
-                    id
+                icon_type {
+                    asset->{
+                        _id,
+                        url
+                    }
                 },
-                last_updated
+                content_en,
+                content_id,
+                published_at
             }
         },
 
-        // Terms and Conditions Section Content
+        // Terms and Conditions Section Content (UPDATED - Array)
         terms_and_conditions_section_content {
-            terms_and_conditions->{
+            terms_and_conditions[]->{
                 _id,
                 title {
                     en,
                     id
                 },
-                content {
-                    en,
-                    id
+                icon_type {
+                    asset->{
+                        _id,
+                        url
+                    }
                 },
-                last_updated
+                content_en,
+                content_id,
+                published_at
             }
         },
 
         // FAQ Section Content
         faq_section_content {
+            title_en,
+            title_id,
+            description_en,
+            description_id,
             category_tabs[] {
                 category_key,
                 category_label {
@@ -460,7 +466,7 @@ export async function getSectionData(sectionId: string): Promise<Section | null>
                 en,
                 id
             },
-            list_blog[]->{
+            list_blogs[]->{
                 _id,
                 title {
                     en,
