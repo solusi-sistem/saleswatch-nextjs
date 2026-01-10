@@ -96,7 +96,10 @@ export async function getAllBlogs(
     }`;
 
     try {
-        const result = await client.fetch<BlogItem[]>(query, {}, { cache: "no-store" });
+        // ✅ Remove { cache: "no-store" } to allow static generation with ISR
+        const result = await client.fetch<BlogItem[]>(query, {}, {
+            next: { revalidate: 3600 } // Revalidate every hour
+        });
         console.log(`Fetched ${result?.length || 0} blog posts from Sanity`);
         return result || [];
     } catch (error) {
@@ -166,7 +169,10 @@ export async function getBlogBySlug(slug: string): Promise<BlogItem | null> {
     }`;
 
     try {
-        const result = await client.fetch<BlogItem>(query, { slug }, { cache: "no-store" });
+        // ✅ Remove { cache: "no-store" } to allow static generation with ISR
+        const result = await client.fetch<BlogItem>(query, { slug }, {
+            next: { revalidate: 3600 } // Revalidate every hour
+        });
         console.log("Blog post by slug:", result ? "Found" : "Not found");
         return result || null;
     } catch (error) {
@@ -250,7 +256,11 @@ export async function getBlogsWithPagination(
     }`;
 
     try {
-        const totalPosts = await client.fetch<number>(countQuery, { status }, { cache: "no-store" });
+        // ✅ Remove { cache: "no-store" }
+        const totalPosts = await client.fetch<number>(countQuery, { status }, {
+            next: { revalidate: 3600 }
+        });
+        
         const posts = await client.fetch<BlogItem[]>(
             postsQuery,
             {
@@ -258,7 +268,9 @@ export async function getBlogsWithPagination(
                 offset,
                 limit: offset + postsPerPage
             },
-            { cache: "no-store" }
+            {
+                next: { revalidate: 3600 }
+            }
         );
 
         const totalPages = Math.ceil(totalPosts / postsPerPage);
@@ -331,10 +343,13 @@ export async function getRelatedBlogs(
     }`;
 
     try {
+        // ✅ Remove { cache: "no-store" }
         const result = await client.fetch<BlogItem[]>(
             query,
             { currentBlogId, category, limit },
-            { cache: "no-store" }
+            {
+                next: { revalidate: 3600 }
+            }
         );
         console.log(`Fetched ${result?.length || 0} related blog posts`);
         return result || [];
@@ -397,10 +412,13 @@ export async function getRecentBlogs(
     }`;
 
     try {
+        // ✅ Remove { cache: "no-store" }
         const result = await client.fetch<BlogItem[]>(
             query,
             { limit },
-            { cache: "no-store" }
+            {
+                next: { revalidate: 3600 }
+            }
         );
         console.log(`Fetched ${result?.length || 0} recent blog posts`);
         return result || [];
@@ -418,10 +436,13 @@ export async function getBlogCategories(): Promise<Array<{ en: string; id: strin
     const query = groq`array::unique(*[_type == "list_blog" && status == "published"].category)`;
 
     try {
+        // ✅ Remove { cache: "no-store" }
         const result = await client.fetch<Array<{ en: string; id: string }>>(
             query,
             {},
-            { cache: "no-store" }
+            {
+                next: { revalidate: 3600 }
+            }
         );
         console.log(`Fetched ${result?.length || 0} blog categories`);
         return result || [];
