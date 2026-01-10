@@ -1,6 +1,5 @@
 import Header from '@/components/layouts/Header';
 import Footer from '@/components/layouts/Footer';
-
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { getGeoData } from '@/lib/getGeoData';
@@ -17,11 +16,8 @@ export const revalidate = 0;
 
 // Generate Metadata untuk SEO (SSR)
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
-  // Await params karena sekarang adalah Promise di Next.js 15+
   const resolvedParams = await params;
-  // console.log("resolvedParams", resolvedParams);
   const slug = resolvedParams.slug ? `/${resolvedParams.slug}` : '/';
-  // console.log("slug", slug);
   const pageData = await getPageData(slug);
 
   if (!pageData) {
@@ -62,12 +58,27 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   };
 }
 
-export default async function EnglishPage({ params }: PageProps) {
-  // Await params karena sekarang adalah Promise di Next.js 15+
+export default async function RootPage({ params }: PageProps) {
   const resolvedParams = await params;
-  // console.log('Resolved Params:', resolvedParams);
   const slug = resolvedParams.slug ? `/${resolvedParams.slug}` : '/';
-  // console.log('Slug:', slug);
+
+  // ⚠️ cookies() DI NEXT 15+ HARUS await
+  const cookieStore = await cookies();
+  const localeCookie = cookieStore.get('locale');
+
+  // ✅ HANYA redirect berdasarkan EXPLICIT user choice
+  // JANGAN redirect berdasarkan geo untuk menghindari loop
+  
+  // Jika user EXPLICITLY memilih Indonesian, redirect ke /id
+  if (localeCookie?.value === 'id') {
+    redirect('/id');
+  }
+
+  // ✅ JANGAN lakukan geo-based redirect untuk root page
+  // Biarkan root "/" sebagai English version
+  // User bisa switch manual via language switcher
+  
+  // Fetch page data
   const pageData = await getPageData(slug);
 
   // Jika data tidak ditemukan
@@ -165,25 +176,7 @@ export default async function EnglishPage({ params }: PageProps) {
     isSectionPublished(section)
   ) || [];
 
-  // ⚠️ cookies() DI NEXT 15+ HARUS await
-  const cookieStore = await cookies();
-  const localeCookie = cookieStore.get('locale');
-
-  // 🛑 Hormati pilihan user
-  if (localeCookie?.value === 'id') {
-    redirect('/id');
-  }
-
-  // 🌍 First visit → geo check
-  if (!localeCookie) {
-    const geoData = await getGeoData();
-
-    if (geoData.languages === 'id') {
-      redirect('/id');
-    }
-  }
-
-  // 🇬🇧 Default English SSR
+  // 🇬🇧 English version (default)
   return (
     <div lang="en">
       <Header />
