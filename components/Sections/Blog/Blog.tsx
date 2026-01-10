@@ -165,6 +165,9 @@ export default function Blog({ id }: BlogProps) {
                                 <Link
                                     href={`/blog/${blogSlug}`}
                                     className="relative block aspect-[4/3] overflow-hidden"
+                                    onClick={() => {
+                                        window.scrollTo({ top: 0, behavior: 'instant' });
+                                    }}
                                 >
                                     <Image
                                         src={imageUrl}
@@ -199,7 +202,12 @@ export default function Blog({ id }: BlogProps) {
                                     </div>
 
                                     <h3 className="mb-4 text-lg font-semibold text-gray-900 leading-snug transition group-hover:text-[#061551]">
-                                        <Link href={`/blog/${blogSlug}`}>
+                                        <Link 
+                                            href={`/blog/${blogSlug}`}
+                                            onClick={() => {
+                                                window.scrollTo({ top: 0, behavior: 'instant' });
+                                            }}
+                                        >
                                             {blogTitle}
                                         </Link>
                                     </h3>
@@ -207,6 +215,9 @@ export default function Blog({ id }: BlogProps) {
                                     <Link
                                         href={`/blog/${blogSlug}`}
                                         className="inline-flex items-center gap-2 text-sm font-medium text-black underline underline-offset-4 decoration-black transition hover:text-[#061551] hover:decoration-[#061551]"
+                                        onClick={() => {
+                                            window.scrollTo({ top: 0, behavior: 'instant' });
+                                        }}
                                     >
                                         {locale === 'id' ? 'Pelajari Lebih Lanjut' : 'Learn More'}
                                         <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />

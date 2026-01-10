@@ -8,6 +8,7 @@ import Nav from '../data/nav';
 import ScheduleDemoModal from '@/components/modals/ScheduleDemoModal';
 import { useLayout } from '@/contexts/LayoutContext';
 import { urlFor } from '@/lib/sanity.realtime';
+import { scrollToSection } from '@/lib/scrollToSection';
 import type { LangKey, LanguageMap } from '@/types';
 
 const LANGUAGES: LanguageMap = {
@@ -75,21 +76,28 @@ export default function Header() {
     setLangOpen(false);
     if (newLang === currentLang) return;
 
-    // Dapatkan path tanpa prefix bahasa
     let pathWithoutLang = pathname;
     if (currentLang === 'id' && pathname.startsWith('/id')) {
-      // Hapus /id dari awal path
       pathWithoutLang = pathname.substring(3) || '/';
     }
 
-    // Buat path baru dengan bahasa yang dipilih
     const newPath = newLang === '' ? pathWithoutLang : `/id${pathWithoutLang}`;
-
     router.push(newPath);
   };
 
+  const handleScrollToSection = (hash: string, delay: number = 0) => {
+    setTimeout(() => {
+      scrollToSection(hash, {
+        headerOffset: 100,
+        delay: 100
+      });
+    }, delay);
+  };
+
   const handleNavClick = (href: string) => {
-    if (href.includes('#')) {
+    const isAnchorLink = href.includes('/#');
+    
+    if (isAnchorLink) {
       const hash = href.split('#')[1];
 
       if (hash) {
@@ -100,25 +108,10 @@ export default function Header() {
         const isLocalePage = pathname === '/' || pathname === '/id';
 
         if (isLocalePage) {
-          const targetElement = document.getElementById(hash);
-
-          if (targetElement) {
-            setTimeout(
-              () => {
-                const headerOffset = 100;
-                const elementPosition = targetElement.getBoundingClientRect().top;
-                const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
-
-                window.scrollTo({
-                  top: offsetPosition,
-                  behavior: 'smooth',
-                });
-              },
-              mobileMenuOpen ? 100 : 0
-            );
-          }
+          handleScrollToSection(hash, mobileMenuOpen ? 100 : 0);
         } else {
-          router.push(`/${currentLang}#${hash}`);
+          const homePath = currentLang === '' ? '/' : '/id';
+          router.push(`${homePath}#${hash}`);
         }
       }
     } else {
@@ -131,22 +124,41 @@ export default function Header() {
 
     if (isLocalePage && window.location.hash) {
       const hash = window.location.hash.substring(1);
-
-      setTimeout(() => {
-        const targetElement = document.getElementById(hash);
-
-        if (targetElement) {
-          const headerOffset = 100;
-          const elementPosition = targetElement.getBoundingClientRect().top;
-          const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
-
-          window.scrollTo({
-            top: offsetPosition,
-            behavior: 'smooth',
-          });
-        }
-      }, 100);
+      
+      scrollToSection(hash, {
+        headerOffset: 100,
+        delay: 100,
+        maxAttempts: 30,
+        retryInterval: 200
+      });
     }
+  }, [pathname]);
+
+  useEffect(() => {
+    const handleHashChange = () => {
+      const isLocalePage = pathname === '/' || pathname === '/id';
+      
+      if (isLocalePage && window.location.hash) {
+        const hash = window.location.hash.substring(1);
+        const targetElement = document.getElementById(hash);
+        
+        if (targetElement) {
+          setTimeout(() => {
+            const headerOffset = 100;
+            const elementPosition = targetElement.getBoundingClientRect().top;
+            const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+
+            window.scrollTo({
+              top: offsetPosition,
+              behavior: 'smooth',
+            });
+          }, 100);
+        }
+      }
+    };
+
+    window.addEventListener('hashchange', handleHashChange);
+    return () => window.removeEventListener('hashchange', handleHashChange);
   }, [pathname]);
 
   useEffect(() => {
@@ -175,7 +187,7 @@ export default function Header() {
     <>
       <header className="absolute top-0 left-0 right-0 text-white z-50 px-5 md:px-8 lg:px-12 pt-0">
         <div className="md:max-w-4xl lg:max-w-5xl xl:max-w-5xl 2xl:max-w-6xl mx-auto flex items-center justify-between py-5 px-6 lg:px-12 bg-[#061551] backdrop-blur-sm rounded-b-[50px]">
-          <Link href={`/${currentLang}`} className="flex items-center flex-shrink-0">
+          <Link href={currentLang === '' ? '/' : '/id'} className="flex items-center flex-shrink-0">
             {logoUrl ? <Image src={logoUrl} alt="Company Logo" width={170} height={41} priority className="h-auto" /> : <span className="text-2xl font-bold text-white"></span>}
           </Link>
 
