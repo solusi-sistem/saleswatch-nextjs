@@ -4,7 +4,6 @@ import { useEffect, useRef, useState } from 'react';
 import { usePathname } from 'next/navigation';
 import Image from 'next/image';
 import CustomButton from '@/components/button/button';
-import { Monitor } from 'lucide-react';
 import { suiteButtons } from '@/lib/features';
 import { SectionProps, FeaturesContent } from '@/types/section';
 import { getSectionData } from '@/hooks/getSectionData';
@@ -84,15 +83,15 @@ export default function Features({ id }: SectionProps) {
 
   if (loading) {
     return (
-      <div className="bg-gray-50">
-        <div className="container mx-auto py-10">
+      <div className="bg-[#f2f7ff]">
+        {/* <div className="container mx-auto py-10 md:px-34">
           <div className="bg-[#061551] rounded-4xl px-8 py-12 mx-4">
             <div className="h-32 w-full bg-gray-600 animate-pulse rounded"></div>
           </div>
           <div className="py-10">
             <div className="h-64 w-full bg-gray-300 animate-pulse rounded"></div>
           </div>
-        </div>
+        </div> */}
       </div>
     );
   }
@@ -102,37 +101,31 @@ export default function Features({ id }: SectionProps) {
   }
 
   // Pisahkan fitur berdasarkan type - handle null/undefined dengan fallback ke fiturSuite
-  const fiturUtamaList = content.mobile_features.filter(f => f.type_features === 'fiturUtama');
-  const fiturSuiteList = content.mobile_features.filter(f => f.type_features === 'fiturSuite' || !f.type_features);
+  const fiturUtamaList = content.mobile_features.filter((f) => f.type_features === 'fiturUtama');
+  const fiturSuiteList = content.mobile_features.filter((f) => f.type_features === 'fiturSuite' || !f.type_features);
 
   console.log('Fitur Utama:', fiturUtamaList.length);
   console.log('Fitur Suite:', fiturSuiteList.length);
 
   return (
-    <div className="bg-gray-50">
-      <div className="container mx-auto py-10">
+    <div className="bg-[#f2f7ff]">
+      <div className="container mx-auto py-10 md:px-34">
         <div className="bg-[#061551] rounded-4xl px-8 py-12 mx-4 animate__animated animate__fadeIn">
           <div className="flex flex-col lg:flex-row items-stretch justify-center gap-8 lg:gap-0">
             {/* Saleswatch Section */}
-            <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-4 justify-between">
               <div className="flex items-center justify-center">
                 <Image src="/assets/images/character2.jpg" alt="Saleswatch Logo" width={60} height={60} priority className="rounded-full lg:hidden" />
-                <div className="">
+                <div className="md:ms-20">
                   <h5 className="text-[#CFE3C0] font-semibold text-2xl leading-none">SALESWATCH</h5>
                 </div>
               </div>
-              <div className="flex flex-wrap justify-center gap-3">
+              <div className="flex flex-wrap justify-center md:justify-end gap-3">
                 {fiturUtamaList.map((feature, index) => {
-                  const btnText = currentLang === 'id'
-                    ? (feature.section_title_id || feature.section_title_en)
-                    : (feature.section_title_en || feature.section_title_id);
+                  const btnText = currentLang === 'id' ? feature.section_title_id || feature.section_title_en : feature.section_title_en || feature.section_title_id;
 
                   return (
-                    <CustomButton
-                      key={index}
-                      className="py-4 px-6 h-14 w-[204px] text-sm"
-                      onClick={() => scrollToSection(`feature-${index}`)}
-                    >
+                    <CustomButton key={index} className="py-4 px-6 h-14 w-[204px] text-sm" onClick={() => scrollToSection(`feature-${index}`)}>
                       {btnText}
                     </CustomButton>
                   );
@@ -142,20 +135,21 @@ export default function Features({ id }: SectionProps) {
 
             {/* Divider with Character Image */}
             <div className="hidden lg:flex items-end justify-center relative px-8 pb-[0px]">
-              <div className="w-[4px] bg-[#6587A8] h-full"></div>
-              <Image src="/assets/images/character2.jpg" alt="Saleswatch Logo" width={60} height={60} priority className="rounded-full absolute -left-0 -top-4" />
+              <div className="w-[4px] bg-[#6587A8] h-[110px]"></div>
+              <Image src="/assets/images/character2.jpg" alt="Saleswatch Logo" width={60} height={60} priority className="rounded-full absolute -left-0 -top-6" />
             </div>
 
             {/* Saleswatch Suite Section */}
             <div className="flex flex-col gap-4">
               <div className="flex items-center justify-center gap-3 lg:justify-start">
                 <Image src="/assets/images/character2.jpg" alt="Saleswatch Logo" width={60} height={60} priority className="rounded-full lg:hidden" />
-                <div>
-                  <h5 className="text-[#CFE3C0] font-semibold text-2xl leading-none">SALESWATCH SUITE</h5>
+                <div className="flex flex-col justify-start items-start">
+                  <h5 className="text-[#CFE3C0] font-semibold text-2xl leading-none">SALESWATCH</h5>
+                  <h5 className="text-[#CFE3C0] font-semibold text-2xl leading-none">SUITE</h5>
                 </div>
               </div>
 
-              <div className="flex flex-wrap gap-3">
+              <div className="flex flex-wrap gap-3 justify-center md:justify-start">
                 {suiteButtons.map((item) => (
                   <CustomButton key={item} className="py-4 px-6 h-14 w-[204px] text-sm" onClick={() => scrollToSection('suite-modules')}>
                     {item}
@@ -168,54 +162,25 @@ export default function Features({ id }: SectionProps) {
 
         {/* Render Fitur Utama Sections */}
         {fiturUtamaList.map((feature, index) => {
-          const sectionTitle = currentLang === 'id'
-            ? (feature.section_title_id || feature.section_title_en)
-            : (feature.section_title_en || feature.section_title_id);
+          const sectionTitle = currentLang === 'id' ? feature.section_title_id || feature.section_title_en : feature.section_title_en || feature.section_title_id;
           const mobileIcon = feature.mobile_icon?.asset?.url;
           const featuresList = feature.features_list || [];
 
           return (
-            <div
-              key={`fitur-utama-${index}`}
-              ref={index === 0 ? mobileFeaturesRef : null}
-              id={`feature-${index}`}
-              className="py-10 scroll-mt-32"
-            >
+            <div key={`fitur-utama-${index}`} ref={index === 0 ? mobileFeaturesRef : null} id={`feature-${index}`} className="py-10 scroll-mt-32">
               <div className="flex justify-center items-center gap-3">
-                {mobileIcon && (
-                  <Image
-                    src={mobileIcon}
-                    alt={sectionTitle}
-                    width={30}
-                    height={30}
-                    priority
-                    style={{ filter: 'brightness(0)' }}
-                  />
-                )}
+                {mobileIcon && <Image src={mobileIcon} alt={sectionTitle} width={30} height={30} priority style={{ filter: 'brightness(0)' }} />}
                 <h3 className="text-[#061551] font-bold text-2xl md:text-4xl">{sectionTitle}</h3>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 py-10 max-w-7xl mx-auto px-4">
                 {featuresList.map((item) => {
-                  const title = currentLang === 'id'
-                    ? (item.title?.id || item.title?.en)
-                    : (item.title?.en || item.title?.id);
-                  const description = currentLang === 'id'
-                    ? (item.description?.id || item.description?.en)
-                    : (item.description?.en || item.description?.id);
+                  const title = currentLang === 'id' ? item.title?.id || item.title?.en : item.title?.en || item.title?.id;
+                  const description = currentLang === 'id' ? item.description?.id || item.description?.en : item.description?.en || item.description?.id;
                   const icon = item.icon?.asset?.url;
 
                   return (
                     <div key={item._id} className="flex flex-col items-center text-center gap-3">
-                      {icon && (
-                        <Image
-                          src={icon}
-                          alt={title || ''}
-                          width={80}
-                          height={80}
-                          priority
-                          style={{ filter: 'brightness(0)' }}
-                        />
-                      )}
+                      {icon && <Image src={icon} alt={title || ''} width={80} height={80} priority style={{ filter: 'brightness(0)' }} />}
                       <h5 className="text-[#6587A8] font-semibold text-lg md:text-2xl">{title}</h5>
                       <p className="text-base md:text-lg opacity-70">{description}</p>
                     </div>
@@ -228,54 +193,25 @@ export default function Features({ id }: SectionProps) {
 
         {/* Render Suite Modules Sections */}
         {fiturSuiteList.map((feature, index) => {
-          const sectionTitle = currentLang === 'id'
-            ? (feature.section_title_id || feature.section_title_en)
-            : (feature.section_title_en || feature.section_title_id);
+          const sectionTitle = currentLang === 'id' ? feature.section_title_id || feature.section_title_en : feature.section_title_en || feature.section_title_id;
           const mobileIcon = feature.mobile_icon?.asset?.url;
           const featuresList = feature.features_list || [];
 
           return (
-            <div
-              key={`fitur-suite-${index}`}
-              ref={index === 0 ? suiteModulesRef : null}
-              id="suite-modules"
-              className="py-10 scroll-mt-32"
-            >
+            <div key={`fitur-suite-${index}`} ref={index === 0 ? suiteModulesRef : null} id="suite-modules" className="py-10 scroll-mt-32">
               <div className="flex justify-center items-center gap-3">
-                {mobileIcon && (
-                  <Image
-                    src={mobileIcon}
-                    alt={sectionTitle}
-                    width={40}
-                    height={40}
-                    priority
-                    style={{ filter: 'brightness(0)' }}
-                  />
-                )}
+                {mobileIcon && <Image src={mobileIcon} alt={sectionTitle} width={40} height={40} priority style={{ filter: 'brightness(0)' }} />}
                 <h3 className="text-[#061551] font-bold text-2xl md:text-4xl">{sectionTitle}</h3>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 py-10 max-w-7xl mx-auto px-4">
                 {featuresList.map((item) => {
-                  const title = currentLang === 'id'
-                    ? (item.title?.id || item.title?.en)
-                    : (item.title?.en || item.title?.id);
-                  const description = currentLang === 'id'
-                    ? (item.description?.id || item.description?.en)
-                    : (item.description?.en || item.description?.id);
+                  const title = currentLang === 'id' ? item.title?.id || item.title?.en : item.title?.en || item.title?.id;
+                  const description = currentLang === 'id' ? item.description?.id || item.description?.en : item.description?.en || item.description?.id;
                   const icon = item.icon?.asset?.url;
 
                   return (
                     <div key={item._id} className="flex flex-col items-center text-center gap-3">
-                      {icon && (
-                        <Image
-                          src={icon}
-                          alt={title || ''}
-                          width={80}
-                          height={80}
-                          priority
-                          style={{ filter: 'brightness(0)' }}
-                        />
-                      )}
+                      {icon && <Image src={icon} alt={title || ''} width={80} height={80} priority style={{ filter: 'brightness(0)' }} />}
                       <h5 className="text-[#6587A8] font-semibold text-lg md:text-2xl">{title}</h5>
                       <p className="text-base md:text-lg opacity-70">{description}</p>
                     </div>
