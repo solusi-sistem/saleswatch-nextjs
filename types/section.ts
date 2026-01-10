@@ -59,9 +59,16 @@ export interface PricingPlan {
 // ==========================================
 export interface FeatureItem {
     _id: string;
-    feature_name: LocalizedText;
-    feature_description: LocalizedText;
-    feature_icon?: SanityImage;
+    title: LocalizedText;
+    description: LocalizedText;
+    icon?: {
+        asset: {
+            _id: string;
+            url: string;
+        };
+        alt?: LocalizedText;
+    };
+    status: 'active' | 'inactive';
 }
 
 // ==========================================
