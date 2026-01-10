@@ -1,6 +1,8 @@
 import Header from '@/components/layouts/Header';
 import Footer from '@/components/layouts/Footer';
 
+import { cookies } from 'next/headers';
+import { redirect } from 'next/navigation';
 import { getPageData } from '@/hooks/getPageData';
 import { Metadata } from 'next';
 import { PageProps } from '@/types/page';
@@ -70,6 +72,27 @@ export default async function IndonesianPage({ params }: PageProps) {
   const slug = resolvedParams.slug ? `/${resolvedParams.slug}` : '/';
   const pageData = await getPageData(slug);
 
+  // Check cookie - jika user pilih bahasa Inggris, redirect ke English version
+  const cookieStore = await cookies();
+  const localeCookie = cookieStore.get('locale');
+  
+  // ✅ HANYA redirect jika user memilih English
+  if (localeCookie?.value === 'en') {
+    redirect('/');
+  }
+
+  // ❌ HAPUS BAGIAN INI - PENYEBAB LOOP!
+  // if (localeCookie?.value === 'id') {
+  //   redirect('/id');
+  // }
+  //
+  // if (!localeCookie) {
+  //   const geoData = await getGeoData();
+  //   if (geoData.languages === 'id') {
+  //     redirect('/id');
+  //   }
+  // }
+
   // Jika data tidak ditemukan
   if (!pageData) {
     return (
@@ -103,7 +126,7 @@ export default async function IndonesianPage({ params }: PageProps) {
           </p>
 
           <div className="d-flex flex-wrap justify-content-center gap-3">
-            <Link href="/" className="btn btn-outline-light btn-lg fw-semibold">
+            <Link href="/id" className="btn btn-outline-light btn-lg fw-semibold">
               Kembali ke Beranda
             </Link>
           </div>
@@ -144,7 +167,7 @@ export default async function IndonesianPage({ params }: PageProps) {
             </p>
             <div className="d-flex gap-3 justify-content-center">
               <Link
-                href="/"
+                href="/id"
                 className="btn btn-outline-light px-4 py-2 fw-semibold fs-5"
                 style={{
                   borderRadius: '8px',
