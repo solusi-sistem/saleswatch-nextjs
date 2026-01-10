@@ -62,13 +62,13 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 export default async function EnglishSlugPage({ params }: PageProps) {
   const resolvedParams = await params;
   const slug = `/${resolvedParams.slug}`;
-  const pageData = await getPageData(slug);
 
   // ⚠️ cookies() DI NEXT 15+ HARUS await
   const cookieStore = await cookies();
   const localeCookie = cookieStore.get('locale');
 
-  // 🛑 Hormati pilihan user - jika pilih Indonesian, redirect ke /id/slug
+  // 🛑 PINDAHKAN REDIRECT LOGIC KE ATAS - SEBELUM FETCH DATA
+  // Hormati pilihan user - jika pilih Indonesian, redirect ke /id/slug
   if (localeCookie?.value === 'id') {
     redirect(`/id${slug}`);
   }
@@ -80,6 +80,9 @@ export default async function EnglishSlugPage({ params }: PageProps) {
       redirect(`/id${slug}`);
     }
   }
+
+  // Fetch page data SETELAH redirect check
+  const pageData = await getPageData(slug);
 
   // Jika data tidak ditemukan
   if (!pageData) {
