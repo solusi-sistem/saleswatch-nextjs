@@ -346,6 +346,8 @@ export interface FaqSectionContent {
 export interface BlogListSectionContent {
     title_section?: LocalizedText;
     desc_section?: LocalizedText;
+    post_per_page?: number;
+    tampilkan_semua?: boolean;
     list_blogs?: BlogItem[];
 }
 

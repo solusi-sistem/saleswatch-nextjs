@@ -36,6 +36,8 @@ export interface BlogItem {
         en: any[]; // Portable Text blocks
         id: any[]; // Portable Text blocks
     };
+    // Tags
+    tags?: string[];
     // SEO Settings
     seo?: {
         metaTitle?: LocalizedText;
