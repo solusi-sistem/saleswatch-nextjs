@@ -190,7 +190,6 @@ export default async function IndonesianPage({ params }: PageProps) {
       isSectionPublished(section)
     ) || [];
 
-  // 🇮🇩 Indonesian SSR
   return (
     <div lang="id">
       <Header />
