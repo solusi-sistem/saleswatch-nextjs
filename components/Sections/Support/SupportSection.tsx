@@ -190,7 +190,7 @@ export default function SupportSection({ id }: SectionProps) {
   ========================================= */
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 py-12">
+      <div className="min-h-screen bg-[#f2f7ff] py-12">
         <div className="container mx-auto px-4 md:px-6 max-w-7xl">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
             <div className="lg:col-span-4">
@@ -219,7 +219,7 @@ export default function SupportSection({ id }: SectionProps) {
 
   if (!supportPlans.length) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-[#f2f7ff] flex items-center justify-center">
         <p className="text-gray-500">No support content available.</p>
       </div>
     );
@@ -229,7 +229,7 @@ export default function SupportSection({ id }: SectionProps) {
      RENDER (IDENTIK DENGAN CONTEXT VERSION)
   ========================================= */
   return (
-    <div className="min-h-screen bg-gray-50 py-12">
+    <div className="min-h-screen bg-[#f2f7ff] py-12">
       <div className="container mx-auto max-w-7xl grid grid-cols-1 lg:grid-cols-12 gap-6">
 
         {/* SIDEBAR */}

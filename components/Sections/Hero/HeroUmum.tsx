@@ -28,7 +28,7 @@ export default function HeroUmum({ id }: SectionProps) {
 
     return (
         <header className="relative w-full bg-[#061551] pt-12 pb-16 px-6 md:px-14 lg:px-18">
-            <div className="relative w-full bg-white rounded-4xl pt-30 pb-10 flex items-center justify-center">
+            <div className="relative w-full bg-[#f2f7ff] rounded-4xl pt-30 pb-10 flex items-center justify-center">
                 <div className="text-center mb-12">
                     <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4 animate__animated animate__fadeInUp">
                         {lang === 'id' ? header?.title_id : header?.title_en}

@@ -32,23 +32,6 @@ interface PrivacyPolicyBlock {
   caption?: string;
 }
 
-// Interface untuk Privacy Policy Item
-interface PrivacyPolicyItem {
-  _id: string;
-  title: {
-    en: string;
-    id: string;
-  };
-  icon_type?: {
-    asset?: {
-      url: string;
-    };
-  };
-  content_en: PrivacyPolicyBlock[];
-  content_id: PrivacyPolicyBlock[];
-  published_at?: boolean;
-}
-
 type LangKey = '' | 'id';
 
 // Portable Text Renderer Component
@@ -199,7 +182,7 @@ export default function PrivacyPolicySection({ id }: SectionProps) {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-[#f2f7ff]">
         <div className="max-w-5xl mx-auto px-4 py-12 sm:px-6 lg:px-8">
           <div className="space-y-4">
             {[1, 2, 3, 4, 5].map((i) => (
@@ -218,7 +201,7 @@ export default function PrivacyPolicySection({ id }: SectionProps) {
 
   if (!sectionData?.privacy_policy_section_content?.privacy_policy) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-[#f2f7ff] flex items-center justify-center">
         <p className="text-gray-500">No privacy policy content available.</p>
       </div>
     );
@@ -230,7 +213,7 @@ export default function PrivacyPolicySection({ id }: SectionProps) {
   // Jika privacy policy adalah single item (reference)
   if (privacyPolicies) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-[#f2f7ff]">
         <div className="max-w-5xl mx-auto px-4 py-12 sm:px-6 lg:px-8">
           <div className="space-y-4">
             {privacyPolicies.map((item, index) => {
@@ -243,41 +226,48 @@ export default function PrivacyPolicySection({ id }: SectionProps) {
               return (
                 <div
                   key={index.toString()}
-                  className="bg-white rounded-xl shadow-md overflow-hidden"
+                  className="bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 overflow-hidden border border-gray-100"
                 >
                   {/* HEADER */}
                   <button
                     onClick={() => toggleSection(index.toString())}
-                    className="w-full flex items-center justify-between gap-4 p-6 text-left hover:bg-gray-50 transition"
+                    className="w-full px-6 py-5 flex items-center justify-between text-left hover:bg-gray-50 transition-colors"
                   >
                     <div className="flex items-center gap-4">
                       {item.icon_type?.asset?.url && (
-                        <Image
-                          src={item.icon_type.asset.url || ''}
-                          alt={title}
-                          width={40}
-                          height={40}
-                          className="rounded-md"
-                        />
+                        <div className="w-12 h-12 bg-[#061551] rounded-lg flex items-center justify-center flex-shrink-0">
+                          <Image
+                            src={item.icon_type.asset.url}
+                            alt={title}
+                            width={24}
+                            height={24}
+                            className="object-contain"
+                            style={{ filter: 'brightness(0) invert(1)' }}
+                          />
+                        </div>
                       )}
-                      <h2 className="text-lg font-semibold text-gray-900">
+                      <h2 className="text-xl font-semibold text-gray-900">
                         {title}
                       </h2>
                     </div>
 
-                    {isExpanded ? (
-                      <ChevronUp className="w-5 h-5 text-gray-500" />
-                    ) : (
-                      <ChevronDown className="w-5 h-5 text-gray-500" />
-                    )}
+                    <div className="flex-shrink-0">
+                      {isExpanded ? (
+                        <ChevronUp className="w-6 h-6 text-gray-400" />
+                      ) : (
+                        <ChevronDown className="w-6 h-6 text-gray-400" />
+                      )}
+                    </div>
                   </button>
 
                   {/* CONTENT */}
                   {isExpanded && (
-                    <div className="px-6 pb-6">
-                      <PortableTextRenderer
-                        blocks={content as PrivacyPolicyBlock[]}
-                      />
+                    <div className="px-6 pb-6 pt-2 animate-fadeIn">
+                      <div className="pl-16">
+                        <PortableTextRenderer
+                          blocks={content as PrivacyPolicyBlock[]}
+                        />
+                      </div>
                     </div>
                   )}
                 </div>
@@ -285,6 +275,22 @@ export default function PrivacyPolicySection({ id }: SectionProps) {
             })}
           </div>
         </div>
+
+        <style jsx>{`
+          @keyframes fadeIn {
+            from {
+              opacity: 0;
+              transform: translateY(-10px);
+            }
+            to {
+              opacity: 1;
+              transform: translateY(0);
+            }
+          }
+          .animate-fadeIn {
+            animation: fadeIn 0.3s ease-out;
+          }
+        `}</style>
       </div>
     );
   }

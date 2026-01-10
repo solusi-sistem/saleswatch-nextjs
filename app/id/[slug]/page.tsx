@@ -3,7 +3,6 @@ import Footer from '@/components/layouts/Footer';
 
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
-import { getGeoData } from '@/lib/getGeoData';
 import { getPageData } from '@/hooks/getPageData';
 import { Metadata } from 'next';
 import { PageProps } from '@/types/page';
@@ -18,7 +17,7 @@ export const revalidate = 0;
 // Generate Metadata untuk SEO (SSR)
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const resolvedParams = await params;
-  const slug = resolvedParams.slug ? `/${resolvedParams.slug}` : '/';
+  const slug = `/${resolvedParams.slug}`;
   const pageData = await getPageData(slug);
 
   if (!pageData) {
@@ -68,10 +67,18 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   };
 }
 
-export default async function IndonesianPage({ params }: PageProps) {
+export default async function IndonesianSlugPage({ params }: PageProps) {
   const resolvedParams = await params;
-  const slug = resolvedParams.slug ? `/${resolvedParams.slug}` : '/';
+  const slug = `/${resolvedParams.slug}`;
   const pageData = await getPageData(slug);
+
+  // Check cookie - jika user pilih bahasa Inggris, redirect ke English version
+  const cookieStore = await cookies();
+  const localeCookie = cookieStore.get('locale');
+  
+  if (localeCookie?.value === 'en') {
+    redirect(slug);
+  }
 
   // Jika data tidak ditemukan
   if (!pageData) {
@@ -106,7 +113,7 @@ export default async function IndonesianPage({ params }: PageProps) {
           </p>
 
           <div className="d-flex flex-wrap justify-content-center gap-3">
-            <Link href="/" className="btn btn-outline-light btn-lg fw-semibold">
+            <Link href="/id" className="btn btn-outline-light btn-lg fw-semibold">
               Kembali ke Beranda
             </Link>
           </div>
@@ -147,7 +154,7 @@ export default async function IndonesianPage({ params }: PageProps) {
             </p>
             <div className="d-flex gap-3 justify-content-center">
               <Link
-                href="/"
+                href="/id"
                 className="btn btn-outline-light px-4 py-2 fw-semibold fs-5"
                 style={{
                   borderRadius: '8px',
@@ -169,20 +176,6 @@ export default async function IndonesianPage({ params }: PageProps) {
     pageData?.section_list?.filter(section =>
       isSectionPublished(section)
     ) || [];
-
-  const cookieStore = await cookies();
-  const localeCookie = cookieStore.get('locale');
-
-  if (localeCookie?.value === 'id') {
-    redirect('/id');
-  }
-
-  if (!localeCookie) {
-    const geoData = await getGeoData();
-    if (geoData.languages === 'id') {
-      redirect('/id');
-    }
-  }
 
   return (
     <div lang="id">

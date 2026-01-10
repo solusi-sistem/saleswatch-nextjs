@@ -130,13 +130,15 @@ export default function WhyItWorks({ id }: SectionProps) {
                                     : 'md:justify-center md:mr-30 md:order-2'
                                     } -mt-14 md:mt-0 ${!isImageLeft ? 'mr-0 md:mr-10' : ''}`}
                             >
-                                <Image
-                                    src={imageUrl}
-                                    alt={title}
-                                    width={340}
-                                    height={340}
-                                    className="w-[260px] sm:w-[300px] md:w-[340px] h-auto rounded-xl"
-                                />
+                                <div className="w-[300px] sm:w-[400px] md:w-[500px] aspect-video rounded-xl overflow-hidden flex items-center justify-center">
+                                    <Image
+                                        src={imageUrl}
+                                        alt={title}
+                                        width={340}
+                                        height={340}
+                                        className="w-full h-full object-contain"
+                                    />
+                                </div>
                             </div>
 
                             {/* Content */}
