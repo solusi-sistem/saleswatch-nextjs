@@ -151,20 +151,25 @@ export async function getSectionData(sectionId: string): Promise<Section | null>
                 },
                 features_list[]->{
                     _id,
-                    feature_name {
+                    title {
                         en,
                         id
                     },
-                    feature_description {
+                    description {
                         en,
                         id
                     },
-                    feature_icon {
+                    icon {
                         asset->{
                             _id,
                             url
-                        }
-                    }
+                        },
+                        alt{
+                            en,
+                            id
+                        },
+                    },
+                    status,
                 }
             }
         },
