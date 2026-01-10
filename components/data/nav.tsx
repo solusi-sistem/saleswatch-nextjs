@@ -34,7 +34,6 @@ export default function Nav({
         return;
       }
 
-      // Extract sections dari menu items yang punya hash
       const sections = navItems
         .filter(item => item.href.includes('#'))
         .map(item => item.href.split('#')[1])
@@ -67,41 +66,37 @@ export default function Nav({
   };
 
   const isActive = (href: string) => {
-    // Untuk home page
     if (href === '/' || href === `/${currentLang}`) {
       return (pathname === '/' || pathname === `/${currentLang}`) && activeSection === '';
     }
 
-    // Untuk section dengan hash
     if (href.includes('#')) {
       const section = href.split('#')[1];
       return activeSection === section;
     }
 
-    // Untuk page lain
     return pathname === href || pathname === `/${currentLang}${href}`;
   };
 
-  // Normalisasi href untuk menambahkan locale jika perlu
   const normalizeHref = (href: string) => {
-    // Jika href adalah root
-    if (href === '/') {
-      return `/${currentLang}`;
+    if (href.startsWith('http')) {
+      return href;
     }
 
-    // Jika href sudah punya locale, return as-is
     if (href.startsWith('/en') || href.startsWith('/id')) {
       return href;
     }
 
-    // Jika href adalah hash (#about), tambahkan locale
-    if (href.startsWith('/#')) {
-      return `/${currentLang}${href.substring(1)}`;
+    if (href === '/') {
+      return currentLang === '' ? '/' : `/id`;
     }
 
-    // Jika href adalah path biasa (/features), tambahkan locale
+    if (href.startsWith('/#')) {
+      return currentLang === '' ? href : `/id${href}`;
+    }
+
     if (href.startsWith('/')) {
-      return `/${currentLang}${href}`;
+      return currentLang === '' ? href : `/id${href}`;
     }
 
     return href;
@@ -118,10 +113,11 @@ export default function Nav({
           key={`${item.href}-${index}`}
           href={normalizeHref(item.href)}
           onClick={(e) => handleClick(e, item.href)}
-          className={`block transition ${isActive(item.href)
+          className={`block transition ${
+            isActive(item.href)
               ? 'text-blue-300/60 font-semibold'
               : 'text-[#CFE3C0] hover:text-blue-200'
-            }`}
+          }`}
         >
           {item.label}
         </Link>

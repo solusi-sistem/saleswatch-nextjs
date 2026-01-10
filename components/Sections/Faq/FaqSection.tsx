@@ -52,7 +52,7 @@ export default function FaqSection({ id }: SectionProps) {
 
     if (loading) {
         return (
-            <main className="bg-gray-50">
+            <main className="bg-[#f2f7ff]">
                 <div className="max-w-7xl mx-auto px-6 sm:px-6 lg:px-8 pt-30 pb-16">
                     <div className="text-center mb-12">
                         <div className="h-12 w-96 mx-auto bg-gray-300 animate-pulse rounded mb-4"></div>
@@ -79,7 +79,7 @@ export default function FaqSection({ id }: SectionProps) {
     const currentFAQs = currentTab?.list_faqs || [];
 
     return (
-        <main className="bg-gray-50">
+        <main className="bg-[#f2f7ff]">
             <div className="max-w-7xl mx-auto px-6 sm:px-6 lg:px-8 pt-30 pb-16">
                 {/* Title */}
                 <div className="text-center mb-12">

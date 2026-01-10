@@ -98,7 +98,7 @@ export default function PricingSection() {
 
   return (
     <>
-      <main className="bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+      <main className="bg-[#f2f7ff] py-12 px-4 sm:px-6 lg:px-8">
         {/* ================= DESKTOP: TABEL ================= */}
         <div className="hidden lg:block max-w-7xl mx-auto overflow-x-auto">
           <table className="min-w-full border-collapse">

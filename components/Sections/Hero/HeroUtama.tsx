@@ -135,7 +135,7 @@ export default function HeroUtama({ id }: SectionProps) {
           <div className="absolute inset-0 bg-[#061551]/50 rounded-4xl" />
 
           <div className="relative z-10 flex flex-col items-center justify-center px-4 py-12 md:py-20 mt-5 md:mt-0 text-center text-[#DFE1E4]">
-            <div className='max-w-3xl'>
+            <div className="max-w-3xl">
               {/* Title */}
               {titleText && <h1 className="md:mb-4 text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl lg:text-5xl animate__animated animate__fadeIn">{titleText}</h1>}
             </div>
@@ -166,7 +166,7 @@ export default function HeroUtama({ id }: SectionProps) {
 
             {/* CTA Button */}
             {ctaButtonText && (
-              <div className="flex gap-4 mt-0 mb-3 md:mb-9 animate__animated animate__fadeIn">
+              <div className="flex gap-4 mt-0 mb-3 md:mb-0 animate__animated animate__fadeIn">
                 <CustomButton size="lg" className="mt-3" onClick={() => setIsModalOpen(true)}>
                   {ctaButtonText}
                 </CustomButton>
@@ -180,7 +180,7 @@ export default function HeroUtama({ id }: SectionProps) {
                   <div className={`flex h-full ${isTransitioning ? 'transition-transform duration-1000 ease-in-out' : ''}`} style={{ transform: `translateX(-${currentImageIndex * 100}%)` }}>
                     {images.map((src, index) => (
                       <div key={index} className="relative min-w-full h-full flex items-center justify-center px-4">
-                        <div className="relative w-full max-w-[800px] h-[450px] mx-auto">
+                        <div className="relative w-full max-w-[800px] h-[450px] mx-auto overflow-hidden" style={{ clipPath: 'inset(45px 5px 0 0)' }}>
                           <Image src={src} alt={`Slide ${index + 1}`} fill className="object-contain" priority={index === 0} />
                         </div>
                       </div>
@@ -211,16 +211,36 @@ export default function HeroUtama({ id }: SectionProps) {
           </div>
         </div>
 
-        {/* Stats Section */}
+        {/* Stats Section - FIXED VERSION */}
         {statistics.length > 0 && (
-          <div ref={statsRef} className="relative z-10 flex flex-col items-center justify-center px-6 pt-12 pb-8 md:py-20 text-center text-[#DFE1E4]">
-            <div className="grid grid-cols-2 md:flex md:flex-wrap md:justify-center md:items-start gap-6 md:gap-8 lg:gap-16 xl:gap-20 max-w-6xl mx-auto w-full">
+          <div 
+            ref={statsRef} 
+            className="relative z-10 flex flex-col items-center justify-center px-6 pt-12 pb-8 md:py-20 text-center text-[#DFE1E4]"
+          >
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8 lg:gap-12 max-w-6xl mx-auto w-full">
               {statistics.map((stat, index) => {
                 const statLabel = locale === 'id' ? stat.label_id : stat.label_en;
+                const refMap = [stat1Ref, stat2Ref, stat3Ref, stat4Ref];
+                
                 return (
-                  <div key={index} className="flex flex-col items-center text-center md:min-w-[120px] lg:min-w-[150px]" style={{ animationDelay: `${index * 0.1}s`, animationFillMode: 'both' }}>
-                    <h1 className="mb-2 md:mb-4 text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl lg:text-6xl">{stat.number}</h1>
-                    <p className="font-normal text-sm md:text-base lg:text-lg leading-tight whitespace-nowrap">{statLabel}</p>
+                  <div 
+                    key={index}
+                    ref={refMap[index] || null}
+                    className="flex flex-col items-center justify-start text-center"
+                    style={{ 
+                      animationDelay: `${index * 0.1}s`, 
+                      animationFillMode: 'both' 
+                    }}
+                  >
+                    {/* Number */}
+                    <h1 className="mb-2 md:mb-4 text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl lg:text-6xl">
+                      {stat.number}
+                    </h1>
+                    
+                    {/* Label - Responsive text wrapping */}
+                    <p className="font-normal text-sm md:text-base lg:text-lg leading-tight px-2 break-words max-w-[180px]">
+                      {statLabel}
+                    </p>
                   </div>
                 );
               })}

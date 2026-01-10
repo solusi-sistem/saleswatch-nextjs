@@ -49,16 +49,62 @@ export default function SupportHeader({ id }: SectionProps) {
     useEffect(() => {
         async function fetchData() {
             if (!id) return;
-            const res = await getSectionData(id);
-            setSection(res);
-            setLoading(false);
+            try {
+                const res = await getSectionData(id);
+                setSection(res);
+            } catch (error) {
+            } finally {
+                setLoading(false);
+            }
         }
         fetchData();
     }, [id]);
 
+    /* =========================================
+       LOADING STATE
+    ========================================= */
+    if (loading) {
+        return (
+            <header className="relative w-full bg-[#061551] pt-12 pb-16 px-6 md:px-14 lg:px-18">
+                <div className="relative w-full bg-[#f2f7ff] rounded-4xl pt-30 pb-10">
+                    <div className="text-center mb-12 px-4 md:px-8 animate-pulse">
+                        <div className="h-12 bg-gray-200 rounded w-2/3 mx-auto mb-4"></div>
+                        <div className="w-24 h-1 bg-gray-200 mx-auto rounded-full mb-4"></div>
+                        <div className="h-6 bg-gray-200 rounded w-1/2 mx-auto mb-8"></div>
+                        <div className="flex gap-4 justify-center">
+                            <div className="h-12 bg-gray-200 rounded w-40"></div>
+                            <div className="h-12 bg-gray-200 rounded w-40"></div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+        );
+    }
+
     const header = section?.support_header_content;
 
-    if (loading || !header) return null;
+    /* =========================================
+       NO DATA STATE
+    ========================================= */
+    if (!header) {
+        return (
+            <header className="relative w-full bg-[#061551] pt-12 pb-16 px-6 md:px-14 lg:px-18">
+                <div className="relative w-full bg-[#f2f7ff] rounded-4xl pt-30 pb-10 flex items-center justify-center">
+                    <div className="text-center mb-12">
+                        <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+                            {lang === 'id' ? 'Pusat Bantuan' : 'Support Center'}
+                        </h1>
+                        <div className="w-24 h-1 bg-blue-200 mx-auto rounded-full mb-4"></div>
+                        <p className="text-gray-600 text-lg max-w-2xl mx-auto">
+                            {lang === 'id' 
+                                ? 'Temukan bantuan yang Anda butuhkan'
+                                : 'Find the help you need'}
+                        </p>
+                    </div>
+                </div>
+            </header>
+        );
+    }
 
     /* =========================================
        HANDLER BUTTON CLICK
@@ -73,7 +119,9 @@ export default function SupportHeader({ id }: SectionProps) {
                     : btn.file_pdf?.file_pdf_en?.asset?.url;
         }
 
-        if (!url) return;
+        if (!url) {
+            return;
+        }
 
         window.open(url, btn.open_in_new_tab ? '_blank' : '_self');
     };
@@ -83,7 +131,7 @@ export default function SupportHeader({ id }: SectionProps) {
     ========================================= */
     return (
         <header className="relative w-full bg-[#061551] pt-12 pb-16 px-6 md:px-14 lg:px-18">
-            <div className="relative w-full bg-white rounded-4xl pt-30 pb-10 flex items-center justify-center">
+            <div className="relative w-full bg-[#f2f7ff] rounded-4xl pt-30 pb-10 flex items-center justify-center">
                 <div className="text-center mb-12 px-4 md:px-8">
 
                     {/* TITLE */}
@@ -101,7 +149,7 @@ export default function SupportHeader({ id }: SectionProps) {
                     </p>
 
                     {/* BUTTONS */}
-                    {header.buttons && (
+                    {header.buttons && header.buttons.length > 0 && (
                         <div className="flex flex-col md:flex-row gap-4 justify-center items-stretch mx-auto">
                             {header.buttons.map((btn, idx) => (
                                 <button
