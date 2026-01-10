@@ -1,9 +1,6 @@
 import Header from '@/components/layouts/Header';
 import Footer from '@/components/layouts/Footer';
 
-import { cookies } from 'next/headers';
-import { redirect } from 'next/navigation';
-import { getGeoData } from '@/lib/getGeoData';
 import { getPageData } from '@/hooks/getPageData';
 import { Metadata } from 'next';
 import { PageProps } from '@/types/page';
@@ -169,20 +166,6 @@ export default async function IndonesianPage({ params }: PageProps) {
     pageData?.section_list?.filter(section =>
       isSectionPublished(section)
     ) || [];
-
-  const cookieStore = await cookies();
-  const localeCookie = cookieStore.get('locale');
-
-  if (localeCookie?.value === 'id') {
-    redirect('/id');
-  }
-
-  if (!localeCookie) {
-    const geoData = await getGeoData();
-    if (geoData.languages === 'id') {
-      redirect('/id');
-    }
-  }
 
   return (
     <div lang="id">

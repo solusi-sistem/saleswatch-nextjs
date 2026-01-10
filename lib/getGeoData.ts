@@ -1,4 +1,4 @@
-import { headers } from "next/headers";
+import { cookies, headers } from "next/headers";
 
 export interface GeoData {
     ip: string;
@@ -19,33 +19,39 @@ export async function getGeoData(): Promise<GeoData> {
 
         // Vercel Geo Headers
         const country = headersList.get("x-vercel-ip-country") ?? "US";
-        const countryRegion = headersList.get("x-vercel-ip-country-region") ?? "Unknown"; 
-        const city = headersList.get("x-vercel-ip-city") ?? "Unknown"; 
-        const timezone = headersList.get("x-vercel-ip-timezone") ?? "UTC"; 
-        const latitude = headersList.get("x-vercel-ip-latitude") ?? ""; 
+        const countryRegion = headersList.get("x-vercel-ip-country-region") ?? "Unknown";
+        const city = headersList.get("x-vercel-ip-city") ?? "Unknown";
+        const timezone = headersList.get("x-vercel-ip-timezone") ?? "UTC";
+        const latitude = headersList.get("x-vercel-ip-latitude") ?? "";
         const longitude = headersList.get("x-vercel-ip-longitude") ?? "";
 
         // IP Address
         const forwardedFor = headersList.get("x-forwarded-for");
         const realIp = headersList.get("x-real-ip");
 
+        const ip = forwardedFor?.split(",")[0]?.trim() || realIp || "Unknown";
 
-        const ip =
-            forwardedFor?.split(",")[0]?.trim() ||
-            realIp || 
-            "Unknown";
+        // Currency Map
+        const currencyMap: Record<string, string> = {
+            ID: "IDR",
+            US: "USD",
+        };
 
-            // Currency Map
-            const currencyMap: Record<string, string> = {
-                ID: "IDR", 
-                US: "USD",
-            };
-
-            // Country Name Map
-            const countryNameMap: Record<string, string> = {
+        // Country Name Map
+        const countryNameMap: Record<string, string> = {
             ID: "Indonesia",
             US: "United States",
         };
+
+        const languages = country === "ID" ? "id" : "en";
+
+        // 🔥 SET COOKIES OTOMATIS BERDASARKAN GEO
+        const cookieStore = await cookies();
+        cookieStore.set('locale', languages, {
+            path: '/',
+            maxAge: 60 * 60 * 24 * 365, // 1 tahun
+            sameSite: 'lax',
+        });
 
         return {
             ip,
@@ -54,13 +60,12 @@ export async function getGeoData(): Promise<GeoData> {
             city: decodeURIComponent(city),
             region: decodeURIComponent(countryRegion),
             currency: currencyMap[country] || "USD",
-            languages: country === "ID" ? "id" : "en",
+            languages,
             timezone,
             latitude,
             longitude,
         };
     } catch (error) {
-
         return {
             ip: "Unknown",
             country: "US",

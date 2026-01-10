@@ -10,6 +10,7 @@ import { useLayout } from '@/contexts/LayoutContext';
 import { urlFor } from '@/lib/sanity.realtime';
 import { scrollToSection } from '@/lib/scrollToSection';
 import type { LangKey, LanguageMap } from '@/types';
+import { setLocaleCookie } from '@/app/actions/locale';
 
 const LANGUAGES: LanguageMap = {
   '': { label: 'English', flag: '/assets/images/EN.svg' },
@@ -72,9 +73,11 @@ export default function Header() {
     setIsModalOpen(true);
   };
 
-  const handleLanguageSwitch = (newLang: LangKey) => {
+  const handleLanguageSwitch = async (newLang: LangKey) => {
     setLangOpen(false);
     if (newLang === currentLang) return;
+
+    await setLocaleCookie(newLang === '' ? 'en' : 'id');
 
     let pathWithoutLang = pathname;
     if (currentLang === 'id' && pathname.startsWith('/id')) {
@@ -96,7 +99,7 @@ export default function Header() {
 
   const handleNavClick = (href: string) => {
     const isAnchorLink = href.includes('/#');
-    
+
     if (isAnchorLink) {
       const hash = href.split('#')[1];
 
@@ -124,7 +127,7 @@ export default function Header() {
 
     if (isLocalePage && window.location.hash) {
       const hash = window.location.hash.substring(1);
-      
+
       scrollToSection(hash, {
         headerOffset: 100,
         delay: 100,
@@ -137,11 +140,11 @@ export default function Header() {
   useEffect(() => {
     const handleHashChange = () => {
       const isLocalePage = pathname === '/' || pathname === '/id';
-      
+
       if (isLocalePage && window.location.hash) {
         const hash = window.location.hash.substring(1);
         const targetElement = document.getElementById(hash);
-        
+
         if (targetElement) {
           setTimeout(() => {
             const headerOffset = 100;

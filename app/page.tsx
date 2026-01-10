@@ -165,20 +165,22 @@ export default async function EnglishPage({ params }: PageProps) {
     isSectionPublished(section)
   ) || [];
 
-  // ⚠️ cookies() DI NEXT 15+ HARUS await
+  // Di page.tsx atau layout.tsx root
   const cookieStore = await cookies();
   const localeCookie = cookieStore.get('locale');
 
-  // 🛑 Hormati pilihan user
+  // 🛑 Jika ada cookie locale = 'id', redirect ke /id
   if (localeCookie?.value === 'id') {
     redirect('/id');
   }
 
-  // 🌍 First visit → geo check
+  // 🌍 First visit → panggil getGeoData (akan auto set cookie)
   if (!localeCookie) {
-    const geoData = await getGeoData();
+    await getGeoData(); // Ini akan set cookie otomatis
 
-    if (geoData.languages === 'id') {
+    // Re-check cookie setelah di-set
+    const updatedCookie = cookieStore.get('locale');
+    if (updatedCookie?.value === 'id') {
       redirect('/id');
     }
   }
