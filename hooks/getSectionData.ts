@@ -466,6 +466,8 @@ export async function getSectionData(sectionId: string): Promise<Section | null>
                 en,
                 id
             },
+            post_per_page,
+            tampilkan_semua,
             list_blogs[]->{
                 _id,
                 title {
@@ -500,6 +502,7 @@ export async function getSectionData(sectionId: string): Promise<Section | null>
                     en,
                     id
                 },
+                tags,
                 seo {
                     metaTitle {
                         en,
