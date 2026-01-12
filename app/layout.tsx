@@ -44,7 +44,7 @@ export default function RootLayout({
           </HomeProvider>
         </LayoutProvider>
 
-        <Script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></Script>
+        {/* <Script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></Script> */}
       </body>
     </html>
   );
