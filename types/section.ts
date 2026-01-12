@@ -189,6 +189,10 @@ export interface WhyItWorksContent {
 // FEATURES CONTENT
 // ==========================================
 export interface FeaturesContent {
+    logo_text?: string;
+    logo_features?: SanityImage;
+    logo_teks_features?: string;
+    suite_text?: string;
     mobile_features?: {
         section_title_en: string;
         section_title_id: string;

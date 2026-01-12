@@ -1,8 +1,11 @@
-export interface LayoutData {
-  _id?: string;
-  name_layout?: string;
-  header?: HeaderData;
-  footer?: FooterData;
+export interface HeaderData {
+  logo_header?: {
+    logo?: any;
+    logo_teks?: any;
+  };
+  menu_header?: MenuHeaderItem[];
+  cta_buttons?: CTAButtons;
+  language_switcher?: LanguageSwitcher;
 }
 
 export interface HeaderData {
@@ -41,7 +44,10 @@ export interface LanguageSwitcher {
 }
 
 export interface FooterData {
-  logo_footer?: any;
+  logo_footer?: {
+    logo?: any;
+    logo_teks?: any;
+  };
   desc_footer?: {
     desc_footer_en?: string;
     desc_footer_id?: string;
