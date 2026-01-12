@@ -8,13 +8,6 @@ export interface HeaderData {
   language_switcher?: LanguageSwitcher;
 }
 
-export interface HeaderData {
-  logo?: any;
-  menu_header?: MenuHeaderItem[];
-  cta_buttons?: CTAButtons;
-  language_switcher?: LanguageSwitcher;
-}
-
 export interface MenuHeaderItem {
   label_menu?: {
     label_menu_en?: string;
@@ -95,4 +88,12 @@ export interface FooterCTA {
 
 export interface ScrollToTop {
   show_button?: boolean;
+}
+
+// Main LayoutData interface
+export interface LayoutData {
+  _id?: string;
+  name_layout?: string;
+  header?: HeaderData;
+  footer?: FooterData;
 }
