@@ -8,7 +8,7 @@ import { Facebook, Linkedin, Instagram, Youtube, Twitter, ChevronUp } from 'luci
 import ScheduleDemoModal from '@/components/modals/ScheduleDemoModal';
 import { useLayout } from '@/contexts/LayoutContext';
 import { urlFor } from '@/lib/sanity.realtime';
-import type { LangKey } from '@/types';
+import type { LangKey, SocialMediaItem, FooterColumn, FooterLink } from '@/types';
 
 const SOCIAL_ICONS = {
   facebook: Facebook,
@@ -47,8 +47,8 @@ export default function Footer() {
 
   const socialMediaLinks =
     layoutData?.footer?.social_media
-      ?.filter((item) => item.show_social_media !== false)
-      ?.map((item) => ({
+      ?.filter((item: SocialMediaItem) => item.show_social_media !== false)
+      ?.map((item: SocialMediaItem) => ({
         platform: item.platform || '',
         url: item.url || '#',
         icon: item.icon || null,
@@ -56,13 +56,13 @@ export default function Footer() {
 
   const footerColumns =
     layoutData?.footer?.footer_columns
-      ?.filter((col) => col.show_column !== false)
-      ?.map((col) => ({
+      ?.filter((col: FooterColumn) => col.show_column !== false)
+      ?.map((col: FooterColumn) => ({
         title: currentLang === '' ? col.column_title?.title_en || '' : col.column_title?.title_id || '',
         links:
           col.links
-            ?.filter((link) => link.show_link !== false)
-            ?.map((link) => ({
+            ?.filter((link: FooterLink) => link.show_link !== false)
+            ?.map((link: FooterLink) => ({
               label: currentLang === '' ? link.label?.label_en || '' : link.label?.label_id || '',
               path: link.path || '/',
             })) || [],
