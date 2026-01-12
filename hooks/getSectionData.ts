@@ -1,10 +1,10 @@
-import { client } from "@/lib/sanity";
-import { Section } from "@/types/section";
-import { groq } from "next-sanity";
+import { client } from '@/lib/sanity';
+import { Section } from '@/types/section';
+import { groq } from 'next-sanity';
 
 // Fungsi untuk fetch data section berdasarkan ID
 export async function getSectionData(sectionId: string): Promise<Section | null> {
-    const query = groq`*[_type == "section" && _id == $sectionId][0]{
+  const query = groq`*[_type == "section" && _id == $sectionId][0]{
         _id,
         _type,
         name_section,
@@ -139,6 +139,15 @@ export async function getSectionData(sectionId: string): Promise<Section | null>
 
         // Features Content
         features_content {
+            logo_text,
+            logo_features {
+                asset->{
+                    _id,
+                    url
+                }
+            },
+            logo_teks_features,
+            suite_text,
             mobile_features[] {
                 section_title_en,
                 section_title_id,
@@ -528,12 +537,12 @@ export async function getSectionData(sectionId: string): Promise<Section | null>
         }
     }`;
 
-    try {
-        const result = await client.fetch(query, { sectionId }, { cache: "no-store" });
-        console.log("Section data for ID " + sectionId, result);
-        return result || null;
-    } catch (error) {
-        console.error("Error fetching section data:", error);
-        return null;
-    }
+  try {
+    const result = await client.fetch(query, { sectionId }, { cache: 'no-store' });
+    console.log('Section data for ID ' + sectionId, result);
+    return result || null;
+  } catch (error) {
+    console.error('Error fetching section data:', error);
+    return null;
+  }
 }

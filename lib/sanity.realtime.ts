@@ -21,7 +21,10 @@ const LAYOUT_QUERY = `
     _id,
     name_layout,
     header {
-      logo,
+      logo_header {
+        logo,
+        logo_teks
+      },
       menu_header[] {
         label_menu {
           label_menu_en,
@@ -48,7 +51,10 @@ const LAYOUT_QUERY = `
       }
     },
     footer {
-      logo_footer,
+      logo_footer {
+        logo,
+        logo_teks
+      },
       desc_footer {
         desc_footer_en,
         desc_footer_id
@@ -105,8 +111,7 @@ export function listenToLayoutChanges(callback: (data: LayoutData) => void) {
         callback(update.result);
       }
     },
-    error: (err) => {
-    },
+    error: (err) => {},
   });
 
   return () => subscription.unsubscribe();

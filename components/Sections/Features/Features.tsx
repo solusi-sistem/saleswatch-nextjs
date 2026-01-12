@@ -4,7 +4,6 @@ import { useEffect, useRef, useState } from 'react';
 import { usePathname } from 'next/navigation';
 import Image from 'next/image';
 import CustomButton from '@/components/button/button';
-import { suiteButtons } from '@/lib/features';
 import { SectionProps, FeaturesContent } from '@/types/section';
 import { getSectionData } from '@/hooks/getSectionData';
 import type { LangKey } from '@/types';
@@ -82,18 +81,7 @@ export default function Features({ id }: SectionProps) {
   };
 
   if (loading) {
-    return (
-      <div className="bg-[#f2f7ff]">
-        {/* <div className="container mx-auto py-10 md:px-34">
-          <div className="bg-[#061551] rounded-4xl px-8 py-12 mx-4">
-            <div className="h-32 w-full bg-gray-600 animate-pulse rounded"></div>
-          </div>
-          <div className="py-10">
-            <div className="h-64 w-full bg-gray-300 animate-pulse rounded"></div>
-          </div>
-        </div> */}
-      </div>
-    );
+    return <div className="bg-[#f2f7ff]"></div>;
   }
 
   if (!content || !content.mobile_features || content.mobile_features.length === 0) {
@@ -104,23 +92,23 @@ export default function Features({ id }: SectionProps) {
   const fiturUtamaList = content.mobile_features.filter((f) => f.type_features === 'fiturUtama');
   const fiturSuiteList = content.mobile_features.filter((f) => f.type_features === 'fiturSuite' || !f.type_features);
 
-  console.log('Fitur Utama:', fiturUtamaList.length);
-  console.log('Fitur Suite:', fiturSuiteList.length);
+  // Ambil data dari content
+  const logoText = content.logo_text || 'SALESWATCH';
+  const logoImage = content.logo_features?.asset?.url;
+  const logoTeksFeatures = content.logo_teks_features || 'Saleswatch';
+  const suiteText = content.suite_text || 'SUITE';
 
   return (
     <div className="bg-[#f2f7ff]">
-      <div className="container mx-auto py-10 md:px-34">
+      <div className="container mx-auto py-10 xl:px-30">
         <div className="bg-[#061551] rounded-4xl px-8 py-12 mx-4 animate__animated animate__fadeIn">
           <div className="flex flex-col lg:flex-row items-stretch justify-center gap-8 lg:gap-0">
             {/* Saleswatch Section */}
-            <div className="flex flex-col gap-4 justify-between">
-              <div className="flex items-center justify-center">
-                <Image src="/assets/images/character2.jpg" alt="Saleswatch Logo" width={60} height={60} priority className="rounded-full lg:hidden" />
-                <div className="md:ms-20">
-                  <h5 className="text-[#CFE3C0] font-semibold text-2xl leading-none">SALESWATCH</h5>
-                </div>
+            <div className="flex flex-col md:w-[230px] gap-4 justify-between">
+              <div className="flex items-center justify-center md:justify-start">
+                <h5 className="text-[#CFE3C0] font-semibold text-2xl leading-none">{logoText}</h5>
               </div>
-              <div className="flex flex-wrap justify-center md:justify-end gap-3">
+              <div className="flex flex-wrap justify-center md:justify-start gap-3">
                 {fiturUtamaList.map((feature, index) => {
                   const btnText = currentLang === 'id' ? feature.section_title_id || feature.section_title_en : feature.section_title_en || feature.section_title_id;
 
@@ -135,26 +123,32 @@ export default function Features({ id }: SectionProps) {
 
             {/* Divider with Character Image */}
             <div className="hidden lg:flex items-end justify-center relative px-8 pb-[0px]">
-              <div className="w-[4px] bg-[#6587A8] h-[110px]"></div>
-              <Image src="/assets/images/character2.jpg" alt="Saleswatch Logo" width={60} height={60} priority className="rounded-full absolute -left-0 -top-6" />
+              <div className="w-[4px] bg-[#6587A8] h-[120px]"></div>
+              {logoImage && <Image src={logoImage} alt={logoTeksFeatures} width={120} height={120} priority className="rounded-full absolute -left-0 -top-3" />}
             </div>
 
             {/* Saleswatch Suite Section */}
             <div className="flex flex-col gap-4">
-              <div className="flex items-center justify-center gap-3 lg:justify-start">
-                <Image src="/assets/images/character2.jpg" alt="Saleswatch Logo" width={60} height={60} priority className="rounded-full lg:hidden" />
+              <div className="flex items-center justify-center gap-0 md:gap-3 lg:justify-start">
+                {logoImage && <Image src={logoImage} alt={logoTeksFeatures} width={60} height={60} priority className="rounded-full lg:hidden" />}
                 <div className="flex flex-col justify-start items-start">
-                  <h5 className="text-[#CFE3C0] font-semibold text-2xl leading-none">SALESWATCH</h5>
-                  <h5 className="text-[#CFE3C0] font-semibold text-2xl leading-none">SUITE</h5>
+                  <h5 className="text-[#CFE3C0] font-semibold text-2xl leading-none">{logoTeksFeatures}</h5>
+                  <h5 className="text-[#CFE3C0] font-semibold text-2xl leading-none">{suiteText}</h5>
                 </div>
               </div>
 
               <div className="flex flex-wrap gap-3 justify-center md:justify-start">
-                {suiteButtons.map((item) => (
-                  <CustomButton key={item} className="py-4 px-6 h-14 w-[204px] text-sm" onClick={() => scrollToSection('suite-modules')}>
-                    {item}
-                  </CustomButton>
-                ))}
+                {fiturSuiteList.flatMap((feature) =>
+                  (feature.features_list || []).map((item, itemIndex) => {
+                    const btnText = currentLang === 'id' ? item.title?.id || item.title?.en : item.title?.en || item.title?.id;
+
+                    return (
+                      <CustomButton key={`suite-btn-${item._id}-${itemIndex}`} className="py-4 px-6 h-14 w-[204px] text-sm" onClick={() => scrollToSection('suite-modules')}>
+                        {btnText}
+                      </CustomButton>
+                    );
+                  })
+                )}
               </div>
             </div>
           </div>

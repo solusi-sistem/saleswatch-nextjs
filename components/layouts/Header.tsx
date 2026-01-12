@@ -30,14 +30,20 @@ export default function Header() {
 
   const currentLang: LangKey = pathname.startsWith('/id') ? 'id' : '';
 
-  const logoUrl = useMemo(() => {
-    if (!layoutData?.header?.logo) return null;
+  // Memoize logo URLs
+  const logoUrls = useMemo(() => {
+    const logoHeader = layoutData?.header?.logo_header;
+
+    if (!logoHeader) return { logo: null, logoTeks: null };
 
     try {
-      const url = urlFor(layoutData.header.logo).width(170).fit('max').auto('format').url();
-      return url;
+      const logo = logoHeader.logo ? urlFor(logoHeader.logo).width(100).height(100).fit('max').auto('format').url() : null;
+
+      const logoTeks = logoHeader.logo_teks ? urlFor(logoHeader.logo_teks).width(200).fit('max').auto('format').url() : null;
+
+      return { logo, logoTeks };
     } catch (err) {
-      return null;
+      return { logo: null, logoTeks: null };
     }
   }, [layoutData]);
 
@@ -92,7 +98,7 @@ export default function Header() {
     setTimeout(() => {
       scrollToSection(hash, {
         headerOffset: 100,
-        delay: 100
+        delay: 100,
       });
     }, delay);
   };
@@ -132,7 +138,7 @@ export default function Header() {
         headerOffset: 100,
         delay: 100,
         maxAttempts: 30,
-        retryInterval: 200
+        retryInterval: 200,
       });
     }
   }, [pathname]);
@@ -180,7 +186,7 @@ export default function Header() {
     return (
       <header className="absolute top-0 left-0 right-0 text-white z-50 px-5 md:px-8 lg:px-12 pt-0">
         <div className="md:max-w-4xl lg:max-w-5xl xl:max-w-5xl 2xl:max-w-6xl mx-auto flex items-center justify-between py-5 px-6 lg:px-12 bg-[#061551] backdrop-blur-sm rounded-b-[50px]">
-          <div className="w-[170px] h-[40px] animate-pulse rounded"></div>
+          <div className="w-[170px] h-[40px] bg-white/10 animate-pulse rounded"></div>
         </div>
       </header>
     );
@@ -189,9 +195,11 @@ export default function Header() {
   return (
     <>
       <header className="absolute top-0 left-0 right-0 text-white z-50 px-5 md:px-8 lg:px-12 pt-0">
-        <div className="md:max-w-4xl lg:max-w-5xl xl:max-w-5xl 2xl:max-w-6xl mx-auto flex items-center justify-between py-5 px-6 lg:px-12 bg-[#061551] backdrop-blur-sm rounded-b-[50px]">
-          <Link href={currentLang === '' ? '/' : '/id'} className="flex items-center flex-shrink-0">
-            {logoUrl ? <Image src={logoUrl} alt="Company Logo" width={170} height={41} priority className="h-auto" /> : <span className="text-2xl font-bold text-white"></span>}
+        <div className="md:max-w-5xl lg:max-w-7xl xl:max-w-5xl 2xl:max-w-6xl mx-auto flex items-center justify-between py-5 px-6 lg:px-12 bg-[#061551] backdrop-blur-sm rounded-b-[50px]">
+          <Link href={currentLang === '' ? '/' : '/id'} className="flex items-center gap-0 flex-shrink-0">
+            {logoUrls.logo && <Image src={logoUrls.logo} alt="Company Logo Icon" width={100} height={100} priority className="w-[70px] h-[70px] object-contain" />}
+            {logoUrls.logoTeks && <Image src={logoUrls.logoTeks} alt="Company Logo Text" width={200} height={70} priority className="w-[150px] h-auto object-contain" />}
+            {!logoUrls.logo && !logoUrls.logoTeks && <span className="text-2xl font-bold text-white">SALESWATCH</span>}
           </Link>
 
           <div className="hidden lg:flex flex-1 justify-center">
@@ -239,7 +247,11 @@ export default function Header() {
         {mobileMenuOpen && (
           <div className="fixed inset-0 z-50 bg-[#061551] lg:hidden">
             <div className="flex items-center justify-between px-6 py-5 border-b border-white/10">
-              {logoUrl ? <Image src={logoUrl} alt="Company Logo" width={150} height={36} className="h-auto" /> : <span className="text-xl font-bold text-white">SALESWATCH</span>}
+              <div className="flex items-center gap-2">
+                {logoUrls.logo && <Image src={logoUrls.logo} alt="Company Logo Icon" width={50} height={50} className="h-auto w-auto max-h-[50px]" />}
+                {logoUrls.logoTeks && <Image src={logoUrls.logoTeks} alt="Company Logo Text" width={100} height={36} className="h-auto w-auto max-h-[36px]" />}
+                {!logoUrls.logo && !logoUrls.logoTeks && <span className="text-xl font-bold text-white">SALESWATCH</span>}
+              </div>
               <button onClick={closeAll} className="text-3xl leading-none" aria-label="Close menu">
                 ✕
               </button>

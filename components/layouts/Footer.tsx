@@ -26,14 +26,20 @@ export default function Footer() {
 
   const currentLang: LangKey = pathname.startsWith('/id') ? 'id' : '';
 
-  const footerLogoUrl = useMemo(() => {
-    if (!layoutData?.footer?.logo_footer) return null;
+  // Memoize footer logo URLs
+  const footerLogoUrls = useMemo(() => {
+    const logoFooter = layoutData?.footer?.logo_footer;
+
+    if (!logoFooter) return { logo: null, logoTeks: null };
 
     try {
-      const url = urlFor(layoutData.footer.logo_footer).width(170).fit('max').auto('format').url();
-      return url;
+      const logo = logoFooter.logo ? urlFor(logoFooter.logo).width(100).height(100).fit('max').auto('format').url() : null;
+
+      const logoTeks = logoFooter.logo_teks ? urlFor(logoFooter.logo_teks).width(200).fit('max').auto('format').url() : null;
+
+      return { logo, logoTeks };
     } catch (err) {
-      return null;
+      return { logo: null, logoTeks: null };
     }
   }, [layoutData]);
 
@@ -147,26 +153,20 @@ export default function Footer() {
         <div className="max-w-6xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-12 gap-9">
             <div className="md:col-span-5 pe-8">
-              <Link href={currentLang === '' ? '/' : '/id'} className="flex items-center">
-                {!loading && footerLogoUrl ? (
-                  <Image
-                    src={footerLogoUrl}
-                    alt="Saleswatch Footer Logo"
-                    width={170}
-                    height={41}
-                    priority
-                    className="h-auto"
-                  />
+              <Link href={currentLang === '' ? '/' : '/id'} className="flex items-center gap-0 mb-0">
+                {!loading && (footerLogoUrls.logo || footerLogoUrls.logoTeks) ? (
+                  <>
+                    {footerLogoUrls.logo && <Image src={footerLogoUrls.logo} alt="Company Logo Icon" width={100} height={100} priority className="w-[70px] h-[70px] object-contain" />}
+                    {footerLogoUrls.logoTeks && <Image src={footerLogoUrls.logoTeks} alt="Company Logo Text" width={200} height={70} priority className="w-[150px] h-auto object-contain" />}
+                  </>
+                ) : !loading ? (
+                  <span className="text-2xl font-bold text-white">SALESWATCH</span>
                 ) : (
-                  <div className="w-[170px] h-[41px] bg-white/10 animate-pulse rounded"></div>
+                  <div className="w-[220px] h-[70px] bg-white/10 animate-pulse rounded"></div>
                 )}
               </Link>
 
-              {footerDescription && (
-                <p className="my-5 text-sm leading-relaxed">
-                  {footerDescription}
-                </p>
-              )}
+              {footerDescription && <p className="my-2 text-sm leading-relaxed">{footerDescription}</p>}
 
               {socialMediaLinks.length > 0 && (
                 <div className="mt-4 flex gap-4">
