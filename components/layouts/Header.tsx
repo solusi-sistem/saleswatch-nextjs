@@ -19,6 +19,7 @@ const LANGUAGES: LanguageMap = {
 
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [isAnimating, setIsAnimating] = useState(false);
   const [langOpen, setLangOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -66,8 +67,16 @@ export default function Header() {
   const loginUrl = ctaButtons?.login_button?.login_url || 'https://dash.saleswatch.id/login';
 
   const closeAll = () => {
-    setMobileMenuOpen(false);
-    setLangOpen(false);
+    setIsAnimating(false);
+    setTimeout(() => {
+      setMobileMenuOpen(false);
+      setLangOpen(false);
+    }, 300); // Wait for animation to complete
+  };
+
+  const openMobileMenu = () => {
+    setMobileMenuOpen(true);
+    setTimeout(() => setIsAnimating(true), 10);
   };
 
   const handleLoginClick = () => {
@@ -180,6 +189,18 @@ export default function Header() {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
+  // Prevent body scroll when mobile menu is open
+  useEffect(() => {
+    if (mobileMenuOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [mobileMenuOpen]);
+
   const showLanguageSwitcher = layoutData?.header?.language_switcher?.show_language_switcher !== false;
 
   if (loading) {
@@ -194,11 +215,11 @@ export default function Header() {
 
   return (
     <>
-      <header className="absolute top-0 left-0 right-0 text-white z-50 px-5 md:px-8 lg:px-12 pt-0">
-        <div className="md:max-w-5xl lg:max-w-7xl xl:max-w-5xl 2xl:max-w-6xl mx-auto flex items-center justify-between py-5 px-6 lg:px-12 bg-[#061551] backdrop-blur-sm rounded-b-[50px]">
+      <header className="absolute top-0 left-0 right-0 text-white z-50 px-9 md:px-8 lg:px-12 pt-0">
+        <div className="md:max-w-4xl lg:max-w-5xl xl:max-w-5xl 2xl:max-w-6xl mx-auto flex items-center justify-between py-5 md:py-3 px-6 lg:px-12 bg-[#061551] backdrop-blur-sm rounded-b-[50px]">
           <Link href={currentLang === '' ? '/' : '/id'} className="flex items-center gap-0 flex-shrink-0">
-            {logoUrls.logo && <Image src={logoUrls.logo} alt="Company Logo Icon" width={100} height={100} priority className="w-[70px] h-[70px] object-contain" />}
-            {logoUrls.logoTeks && <Image src={logoUrls.logoTeks} alt="Company Logo Text" width={200} height={70} priority className="w-[150px] h-auto object-contain" />}
+            {logoUrls.logo && <Image src={logoUrls.logo} alt="Company Logo Icon" width={100} height={100} priority className="w-[50px] md:w-[70px] md:h-[50px] md:h-[70px] object-contain" />}
+            {logoUrls.logoTeks && <Image src={logoUrls.logoTeks} alt="Company Logo Text" width={200} height={70} priority className="w-[130px] md:w-[150px] h-auto object-contain -ms-1" />}
             {!logoUrls.logo && !logoUrls.logoTeks && <span className="text-2xl font-bold text-white">SALESWATCH</span>}
           </Link>
 
@@ -239,55 +260,112 @@ export default function Header() {
             )}
           </div>
 
-          <button className="lg:hidden p-2 text-2xl" onClick={() => setMobileMenuOpen(true)} aria-label="Open menu">
+          <button 
+            className="lg:hidden p-2 text-2xl hover:bg-white/10 rounded-md transition-colors" 
+            onClick={openMobileMenu} 
+            aria-label="Open menu"
+          >
             ☰
           </button>
         </div>
 
+        {/* Mobile Menu with Slide Animation */}
         {mobileMenuOpen && (
-          <div className="fixed inset-0 z-50 bg-[#061551] lg:hidden">
-            <div className="flex items-center justify-between px-6 py-5 border-b border-white/10">
-              <div className="flex items-center gap-2">
-                {logoUrls.logo && <Image src={logoUrls.logo} alt="Company Logo Icon" width={50} height={50} className="h-auto w-auto max-h-[50px]" />}
-                {logoUrls.logoTeks && <Image src={logoUrls.logoTeks} alt="Company Logo Text" width={100} height={36} className="h-auto w-auto max-h-[36px]" />}
-                {!logoUrls.logo && !logoUrls.logoTeks && <span className="text-xl font-bold text-white">SALESWATCH</span>}
+          <>
+            {/* Backdrop with fade animation */}
+            <div 
+              className={`fixed inset-0 bg-black/50 z-40 lg:hidden transition-opacity duration-300 ${
+                isAnimating ? 'opacity-100' : 'opacity-0'
+              }`}
+              onClick={closeAll}
+            />
+            
+            {/* Sliding Panel */}
+            <div 
+              className={`fixed top-0 right-0 bottom-0 w-full sm:w-96 bg-[#061551] z-50 lg:hidden 
+                transform transition-transform duration-300 ease-out shadow-2xl ${
+                isAnimating ? 'translate-x-0' : 'translate-x-full'
+              }`}
+            >
+              <div className="flex items-center justify-between px-6 py-5 border-b border-white/10">
+                <div className="flex items-center gap-2">
+                  {logoUrls.logo && (
+                    <Image 
+                      src={logoUrls.logo} 
+                      alt="Company Logo Icon" 
+                      width={100} 
+                      height={100} 
+                      priority 
+                      className="w-[50px] md:w-[70px] md:h-[50px] md:h-[70px] object-contain" 
+                    />
+                  )}
+                  {logoUrls.logoTeks && (
+                    <Image 
+                      src={logoUrls.logoTeks} 
+                      alt="Company Logo Text" 
+                      width={200} 
+                      height={70} 
+                      priority 
+                      className="w-[130px] md:w-[150px] h-auto object-contain -ms-1" 
+                    />
+                  )}
+                  {!logoUrls.logo && !logoUrls.logoTeks && (
+                    <span className="text-2xl font-bold text-white">SALESWATCH</span>
+                  )}
+                </div>
+                <button 
+                  onClick={closeAll} 
+                  className="text-2xl leading-none hover:bg-white/10 rounded-md p-2 transition-colors" 
+                  aria-label="Close menu"
+                >
+                  ✕
+                </button>
               </div>
-              <button onClick={closeAll} className="text-3xl leading-none" aria-label="Close menu">
-                ✕
-              </button>
+
+              <div className="px-6 py-6 space-y-2 overflow-y-auto h-[calc(100vh-80px)]">
+                <Nav isMobile onNavClick={handleNavClick} navItems={regularMenuItems} />
+
+                {showLanguageSwitcher && (
+                  <div className="flex gap-3 pt-4">
+                    {(Object.keys(LANGUAGES) as LangKey[]).map((key) => (
+                      <button 
+                        key={key} 
+                        onClick={() => handleLanguageSwitch(key)} 
+                        className={`flex items-center gap-2 px-3 py-2 rounded-md text-sm transition-colors ${
+                          currentLang === key ? 'bg-white/20' : 'bg-white/10 hover:bg-white/15'
+                        }`}
+                      >
+                        <img src={LANGUAGES[key].flag} className="w-5 h-3" alt="" />
+                        {LANGUAGES[key].label}
+                      </button>
+                    ))}
+                  </div>
+                )}
+
+                {(showRequestDemo || showLogin) && (
+                  <div className="flex flex-col gap-4 pt-6">
+                    {showRequestDemo && (
+                      <button 
+                        onClick={handleRequestDemoClick} 
+                        className="w-full bg-[#6587A8] hover:bg-[#CFE3C0] hover:text-[#6587A8] px-4 py-2 rounded-md transition cursor-pointer text-white"
+                      >
+                        {requestDemoText}
+                      </button>
+                    )}
+
+                    {showLogin && (
+                      <button 
+                        onClick={handleLoginClick} 
+                        className="w-full bg-[#6587A8] hover:bg-[#CFE3C0] hover:text-[#6587A8] px-4 py-2 rounded-md transition cursor-pointer text-white"
+                      >
+                        {loginText}
+                      </button>
+                    )}
+                  </div>
+                )}
+              </div>
             </div>
-
-            <div className="px-6 py-6 space-y-2">
-              <Nav isMobile onNavClick={handleNavClick} navItems={regularMenuItems} />
-
-              {showLanguageSwitcher && (
-                <div className="flex gap-3 pt-4">
-                  {(Object.keys(LANGUAGES) as LangKey[]).map((key) => (
-                    <button key={key} onClick={() => handleLanguageSwitch(key)} className={`flex items-center gap-2 px-3 py-2 rounded-md text-sm ${currentLang === key ? 'bg-white/20' : 'bg-white/10'}`}>
-                      <img src={LANGUAGES[key].flag} className="w-5 h-3" alt="" />
-                      {LANGUAGES[key].label}
-                    </button>
-                  ))}
-                </div>
-              )}
-
-              {(showRequestDemo || showLogin) && (
-                <div className="flex flex-col gap-4 pt-6">
-                  {showRequestDemo && (
-                    <button onClick={handleRequestDemoClick} className="w-full bg-[#6587A8] hover:bg-[#CFE3C0] hover:text-[#6587A8] px-4 py-2 rounded-md transition cursor-pointer text-white">
-                      {requestDemoText}
-                    </button>
-                  )}
-
-                  {showLogin && (
-                    <button onClick={handleLoginClick} className="w-full bg-[#6587A8] hover:bg-[#CFE3C0] hover:text-[#6587A8] px-4 py-2 rounded-md transition cursor-pointer text-white">
-                      {loginText}
-                    </button>
-                  )}
-                </div>
-              )}
-            </div>
-          </div>
+          </>
         )}
       </header>
 

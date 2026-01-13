@@ -316,6 +316,7 @@ export async function getSectionData(sectionId: string): Promise<Section | null>
                 }
             },
             feature_rows[] {
+                _key,
                 feature_name {
                     en,
                     id
@@ -324,28 +325,36 @@ export async function getSectionData(sectionId: string): Promise<Section | null>
             },
             pricing_plans[]->{
                 _id,
-                plan_name {
+                order,
+                plan_name,
+                is_popular,
+                price {
                     en,
                     id
                 },
-                price_per_user,
-                setup_fee,
-                main_features[] {
+                setup_fee {
                     en,
                     id
                 },
-                flex_user,
-                custom_features[] {
-                    feature_name {
-                        en,
-                        id
-                    },
-                    feature_value {
-                        en,
-                        id
-                    }
-                }
-            },
+                main_features {
+                    en,
+                    id
+                },
+                flex_user {
+                    en,
+                    id
+                },
+                cta_button {
+                    text_en,
+                    text_id,
+                    link
+                },
+                styling {
+                    background_color,
+                    border_color
+                },
+                status
+            } | order(order asc),
             footer_note {
                 en,
                 id
@@ -472,69 +481,82 @@ export async function getSectionData(sectionId: string): Promise<Section | null>
 
         // Blog List Section Content
         blog_list_section_content {
-            title_section {
+    title_section {
+        en,
+        id
+    },
+    desc_section {
+        en,
+        id
+    },
+    post_per_page,
+    tampilkan_semua,
+    list_blogs[]->{
+        _id,
+        title {
+            en,
+            id
+        },
+        slug {
+            current,
+            _type
+        },
+        excerpt {
+            en,
+            id
+        },
+        date,
+        // ✅ PENTING: Pastikan category di-expand dengan ->
+        category->{
+            _id,
+            name {
                 en,
                 id
             },
-            desc_section {
+            slug {
+                current,
+                _type
+            },
+            description {
                 en,
                 id
             },
-            post_per_page,
-            tampilkan_semua,
-            list_blogs[]->{
+            status
+        },
+        author,
+        image {
+            asset->{
                 _id,
-                title {
-                    en,
-                    id
-                },
-                slug {
-                    current,
-                    _type
-                },
-                excerpt {
-                    en,
-                    id
-                },
-                date,
-                category {
-                    en,
-                    id
-                },
-                author,
-                image {
-                    asset->{
-                        _id,
-                        url
-                    },
-                    alt {
-                        en,
-                        id
-                    }
-                },
-                content {
-                    en,
-                    id
-                },
-                tags,
-                seo {
-                    metaTitle {
-                        en,
-                        id
-                    },
-                    metaDescription {
-                        en,
-                        id
-                    },
-                    keywords {
-                        en,
-                        id
-                    }
-                },
-                featured,
-                status
+                url
+            },
+            alt {
+                en,
+                id
             }
-        }
+        },
+        content {
+            en,
+            id
+        },
+        tags,
+        seo {
+            metaTitle {
+                en,
+                id
+            },
+            metaDescription {
+                en,
+                id
+            },
+            keywords {
+                en,
+                id
+            }
+        },
+        featured,
+        status
+    }
+}
     }`;
 
   try {

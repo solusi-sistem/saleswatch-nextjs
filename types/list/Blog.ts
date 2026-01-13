@@ -12,33 +12,36 @@ export interface SanityImage {
     alt?: LocalizedText;
 }
 
-export interface BlogItem {
+// NEW: Blog Category Type
+export interface BlogCategory {
     _id: string;
-    // Title - Bilingual
-    title: LocalizedText;
-    // Slug
+    name: LocalizedText;
     slug: {
         current: string;
         _type: string;
     };
-    // Excerpt - Bilingual
-    excerpt: LocalizedText;
-    // Publication Date
-    date: string;
-    // Category - Bilingual
-    category: LocalizedText;
-    // Author
-    author: string;
-    // Featured Image
-    image: SanityImage;
-    // Content - Bilingual (Portable Text)
-    content?: {
-        en: any[]; // Portable Text blocks
-        id: any[]; // Portable Text blocks
+    description?: LocalizedText;
+    status: 'active' | 'inactive';
+}
+
+export interface BlogItem {
+    _id: string;
+    title: LocalizedText;
+    slug: {
+        current: string;
+        _type: string;
     };
-    // Tags
+    excerpt: LocalizedText;
+    date: string;
+    // UPDATED: Category sekarang berupa object reference
+    category?: BlogCategory;
+    author: string;
+    image: SanityImage;
+    content?: {
+        en: any[];
+        id: any[];
+    };
     tags?: string[];
-    // SEO Settings
     seo?: {
         metaTitle?: LocalizedText;
         metaDescription?: LocalizedText;
@@ -47,8 +50,6 @@ export interface BlogItem {
             id: string[];
         };
     };
-    // Featured Post
     featured?: boolean;
-    // Status
     status?: 'draft' | 'published' | 'archived';
 }

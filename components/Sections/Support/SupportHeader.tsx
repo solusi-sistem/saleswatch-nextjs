@@ -155,7 +155,7 @@ export default function SupportHeader({ id }: SectionProps) {
                                 <button
                                     key={idx}
                                     onClick={() => handleClick(btn)}
-                                    className="flex items-center gap-3 bg-gray-100 hover:bg-gray-200 text-gray-800 font-medium 
+                                    className="flex items-center gap-3 bg-[#061551]/5 hover:bg-[#061551]/8 text-gray-800 font-medium 
                     px-4 py-3 rounded-lg transition-colors duration-200
                     w-full sm:w-auto sm:max-w-md animate__animated animate__fadeInUp"
                                 >

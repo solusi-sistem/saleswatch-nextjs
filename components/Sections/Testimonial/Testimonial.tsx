@@ -110,7 +110,7 @@ export default function Testimonial({ id }: SectionProps) {
 
     return (
         <section className="relative w-full bg-[#2D2D2F] py-16 md:py-24 overflow-hidden">
-            <div className="mx-auto max-w-6xl px-6">
+         <div className="mx-auto max-w-4xl min-[1272px]:max-w-6xl px-6">
                 <div className="relative overflow-hidden">
                     <div className="flex transition-transform duration-700 ease-in-out" style={{ transform: `translateX(-${currentIndex * 100}%)` }}>
                         {testimonials.map((item, index) => {

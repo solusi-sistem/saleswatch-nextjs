@@ -11,11 +11,9 @@ import Link from 'next/link';
 import { isPagePublished, isSectionPublished } from '@/lib/isPublished';
 import { renderSection } from '@/contexts/renderSection';
 
-// Force dynamic rendering
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
-// Generate Metadata untuk SEO (SSR)
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const resolvedParams = await params;
   const slug = `/${resolvedParams.slug}`;
@@ -63,17 +61,13 @@ export default async function EnglishSlugPage({ params }: PageProps) {
   const resolvedParams = await params;
   const slug = `/${resolvedParams.slug}`;
 
-  // ⚠️ cookies() DI NEXT 15+ HARUS await
   const cookieStore = await cookies();
   const localeCookie = cookieStore.get('locale');
 
-  // 🛑 PINDAHKAN REDIRECT LOGIC KE ATAS - SEBELUM FETCH DATA
-  // Hormati pilihan user - jika pilih Indonesian, redirect ke /id/slug
   if (localeCookie?.value === 'id') {
     redirect(`/id${slug}`);
   }
 
-  // 🌍 First visit → geo check
   if (!localeCookie) {
     const geoData = await getGeoData();
     if (geoData.languages === 'id') {
@@ -81,65 +75,44 @@ export default async function EnglishSlugPage({ params }: PageProps) {
     }
   }
 
-  // Fetch page data SETELAH redirect check
   const pageData = await getPageData(slug);
 
-  // Jika data tidak ditemukan
   if (!pageData) {
     return (
       <>
-        <Header />
-        <section
-          className="d-flex flex-column justify-content-center align-items-center text-center min-vh-100"
-          style={{
-            background: "linear-gradient(135deg, #007BFF 0%, #003580 100%)",
-            padding: "100px 20px",
-          }}
-        >
-          <div className="mb-4">
-            <i
-              className="bi bi-emoji-frown"
-              style={{
-                fontSize: "5rem",
-                color: "white",
-                filter: "drop-shadow(0 2px 4px rgba(0,0,0,0.3))",
-              }}
-            ></i>
-          </div>
+        {/* <Header /> */}
+        <section className="min-h-screen bg-[#f2f7ff] flex items-center justify-center px-4 py-20">
+          <div className="text-center max-w-2xl mx-auto">
+            <p className="text-gray-600 text-sm font-medium uppercase tracking-wider mb-4">
+              KESALAHAN: HALAMAN TIDAK DITEMUKAN
+            </p>
+            
+            <h1 className="text-[120px] md:text-[180px] font-black text-gray-900 leading-none mb-6">
+              404
+            </h1>
+            
+            <p className="text-gray-700 text-lg mb-8">
+              Halaman ini tidak tersedia.
+            </p>
 
-          <h1 className="text-white fw-bold mb-3">
-            Page Not Found
-          </h1>
-
-          <p className="text-white-50 fs-5 mb-4" style={{ maxWidth: "600px" }}>
-            Sorry, we couldn't find the page you're looking for. The page may have been moved or deleted.
-          </p>
-
-          <div className="d-flex flex-wrap justify-content-center gap-3">
-            <Link href="/" className="btn btn-outline-light btn-lg fw-semibold">
-              Back to Home
+            <Link 
+              href="/" 
+              className="inline-block bg-black text-white font-semibold px-8 py-3 rounded-full 
+                         hover:bg-gray-800 transition-all duration-200 hover:shadow-lg"
+            >
+              Pergi ke beranda
             </Link>
           </div>
-
-          <div
-            className="position-absolute bottom-0 start-0 end-0"
-            style={{
-              height: "150px",
-              background: "rgba(255,255,255,0.05)",
-              clipPath: "polygon(0 70%, 100% 0, 100% 100%, 0 100%)",
-            }}
-          ></div>
         </section>
-        <Footer />
+        {/* <Footer /> */}
       </>
     );
   }
 
-  // Cek apakah page sudah dipublikasi
   if (!isPagePublished(pageData)) {
     return (
       <>
-        <Header />
+        {/* <Header /> */}
         <div
           className="w-100 min-vh-100 d-flex flex-column justify-content-center align-items-center"
           style={{
@@ -169,17 +142,15 @@ export default async function EnglishSlugPage({ params }: PageProps) {
             </div>
           </div>
         </div>
-        <Footer />
+        {/* <Footer /> */}
       </>
     );
   }
 
-  // Filter section yang sudah published
   const publishedSections = pageData?.section_list?.filter(section =>
     isSectionPublished(section)
   ) || [];
 
-  // 🇬🇧 English SSR
   return (
     <div lang="en">
       <Header />

@@ -7,16 +7,17 @@ import { ArrowRight } from 'lucide-react';
 import { getSectionData } from '@/hooks/getSectionData';
 import { Section } from '@/types/section';
 import { BlogItem } from '@/types/list/Blog';
-import { LangKey } from '@/types';
 import { usePathname } from 'next/navigation';
 
 interface BlogProps {
     id?: string;
 }
 
+type BlogLocale = 'en' | 'id';
+
 export default function Blog({ id }: BlogProps) {
     const pathname = usePathname();
-    const locale: LangKey = pathname.startsWith('/id') ? 'id' : '';
+    const locale: BlogLocale = pathname.startsWith('/id') ? 'id' : 'en';
 
     const [sectionData, setSectionData] = useState<Section | null>(null);
     const [loading, setLoading] = useState(true);
@@ -26,7 +27,6 @@ export default function Blog({ id }: BlogProps) {
     const card2Ref = useRef<HTMLElement>(null);
     const card3Ref = useRef<HTMLElement>(null);
 
-    // Fetch data dari Sanity
     useEffect(() => {
         const fetchSectionData = async () => {
             if (!id) return;
@@ -45,7 +45,6 @@ export default function Blog({ id }: BlogProps) {
         fetchSectionData();
     }, [id]);
 
-    // Setup Intersection Observer SETELAH data di-load
     useEffect(() => {
         if (loading || !sectionData?.blog_content) return;
 
@@ -93,13 +92,11 @@ export default function Blog({ id }: BlogProps) {
 
     const { blog_content } = sectionData;
 
-    // Validasi list_blog
     if (!blog_content.list_blog || !Array.isArray(blog_content.list_blog)) {
         console.warn('No blog list available');
         return null;
     }
 
-    // Filter hanya blog yang published
     const publishedBlogs = blog_content.list_blog.filter(
         (blog: BlogItem) => blog.status === 'published'
     );
@@ -136,15 +133,23 @@ export default function Blog({ id }: BlogProps) {
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
                     {latestBlogs.map((blog: BlogItem, index: number) => {
-                        // Safe extraction dengan fallbacks
                         const blogSlug = blog.slug?.current || '';
-                        const blogTitle = (locale === 'id' ? blog.title.id : blog.title.en) || 'Untitled';
-                        const blogCategory = (locale === 'id' ? blog.category.id : blog.category.en) || 'Uncategorized';
+                        
+                        const blogTitle = blog.title 
+                            ? (locale === 'id' ? (blog.title.id || blog.title.en) : (blog.title.en || blog.title.id)) || 'Untitled'
+                            : 'Untitled';
+                        const blogCategory = blog.category?.name
+                            ? (locale === 'id' ? (blog.category.name.id || blog.category.name.en) : (blog.category.name.en || blog.category.name.id)) || 'Uncategorized'
+                            : 'Uncategorized';
+                        
                         const imageUrl = blog.image?.asset?.url || '/placeholder.jpg';
-                        const imageAlt = (locale === 'id' ? blog.image?.alt?.id : blog.image?.alt?.en) || blogTitle;
+                        
+                        const imageAlt = blog.image?.alt 
+                            ? (locale === 'id' ? (blog.image.alt.id || blog.image.alt.en) : (blog.image.alt.en || blog.image.alt.id)) || blogTitle
+                            : blogTitle;
+                        
                         const author = blog.author || 'Unknown';
 
-                        // Validation: Skip jika slug kosong
                         if (!blogSlug) {
                             console.warn(`Blog ${index} has no slug, skipping`);
                             return null;
