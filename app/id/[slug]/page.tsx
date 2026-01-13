@@ -79,14 +79,14 @@ export default async function IndonesianSlugPage({ params }: PageProps) {
           <div className="text-center max-w-2xl mx-auto">
             <p className="text-gray-600 text-sm font-medium uppercase tracking-wider mb-4">KESALAHAN: HALAMAN TIDAK DITEMUKAN</p>
 
-            <h1 className="text-[120px] md:text-[180px] font-black text-gray-900 leading-none mb-6">404</h1>
+            <h1 className="text-[120px] md:text-[180px] font-black text-gray-800 leading-none mb-6">404</h1>
 
             <p className="text-gray-700 text-lg mb-8">Halaman ini tidak tersedia.</p>
 
             <Link
-              href="/id"
-              className="inline-block bg-black text-white font-semibold px-8 py-3 rounded-full 
-                         hover:bg-gray-800 transition-all duration-200 hover:shadow-lg"
+              href="/"
+              className="inline-block bg-gray-800 text-white font-semibold px-8 py-3 rounded-full 
+                         hover:bg-gray-900 transition-all duration-200 hover:shadow-lg"
             >
               Pergi ke beranda
             </Link>
