@@ -87,7 +87,7 @@ export default async function EnglishSlugPage({ params }: PageProps) {
               KESALAHAN: HALAMAN TIDAK DITEMUKAN
             </p>
             
-            <h1 className="text-[120px] md:text-[180px] font-black text-gray-900 leading-none mb-6">
+            <h1 className="text-[120px] md:text-[180px] font-black text-gray-800 leading-none mb-6">
               404
             </h1>
             
@@ -97,8 +97,8 @@ export default async function EnglishSlugPage({ params }: PageProps) {
 
             <Link 
               href="/" 
-              className="inline-block bg-black text-white font-semibold px-8 py-3 rounded-full 
-                         hover:bg-gray-800 transition-all duration-200 hover:shadow-lg"
+              className="inline-block bg-gray-800 text-white font-semibold px-8 py-3 rounded-full 
+                         hover:bg-gray-900 transition-all duration-200 hover:shadow-lg"
             >
               Pergi ke beranda
             </Link>
