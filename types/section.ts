@@ -43,15 +43,49 @@ export interface FaqItem {
 // ==========================================
 export interface PricingPlan {
     _id: string;
-    plan_name: LocalizedText;
-    price_per_user: string;
-    setup_fee: string;
-    main_features: LocalizedText[];
-    flex_user: string;
-    custom_features?: {
+    order: number;
+    plan_name: string;
+    is_popular: boolean;
+    price: {
+        en: string;
+        id: string;
+    };
+    setup_fee: {
+        en: string;
+        id: string;
+    };
+    main_features: {
+        en: string[];
+        id: string[];
+    };
+    flex_user: {
+        en: string;
+        id: string;
+    };
+    cta_button: {
+        text_en: string;
+        text_id: string;
+        link: string;
+    };
+    styling: {
+        background_color: string;
+        border_color: string;
+    };
+    status: 'active' | 'inactive';
+}
+
+export interface PricingContent {
+    table_headers?: {
+        no_column: LocalizedText;
+        feature_column: LocalizedText;
+    };
+    feature_rows?: {
+        _key: string;
         feature_name: LocalizedText;
-        feature_value: LocalizedText;
+        feature_type: 'price' | 'setup_fee' | 'main_features' | 'flex_user';
     }[];
+    pricing_plans?: PricingPlan[];
+    footer_note?: LocalizedText;
 }
 
 // ==========================================
@@ -273,18 +307,18 @@ export interface RequestDemoContent {
 // ==========================================
 // PRICING CONTENT
 // ==========================================
-export interface PricingContent {
-    table_headers?: {
-        no_column: LocalizedText;
-        feature_column: LocalizedText;
-    };
-    feature_rows?: {
-        feature_name: LocalizedText;
-        feature_type: 'price' | 'setup_fee' | 'main_features' | 'flex_user' | 'custom';
-    }[];
-    pricing_plans?: PricingPlan[];
-    footer_note?: LocalizedText;
-}
+// export interface PricingContent {
+//     table_headers?: {
+//         no_column: LocalizedText;
+//         feature_column: LocalizedText;
+//     };
+//     feature_rows?: {
+//         feature_name: LocalizedText;
+//         feature_type: 'price' | 'setup_fee' | 'main_features' | 'flex_user' | 'custom';
+//     }[];
+//     pricing_plans?: PricingPlan[];
+//     footer_note?: LocalizedText;
+// }
 
 // ==========================================
 // SUPPORT SECTION CONTENT

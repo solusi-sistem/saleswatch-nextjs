@@ -10,11 +10,9 @@ import Link from 'next/link';
 import { isPagePublished, isSectionPublished } from '@/lib/isPublished';
 import { renderSection } from '@/contexts/renderSection';
 
-// Force dynamic rendering
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
-// Generate Metadata untuk SEO (SSR)
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const resolvedParams = await params;
   const slug = `/${resolvedParams.slug}`;
@@ -27,19 +25,13 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     };
   }
 
-  const title =
-    pageData?.seo_title?.seo_title_id ||
-    pageData?.name_page ||
-    'Halaman Tanpa Judul';
+  const title = pageData?.seo_title?.seo_title_id || pageData?.name_page || 'Halaman Tanpa Judul';
 
-  const description =
-    pageData?.seo_description?.seo_description_id || '';
+  const description = pageData?.seo_description?.seo_description_id || '';
 
-  const keywords =
-    pageData?.seo_keyword?.seo_keyword_id || '';
+  const keywords = pageData?.seo_keyword?.seo_keyword_id || '';
 
-  const imageUrl =
-    pageData?.seo_icon?.secure_url || pageData?.seo_icon?.url;
+  const imageUrl = pageData?.seo_icon?.secure_url || pageData?.seo_icon?.url;
 
   return {
     title,
@@ -59,10 +51,10 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     },
     icons: imageUrl
       ? {
-        icon: [{ url: imageUrl }],
-        shortcut: [{ url: imageUrl }],
-        apple: [{ url: imageUrl }],
-      }
+          icon: [{ url: imageUrl }],
+          shortcut: [{ url: imageUrl }],
+          apple: [{ url: imageUrl }],
+        }
       : undefined,
   };
 }
@@ -72,71 +64,43 @@ export default async function IndonesianSlugPage({ params }: PageProps) {
   const slug = `/${resolvedParams.slug}`;
   const pageData = await getPageData(slug);
 
-  // Check cookie - jika user pilih bahasa Inggris, redirect ke English version
   const cookieStore = await cookies();
   const localeCookie = cookieStore.get('locale');
-  
+
   if (localeCookie?.value === 'en') {
     redirect(slug);
   }
 
-  // Jika data tidak ditemukan
   if (!pageData) {
     return (
       <>
         <Header />
-        <section
-          className="d-flex flex-column justify-content-center align-items-center text-center min-vh-100"
-          style={{
-            background: 'linear-gradient(135deg, #007BFF 0%, #003580 100%)',
-            padding: '100px 20px',
-          }}
-        >
-          <div className="mb-4">
-            <i
-              className="bi bi-emoji-frown"
-              style={{
-                fontSize: '5rem',
-                color: 'white',
-                filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.3))',
-              }}
-            ></i>
-          </div>
+        <section className="min-h-screen bg-[#f2f7ff] flex items-center justify-center px-4 py-20">
+          <div className="text-center max-w-2xl mx-auto">
+            <p className="text-gray-600 text-sm font-medium uppercase tracking-wider mb-4">KESALAHAN: HALAMAN TIDAK DITEMUKAN</p>
 
-          <h1 className="text-white fw-bold mb-3">
-            Halaman Tidak Ditemukan
-          </h1>
+            <h1 className="text-[120px] md:text-[180px] font-black text-gray-900 leading-none mb-6">404</h1>
 
-          <p className="text-white-50 fs-5 mb-4" style={{ maxWidth: '600px' }}>
-            Maaf, kami tidak dapat menemukan halaman yang Anda cari.
-            Halaman tersebut mungkin telah dipindahkan atau dihapus.
-          </p>
+            <p className="text-gray-700 text-lg mb-8">Halaman ini tidak tersedia.</p>
 
-          <div className="d-flex flex-wrap justify-content-center gap-3">
-            <Link href="/id" className="btn btn-outline-light btn-lg fw-semibold">
-              Kembali ke Beranda
+            <Link
+              href="/id"
+              className="inline-block bg-black text-white font-semibold px-8 py-3 rounded-full 
+                         hover:bg-gray-800 transition-all duration-200 hover:shadow-lg"
+            >
+              Pergi ke beranda
             </Link>
           </div>
-
-          <div
-            className="position-absolute bottom-0 start-0 end-0"
-            style={{
-              height: '150px',
-              background: 'rgba(255,255,255,0.05)',
-              clipPath: 'polygon(0 70%, 100% 0, 100% 100%, 0 100%)',
-            }}
-          ></div>
         </section>
-        <Footer />
+        {/* <Footer /> */}
       </>
     );
   }
 
-  // Cek apakah halaman sudah dipublikasikan
   if (!isPagePublished(pageData)) {
     return (
       <>
-        <Header />
+        {/* <Header /> */}
         <div
           className="w-100 min-vh-100 d-flex flex-column justify-content-center align-items-center"
           style={{
@@ -146,12 +110,8 @@ export default async function IndonesianSlugPage({ params }: PageProps) {
           }}
         >
           <div className="text-center">
-            <h1 className="fs-1 text-white fw-bold mb-3">
-              Halaman Ini Belum Dipublikasikan
-            </h1>
-            <p className="text-white mb-4 fs-4">
-              Maaf, halaman yang Anda cari belum tersedia saat ini.
-            </p>
+            <h1 className="fs-1 text-white fw-bold mb-3">Halaman Ini Belum Dipublikasikan</h1>
+            <p className="text-white mb-4 fs-4">Maaf, halaman yang Anda cari belum tersedia saat ini.</p>
             <div className="d-flex gap-3 justify-content-center">
               <Link
                 href="/id"
@@ -166,24 +126,18 @@ export default async function IndonesianSlugPage({ params }: PageProps) {
             </div>
           </div>
         </div>
-        <Footer />
+        {/* <Footer /> */}
       </>
     );
   }
 
-  // Filter section yang sudah dipublikasikan
-  const publishedSections =
-    pageData?.section_list?.filter(section =>
-      isSectionPublished(section)
-    ) || [];
+  const publishedSections = pageData?.section_list?.filter((section) => isSectionPublished(section)) || [];
 
   return (
     <div lang="id">
       <Header />
       {publishedSections.length > 0 ? (
-        publishedSections.map((section, index) =>
-          renderSection(section, index)
-        )
+        publishedSections.map((section, index) => renderSection(section, index))
       ) : (
         <div
           className="min-vh-100 flex items-center justify-center relative"
@@ -193,9 +147,7 @@ export default async function IndonesianSlugPage({ params }: PageProps) {
             transition: 'all 1s ease-in-out',
           }}
         >
-          <h1 className="fs-4 text-black fw-semibold">
-            Tidak Ada Konten yang Tersedia
-          </h1>
+          <h1 className="fs-4 text-black fw-semibold">Tidak Ada Konten yang Tersedia</h1>
         </div>
       )}
       <Footer />
