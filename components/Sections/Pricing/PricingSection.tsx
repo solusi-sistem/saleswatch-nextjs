@@ -6,7 +6,6 @@ import { getSectionData } from '@/hooks/getSectionData';
 import { PricingContent } from '@/types/section';
 import ScheduleDemoModal from '@/components/modals/ScheduleDemoModal';
 
-// Type definition for language
 type BlogLocale = 'en' | 'id';
 
 const isValidLanguage = (lang: string): lang is BlogLocale => {
@@ -35,7 +34,6 @@ export default function PricingSection({ id }: PricingSectionProps) {
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  // Fetch data dari Sanity
   useEffect(() => {
     async function fetchContent() {
       if (!id) return;
@@ -72,8 +70,17 @@ export default function PricingSection({ id }: PricingSectionProps) {
   const plans = content.pricing_plans.filter((p) => p.status === 'active');
   const footerNote = content.footer_note;
 
-  // Render text biasa tanpa centang (untuk Price & Setup Fee)
+  const getBackgroundColor = (plan: any) => {
+    return plan.styling?.background_color || 'bg-white';
+  };
+
+  const getBorderColor = (plan: any) => {
+    return plan.styling?.border_color || 'border-gray-200';
+  };
+
   const renderPlainText = (value: string) => {
+    if (!value) return <span className="text-gray-400">-</span>;
+    
     const lines = value.split('\n').filter((line) => line.trim());
     
     return (
@@ -87,8 +94,9 @@ export default function PricingSection({ id }: PricingSectionProps) {
     );
   };
 
-  // Render Flex User dengan warna (tanpa centang)
   const renderFlexUser = (value: string) => {
+    if (!value) return <span className="text-gray-400">-</span>;
+    
     const text = value.trim();
     const textColor = text.toLowerCase().includes('gratis') || text.toLowerCase().includes('free') || text.toLowerCase().includes('included')
       ? 'text-[#43C38A] font-medium'
@@ -98,6 +106,10 @@ export default function PricingSection({ id }: PricingSectionProps) {
   };
 
   const renderFeatureArray = (features: string[]) => {
+    if (!features || features.length === 0) {
+      return <span className="text-gray-400">-</span>;
+    }
+
     return (
       <div className="space-y-1.5">
         {features.map((feature, i) => (
@@ -124,7 +136,7 @@ export default function PricingSection({ id }: PricingSectionProps) {
                 {plans.map((plan) => (
                   <th
                     key={plan._id}
-                    className={`py-5 px-4 min-w-[180px] text-center ${plan.is_popular ? 'bg-[#f2f7ff]' : plan.styling.background_color} relative`}
+                    className={`py-5 px-4 min-w-[180px] text-center ${plan.is_popular ? 'bg-[#f2f7ff]' : getBackgroundColor(plan)} relative`}
                   >
                     {plan.is_popular && (
                       <span className="absolute -top-6 left-1/2 -translate-x-1/2 bg-[#061551] text-white text-xs font-bold px-3 py-1 rounded-full whitespace-nowrap">
@@ -136,7 +148,7 @@ export default function PricingSection({ id }: PricingSectionProps) {
                       onClick={() => setIsModalOpen(true)}
                       className="inline-block w-full py-2 font-medium rounded-md transition text-sm bg-[#6587A8] text-white hover:bg-[#CFE3C0] hover:text-[#6587A8]"
                     >
-                      {currentLang === 'id' ? plan.cta_button.text_id : plan.cta_button.text_en}
+                      {currentLang === 'id' ? plan.cta_button?.text_id || 'Jadwalkan Demo' : plan.cta_button?.text_en || 'Schedule Demo'}
                     </button>
                   </th>
                 ))}
@@ -150,10 +162,10 @@ export default function PricingSection({ id }: PricingSectionProps) {
                   <td
                     key={plan._id}
                     className={`py-4 px-4 align-top text-sm text-left ${
-                      plan.is_popular ? 'bg-[#f2f7ff] text-gray-700' : `${plan.styling.background_color} text-gray-700`
+                      plan.is_popular ? 'bg-[#f2f7ff] text-gray-700' : `${getBackgroundColor(plan)} text-gray-700`
                     }`}
                   >
-                    {renderPlainText(currentLang === 'id' ? plan.price.id : plan.price.en)}
+                    {renderPlainText(currentLang === 'id' ? plan.price?.id : plan.price?.en)}
                   </td>
                 ))}
               </tr>
@@ -165,10 +177,10 @@ export default function PricingSection({ id }: PricingSectionProps) {
                   <td
                     key={plan._id}
                     className={`py-4 px-4 align-top text-sm text-left ${
-                      plan.is_popular ? 'bg-[#f2f7ff] text-gray-700' : `${plan.styling.background_color} text-gray-700`
+                      plan.is_popular ? 'bg-[#f2f7ff] text-gray-700' : `${getBackgroundColor(plan)} text-gray-700`
                     }`}
                   >
-                    {renderPlainText(currentLang === 'id' ? plan.setup_fee.id : plan.setup_fee.en)}
+                    {renderPlainText(currentLang === 'id' ? plan.setup_fee?.id : plan.setup_fee?.en)}
                   </td>
                 ))}
               </tr>
@@ -180,10 +192,10 @@ export default function PricingSection({ id }: PricingSectionProps) {
                   <td
                     key={plan._id}
                     className={`py-4 px-4 align-top text-sm text-left ${
-                      plan.is_popular ? 'bg-[#f2f7ff] text-gray-700' : `${plan.styling.background_color} text-gray-700`
+                      plan.is_popular ? 'bg-[#f2f7ff] text-gray-700' : `${getBackgroundColor(plan)} text-gray-700`
                     }`}
                   >
-                    {renderFeatureArray(currentLang === 'id' ? plan.main_features.id : plan.main_features.en)}
+                    {renderFeatureArray(currentLang === 'id' ? plan.main_features?.id : plan.main_features?.en)}
                   </td>
                 ))}
               </tr>
@@ -195,10 +207,10 @@ export default function PricingSection({ id }: PricingSectionProps) {
                   <td
                     key={plan._id}
                     className={`py-4 px-4 align-top text-sm text-left ${
-                      plan.is_popular ? 'bg-[#f2f7ff] text-gray-700' : `${plan.styling.background_color} text-gray-700`
+                      plan.is_popular ? 'bg-[#f2f7ff] text-gray-700' : `${getBackgroundColor(plan)} text-gray-700`
                     }`}
                   >
-                    {renderFlexUser(currentLang === 'id' ? plan.flex_user.id : plan.flex_user.en)}
+                    {renderFlexUser(currentLang === 'id' ? plan.flex_user?.id : plan.flex_user?.en)}
                   </td>
                 ))}
               </tr>
@@ -211,8 +223,8 @@ export default function PricingSection({ id }: PricingSectionProps) {
           {plans.map((plan) => (
             <div
               key={plan._id}
-              className={`rounded-xl border ${plan.styling.border_color} overflow-hidden shadow-sm ${
-                plan.is_popular ? 'bg-[#f2f7ff]' : plan.styling.background_color
+              className={`rounded-xl border ${getBorderColor(plan)} overflow-hidden shadow-sm ${
+                plan.is_popular ? 'bg-[#f2f7ff]' : getBackgroundColor(plan)
               }`}
             >
               {/* Header Card */}
@@ -227,7 +239,7 @@ export default function PricingSection({ id }: PricingSectionProps) {
                   onClick={() => setIsModalOpen(true)}
                   className="mt-3 inline-block w-full py-2 font-medium rounded-md transition text-sm bg-[#6587A8] text-white hover:bg-[#CFE3C0] hover:text-[#6587A8]"
                 >
-                  {currentLang === 'id' ? plan.cta_button.text_id : plan.cta_button.text_en}
+                  {currentLang === 'id' ? plan.cta_button?.text_id || 'Jadwalkan Demo' : plan.cta_button?.text_en || 'Schedule Demo'}
                 </button>
               </div>
 
@@ -236,28 +248,28 @@ export default function PricingSection({ id }: PricingSectionProps) {
                 <div className="space-y-1">
                   <div className="font-medium text-gray-800">Harga Per User</div>
                   <div className="text-sm text-gray-700">
-                    {renderPlainText(currentLang === 'id' ? plan.price.id : plan.price.en)}
+                    {renderPlainText(currentLang === 'id' ? plan.price?.id : plan.price?.en)}
                   </div>
                 </div>
 
                 <div className="space-y-1">
                   <div className="font-medium text-gray-800">Setup Fee (Sekali Bayar)</div>
                   <div className="text-sm text-gray-700">
-                    {renderPlainText(currentLang === 'id' ? plan.setup_fee.id : plan.setup_fee.en)}
+                    {renderPlainText(currentLang === 'id' ? plan.setup_fee?.id : plan.setup_fee?.en)}
                   </div>
                 </div>
 
                 <div className="space-y-1">
                   <div className="font-medium text-gray-800">Fitur Utama</div>
                   <div className="text-sm text-gray-700">
-                    {renderFeatureArray(currentLang === 'id' ? plan.main_features.id : plan.main_features.en)}
+                    {renderFeatureArray(currentLang === 'id' ? plan.main_features?.id : plan.main_features?.en)}
                   </div>
                 </div>
 
                 <div className="space-y-1">
                   <div className="font-medium text-gray-800">Flex User</div>
                   <div className="text-sm text-gray-700">
-                    {renderFlexUser(currentLang === 'id' ? plan.flex_user.id : plan.flex_user.en)}
+                    {renderFlexUser(currentLang === 'id' ? plan.flex_user?.id : plan.flex_user?.en)}
                   </div>
                 </div>
               </div>

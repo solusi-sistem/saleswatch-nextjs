@@ -19,7 +19,6 @@ export default function WhyItWorks({ id }: SectionProps) {
     const titleRef = useRef<HTMLHeadingElement>(null);
     const featureRefs = useRef<(HTMLDivElement | null)[]>([]);
 
-    // Fetch data dari Sanity
     useEffect(() => {
         async function fetchContent() {
             if (!id) return;

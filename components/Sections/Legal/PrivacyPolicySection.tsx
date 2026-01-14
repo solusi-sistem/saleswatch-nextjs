@@ -132,7 +132,7 @@ function PortableTextRenderer({ blocks }: { blocks: PrivacyPolicyBlock[] }) {
               );
             default:
               return (
-                <p key={block._key || index} className="text-gray-700 leading-relaxed">
+                <p key={block._key || index} className="text-sm md:text-lg text-gray-700 leading-relaxed">
                   {children}
                 </p>
               );
@@ -246,7 +246,7 @@ export default function PrivacyPolicySection({ id }: SectionProps) {
                           />
                         </div>
                       )}
-                      <h2 className="text-xl font-semibold text-gray-900">
+                      <h2 className="text-md md:text-xl font-semibold text-gray-900">
                         {title}
                       </h2>
                     </div>
