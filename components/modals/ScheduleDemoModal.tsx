@@ -1,9 +1,12 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { usePathname } from 'next/navigation';
 import { X } from 'lucide-react';
 import CustomButton from '@/components/button/button';
 import Toast from '@/components/ui/Toast';
+import { useListOptions } from '@/contexts/ListOptionsContext';
+import type { LangKey } from '@/types';
 
 interface ScheduleDemoModalProps {
   isOpen: boolean;
@@ -17,6 +20,11 @@ interface ToastState {
 }
 
 export default function ScheduleDemoModal({ isOpen, onClose }: ScheduleDemoModalProps) {
+  const pathname = usePathname();
+  const currentLang: LangKey = pathname.startsWith('/id') ? 'id' : '';
+
+  const { industryOptions, companySizeOptions, isLoading: isLoadingOptions } = useListOptions();
+
   const [formData, setFormData] = useState({
     companyName: '',
     contactPersonName: '',
@@ -31,7 +39,7 @@ export default function ScheduleDemoModal({ isOpen, onClose }: ScheduleDemoModal
   const [toast, setToast] = useState<ToastState>({
     show: false,
     message: '',
-    type: 'success'
+    type: 'success',
   });
 
   useEffect(() => {
@@ -42,6 +50,12 @@ export default function ScheduleDemoModal({ isOpen, onClose }: ScheduleDemoModal
       document.addEventListener('keydown', handleEsc);
       document.body.style.overflow = 'hidden';
       setIsClosing(false);
+
+      setToast({
+        show: false,
+        message: '',
+        type: 'success',
+      });
     }
     return () => {
       document.removeEventListener('keydown', handleEsc);
@@ -86,7 +100,7 @@ export default function ScheduleDemoModal({ isOpen, onClose }: ScheduleDemoModal
 
       if (response.ok) {
         showToast('Demo request successfully sent! Our team will contact you soon.', 'success');
-        
+
         setFormData({
           companyName: '',
           contactPersonName: '',
@@ -95,7 +109,7 @@ export default function ScheduleDemoModal({ isOpen, onClose }: ScheduleDemoModal
           industry: '',
           message: '',
         });
-        
+
         setTimeout(() => {
           handleClose();
         }, 1500);
@@ -118,34 +132,23 @@ export default function ScheduleDemoModal({ isOpen, onClose }: ScheduleDemoModal
 
   return (
     <>
-      <div 
-        className={`fixed inset-0 z-50 flex items-center justify-center p-4 transition-all duration-300 ${
-          isClosing ? 'bg-black/0' : 'bg-black/50'
-        } backdrop-blur-sm`}
+      <div
+        className={`fixed inset-0 z-50 flex items-center justify-center p-4 transition-all duration-300 ${isClosing ? 'bg-black/0' : 'bg-black/50'} backdrop-blur-sm`}
         style={{
-          animation: isClosing ? 'fadeOut 0.3s ease-out' : 'fadeIn 0.3s ease-out'
+          animation: isClosing ? 'fadeOut 0.3s ease-out' : 'fadeIn 0.3s ease-out',
         }}
         onClick={handleClose}
       >
-        <div 
-          className={`relative w-full max-w-2xl max-h-[90vh] overflow-y-auto bg-white rounded-2xl shadow-2xl transition-all duration-300 ${
-            isClosing ? 'scale-95 opacity-0' : 'scale-100 opacity-100'
-          }`}
+        <div
+          className={`relative w-full max-w-2xl max-h-[90vh] overflow-y-auto bg-white rounded-2xl shadow-2xl transition-all duration-300 ${isClosing ? 'scale-95 opacity-0' : 'scale-100 opacity-100'}`}
           style={{
-            animation: isClosing 
-              ? 'modalSlideOut 0.3s ease-out' 
-              : 'modalSlideIn 0.3s ease-out'
+            animation: isClosing ? 'modalSlideOut 0.3s ease-out' : 'modalSlideIn 0.3s ease-out',
           }}
           onClick={(e) => e.stopPropagation()}
         >
           <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 rounded-t-2xl flex items-center justify-between z-10">
             <h2 className="text-2xl font-bold text-[#061551]">Schedule a Demo</h2>
-            <button 
-              onClick={handleClose} 
-              className="p-1 hover:bg-gray-100 rounded-full transition-all duration-200 hover:rotate-90" 
-              aria-label="Close modal"
-              disabled={isSubmitting}
-            >
+            <button onClick={handleClose} className="p-1 hover:bg-gray-100 rounded-full transition-all duration-200 hover:rotate-90" aria-label="Close modal" disabled={isSubmitting}>
               <X className="w-6 h-6 text-gray-500" />
             </button>
           </div>
@@ -192,15 +195,15 @@ export default function ScheduleDemoModal({ isOpen, onClose }: ScheduleDemoModal
                   id="companySize"
                   value={formData.companySize}
                   onChange={(e) => handleChange('companySize', e.target.value)}
-                  disabled={isSubmitting}
+                  disabled={isSubmitting || isLoadingOptions}
                   className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#6587A8] focus:border-transparent transition-all duration-200 bg-white disabled:bg-gray-100 disabled:cursor-not-allowed"
                 >
-                  <option value="">Select company size</option>
-                  <option value="1-10">1-10 employees</option>
-                  <option value="11-50">11-50 employees</option>
-                  <option value="51-200">51-200 employees</option>
-                  <option value="201-500">201-500 employees</option>
-                  <option value="500+">500+ employees</option>
+                  <option value="">{isLoadingOptions ? 'Loading...' : 'Select company size'}</option>
+                  {companySizeOptions.map((option) => (
+                    <option key={option._id} value={option.value}>
+                      {currentLang === 'id' ? option.label.id : option.label.en}
+                    </option>
+                  ))}
                 </select>
               </div>
 
@@ -228,16 +231,15 @@ export default function ScheduleDemoModal({ isOpen, onClose }: ScheduleDemoModal
                 id="industry"
                 value={formData.industry}
                 onChange={(e) => handleChange('industry', e.target.value)}
-                disabled={isSubmitting}
+                disabled={isSubmitting || isLoadingOptions}
                 className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#6587A8] focus:border-transparent transition-all duration-200 bg-white disabled:bg-gray-100 disabled:cursor-not-allowed"
               >
-                <option value="">Select your industry</option>
-                <option value="FMCG">FMCG</option>
-                <option value="Retail">Retail</option>
-                <option value="Manufacturing">Manufacturing</option>
-                <option value="Healthcare">Healthcare</option>
-                <option value="Technology">Technology</option>
-                <option value="Other">Other</option>
+                <option value="">{isLoadingOptions ? 'Loading...' : 'Select your industry'}</option>
+                {industryOptions.map((option) => (
+                  <option key={option._id} value={option.value}>
+                    {currentLang === 'id' ? option.label.id : option.label.en}
+                  </option>
+                ))}
               </select>
             </div>
 
@@ -257,12 +259,7 @@ export default function ScheduleDemoModal({ isOpen, onClose }: ScheduleDemoModal
             </div>
 
             <div className="pt-2 animate-fadeInUp" style={{ animationDelay: '0.4s', animationFillMode: 'both' }}>
-              <CustomButton 
-                size="lg" 
-                onClick={handleSubmit} 
-                className="mt-3 w-full"
-                disabled={isSubmitting}
-              >
+              <CustomButton size="lg" onClick={handleSubmit} className="mt-3 w-full" disabled={isSubmitting}>
                 {isSubmitting ? (
                   <span className="flex items-center justify-center gap-2">
                     <svg className="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
@@ -338,13 +335,7 @@ export default function ScheduleDemoModal({ isOpen, onClose }: ScheduleDemoModal
       </div>
 
       {/* Toast Notification */}
-      {toast.show && (
-        <Toast
-          message={toast.message}
-          type={toast.type}
-          onClose={hideToast}
-        />
-      )}
+      {toast.show && <Toast message={toast.message} type={toast.type} onClose={hideToast} />}
     </>
   );
 }

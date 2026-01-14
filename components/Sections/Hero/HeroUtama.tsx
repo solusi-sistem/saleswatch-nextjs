@@ -157,7 +157,7 @@ export default function HeroUtama({ id }: SectionProps) {
                 </div>
 
                 {characterImage && (
-                  <div className="absolute -bottom-28 sm:-bottom-34 -left-4 sm:-left-8 md:translate-x-0 h-28 w-24 sm:h-36 sm:w-32">
+                  <div className="absolute -bottom-28 sm:-bottom-34 -left-5 sm:-left-8 md:translate-x-0 h-28 w-24 sm:h-36 sm:w-32">
                     <Image src={characterImage} alt="Sales Watch Character" fill className="object-contain" />
                   </div>
                 )}

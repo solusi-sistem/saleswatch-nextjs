@@ -64,7 +64,7 @@ export async function POST(request) {
 
     const mailOptions = {
       from: `"${process.env.MAIL_FROM_NAME || 'Saleswatch'}" <${process.env.MAIL_FROM_ADDRESS}>`,
-      to: 'infoocs62@gmail.com',
+      to: 'saleswatchid@gmail.com',
       subject: `📋 Demo Request Baru - ${companyName}`,
       html: `
         <!DOCTYPE html>
@@ -146,7 +146,7 @@ export async function POST(request) {
                   </td>
                   <td style="padding: 8px 0; color: #2f2e2e; font-size: 14px;">
                     <a href="https://wa.me/${whatsapp.replace(/[^0-9]/g, '')}" style="color: #25D366; text-decoration: none;">
-                      ${whatsapp} 📱
+                      ${whatsapp}
                     </a>
                   </td>
                 </tr>
@@ -221,7 +221,6 @@ export async function POST(request) {
     );
 
   } catch (error) {
-    console.error('Error sending demo request email:', error);
     return NextResponse.json(
       { 
         success: false,

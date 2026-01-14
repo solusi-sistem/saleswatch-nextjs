@@ -220,7 +220,7 @@ export default function Header() {
           <Link href={currentLang === '' ? '/' : '/id'} className="flex items-center gap-0 flex-shrink-0">
             {logoUrls.logo && <Image src={logoUrls.logo} alt="Company Logo Icon" width={100} height={100} priority className="w-[50px] md:w-[70px] md:h-[50px] md:h-[70px] object-contain" />}
             {logoUrls.logoTeks && <Image src={logoUrls.logoTeks} alt="Company Logo Text" width={200} height={70} priority className="w-[130px] md:w-[150px] h-auto object-contain -ms-1" />}
-            {!logoUrls.logo && !logoUrls.logoTeks && <span className="text-2xl font-bold text-white">SALESWATCH</span>}
+            {!logoUrls.logo && !logoUrls.logoTeks && <span className="text-2xl font-bold text-white"></span>}
           </Link>
 
           <div className="hidden lg:flex flex-1 justify-center">
@@ -310,7 +310,7 @@ export default function Header() {
                     />
                   )}
                   {!logoUrls.logo && !logoUrls.logoTeks && (
-                    <span className="text-2xl font-bold text-white">SALESWATCH</span>
+                    <span className="text-2xl font-bold text-white"></span>
                   )}
                 </div>
                 <button 

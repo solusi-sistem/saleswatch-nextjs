@@ -11,7 +11,7 @@ interface CustomButtonProps {
 }
 
 export default function CustomButton({ children, onClick, variant = 'primary', size = 'lg', className = '', disabled = false, type = 'button' }: CustomButtonProps) {
-  const baseStyles = 'rounded-full font-semibold transition-all duration-300 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer';
+const baseStyles = 'rounded-full font-normal transition-all duration-300 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer';
 
   const variantStyles = {
     primary: 'bg-[#6587A8] text-white hover:bg-[#CFE3C0] hover:text-[#6587A8]',

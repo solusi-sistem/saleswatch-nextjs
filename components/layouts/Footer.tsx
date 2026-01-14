@@ -156,8 +156,8 @@ export default function Footer() {
               <Link href={currentLang === '' ? '/' : '/id'} className="flex items-center gap-0 mb-0">
                 {!loading && (footerLogoUrls.logo || footerLogoUrls.logoTeks) ? (
                   <>
-                    {footerLogoUrls.logo && <Image src={footerLogoUrls.logo} alt="Company Logo Icon" width={100} height={100} priority className="w-[70px] h-[70px] object-contain" />}
-                    {footerLogoUrls.logoTeks && <Image src={footerLogoUrls.logoTeks} alt="Company Logo Text" width={200} height={70} priority className="w-[150px] h-auto object-contain" />}
+                    {footerLogoUrls.logo && <Image src={footerLogoUrls.logo} alt="Company Logo Icon" width={100} height={100} priority className="w-[70px] h-[70px] object-contain -ms-2" />}
+                    {footerLogoUrls.logoTeks && <Image src={footerLogoUrls.logoTeks} alt="Company Logo Text" width={200} height={70} priority className="w-[150px] h-auto object-contain -ms-2" />}
                   </>
                 ) : !loading ? (
                   <span className="text-2xl font-bold text-white">SALESWATCH</span>

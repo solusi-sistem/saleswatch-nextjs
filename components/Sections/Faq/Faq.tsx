@@ -128,7 +128,7 @@ const Faq = ({ id }: SectionProps) => {
             </h2>
 
             {description && (
-              <p ref={descriptionRef} className="text-gray-600 mb-10 text-lg max-w-lg opacity-0" style={{ animationDelay: '0.2s', animationFillMode: 'both' }}>
+              <p ref={descriptionRef} className="text-gray-600 mb-10 text-md max-w-lg opacity-0" style={{ animationDelay: '0.2s', animationFillMode: 'both' }}>
                 {description}
               </p>
             )}

@@ -134,7 +134,7 @@ export default function StoryVisionMission({ id }: SectionProps) {
 
                 <h3 className="text-xl font-bold text-[#6587A8]">{title}</h3>
 
-                <p className="text-[#5B5B5C] text-sm leading-relaxed max-w-xs">{description}</p>
+                <p className="text-[#5B5B5C] text-md leading-relaxed max-w-xs">{description}</p>
               </div>
             );
           })}

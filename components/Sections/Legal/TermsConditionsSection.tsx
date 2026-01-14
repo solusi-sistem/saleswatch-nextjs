@@ -112,7 +112,7 @@ function PortableTextRenderer({ blocks }: { blocks: TermsConditionsBlock[] }) {
               );
             default:
               return (
-                <p key={index} className="text-gray-700 leading-relaxed">
+                <p key={index} className="text-gray-700 leading-relaxed text-sm md:text-lg">
                   {children}
                 </p>
               );
@@ -225,7 +225,7 @@ export default function TermsConditionsSection({ id }: SectionProps) {
                         />
                       </div>
                     )}
-                    <h2 className="text-xl font-semibold text-gray-900">
+                    <h2 className="text-md md:text-xl font-semibold text-gray-900">
                       {title}
                     </h2>
                   </div>
