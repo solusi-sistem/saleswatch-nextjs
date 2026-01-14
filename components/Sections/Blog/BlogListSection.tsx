@@ -168,7 +168,7 @@ export default function BlogListSection({ id }: BlogListSectionProps) {
                   >
                     <article className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300 h-full animate__animated animate__fadeInUp">
                       {post.image?.asset?.url && (
-                        <div className="relative h-48">
+                        <div className="relative h-60 xl:h-92">
                           <Image
                             src={post.image.asset.url}
                             alt={imageAlt}
