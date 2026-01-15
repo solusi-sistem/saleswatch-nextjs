@@ -5,6 +5,15 @@ import { usePathname } from 'next/navigation';
 import type { LangKey } from '@/types';
 import { SectionProps, FaqContent } from '@/types/section';
 import { getSectionData } from '@/hooks/getSectionData';
+import LoadingSpinner from '@/components/loading/LoadingSpinner';
+
+const CACHE_KEY = 'faq_cache';
+const CACHE_DURATION = 5 * 60 * 1000;
+
+interface CachedData {
+  data: FaqContent;
+  timestamp: number;
+}
 
 const Faq = ({ id }: SectionProps) => {
   const pathname = usePathname();
@@ -20,25 +29,85 @@ const Faq = ({ id }: SectionProps) => {
   const accordionRef = useRef<HTMLDivElement>(null);
   const imageRef = useRef<HTMLDivElement>(null);
 
-  // Fetch data dari Sanity
+  const getCachedData = (): FaqContent | null => {
+    try {
+      const cached = localStorage.getItem(CACHE_KEY);
+      if (!cached) return null;
+
+      const parsedCache: CachedData = JSON.parse(cached);
+      const now = Date.now();
+
+      if (now - parsedCache.timestamp < CACHE_DURATION) {
+        return parsedCache.data;
+      } else {
+        localStorage.removeItem(CACHE_KEY);
+        return null;
+      }
+    } catch (error) {
+      localStorage.removeItem(CACHE_KEY);
+      return null;
+    }
+  };
+
+  const setCachedData = (data: FaqContent) => {
+    try {
+      const cacheData: CachedData = {
+        data,
+        timestamp: Date.now(),
+      };
+      localStorage.setItem(CACHE_KEY, JSON.stringify(cacheData));
+    } catch (error) {
+    }
+  };
+
   useEffect(() => {
     async function fetchContent() {
       if (!id) return;
 
+      const cachedContent = getCachedData();
+      if (cachedContent) {
+        setContent(cachedContent);
+        setLoading(false);
+      }
+
       try {
-        setLoading(true);
         const sectionData = await getSectionData(id);
         if (sectionData?.faq_content) {
           setContent(sectionData.faq_content);
+          setCachedData(sectionData.faq_content);
         }
       } catch (error) {
-        console.error('Error fetching faq content:', error);
+        if (!content && cachedContent) {
+          setContent(cachedContent);
+        }
       } finally {
         setLoading(false);
       }
     }
     fetchContent();
   }, [id]);
+
+  useEffect(() => {
+    if (!id) return;
+
+    const interval = setInterval(async () => {
+      try {
+        const sectionData = await getSectionData(id);
+        if (sectionData?.faq_content) {
+          const currentDataString = JSON.stringify(content);
+          const newDataString = JSON.stringify(sectionData.faq_content);
+          
+          if (currentDataString !== newDataString) {
+            setContent(sectionData.faq_content);
+            setCachedData(sectionData.faq_content);
+          }
+        }
+      } catch (error) {
+      }
+    }, 30000);
+
+    return () => clearInterval(interval);
+  }, [id, content]);
 
   useEffect(() => {
     if (loading) return;
@@ -86,26 +155,7 @@ const Faq = ({ id }: SectionProps) => {
   };
 
   if (loading) {
-    return (
-      <section className="py-24 px-6 md:px-10 bg-gray-50 overflow-hidden relative">
-        <div className="max-w-6xl mx-auto relative">
-          <div className="grid lg:grid-cols-2 gap-12 items-start">
-            <div className="relative z-10">
-              <div className="mb-6 inline-flex">
-                <div className="p-[2px] rounded-full bg-gradient-to-r from-gray-300 to-gray-300"></div>
-              </div>
-              <div className="h-12 w-full max-w-lg bg-gray-300 animate-pulse rounded mb-6"></div>
-              <div className="h-20 w-full max-w-lg bg-gray-300 animate-pulse rounded mb-10"></div>
-              <div className="space-y-4">
-                {[1, 2, 3].map((i) => (
-                  <div key={i} className="h-16 w-full bg-gray-300 animate-pulse rounded-xl"></div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-    );
+    return <LoadingSpinner />;
   }
 
   if (!content) {

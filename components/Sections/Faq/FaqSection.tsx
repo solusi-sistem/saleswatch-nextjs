@@ -7,6 +7,15 @@ import { SectionProps, FaqSectionContent } from '@/types/section';
 import { getSectionData } from '@/hooks/getSectionData';
 import { PortableText } from "next-sanity";
 import { portableTextComponents } from "@/lib/PortableText";
+import LoadingSpinner from '@/components/loading/LoadingSpinner';
+
+const CACHE_KEY = 'faq_section_cache';
+const CACHE_DURATION = 5 * 60 * 1000;
+
+interface CachedData {
+  data: FaqSectionContent;
+  timestamp: number;
+}
 
 export default function FaqSection({ id }: SectionProps) {
     const pathname = usePathname();
@@ -17,31 +26,95 @@ export default function FaqSection({ id }: SectionProps) {
     const [activeTab, setActiveTab] = useState<string>("");
     const [openFAQs, setOpenFAQs] = useState<Record<string, boolean>>({});
 
-    // Fetch data dari Sanity
+    const getCachedData = (): FaqSectionContent | null => {
+        try {
+            const cached = localStorage.getItem(CACHE_KEY);
+            if (!cached) return null;
+
+            const parsedCache: CachedData = JSON.parse(cached);
+            const now = Date.now();
+
+            if (now - parsedCache.timestamp < CACHE_DURATION) {
+                return parsedCache.data;
+            } else {
+                localStorage.removeItem(CACHE_KEY);
+                return null;
+            }
+        } catch (error) {
+            localStorage.removeItem(CACHE_KEY);
+            return null;
+        }
+    };
+
+    const setCachedData = (data: FaqSectionContent) => {
+        try {
+            const cacheData: CachedData = {
+                data,
+                timestamp: Date.now(),
+            };
+            localStorage.setItem(CACHE_KEY, JSON.stringify(cacheData));
+        } catch (error) {
+        }
+    };
+
     useEffect(() => {
         async function fetchContent() {
             if (!id) return;
 
+            const cachedContent = getCachedData();
+            if (cachedContent) {
+                setContent(cachedContent);
+                setLoading(false);
+                if (cachedContent.category_tabs && cachedContent.category_tabs.length > 0) {
+                    setActiveTab(cachedContent.category_tabs[0].category_key);
+                }
+            }
+
             try {
-                setLoading(true);
                 const sectionData = await getSectionData(id);
-                console.log(sectionData);
                 if (sectionData?.faq_section_content) {
                     setContent(sectionData.faq_section_content);
-                    // Set default active tab ke kategori pertama
+                    setCachedData(sectionData.faq_section_content);
                     if (sectionData.faq_section_content.category_tabs &&
                         sectionData.faq_section_content.category_tabs.length > 0) {
                         setActiveTab(sectionData.faq_section_content.category_tabs[0].category_key);
                     }
                 }
             } catch (error) {
-                console.error('Error fetching faq section content:', error);
+                if (!content && cachedContent) {
+                    setContent(cachedContent);
+                    if (cachedContent.category_tabs && cachedContent.category_tabs.length > 0) {
+                        setActiveTab(cachedContent.category_tabs[0].category_key);
+                    }
+                }
             } finally {
                 setLoading(false);
             }
         }
         fetchContent();
     }, [id]);
+
+    useEffect(() => {
+        if (!id) return;
+
+        const interval = setInterval(async () => {
+            try {
+                const sectionData = await getSectionData(id);
+                if (sectionData?.faq_section_content) {
+                    const currentDataString = JSON.stringify(content);
+                    const newDataString = JSON.stringify(sectionData.faq_section_content);
+                    
+                    if (currentDataString !== newDataString) {
+                        setContent(sectionData.faq_section_content);
+                        setCachedData(sectionData.faq_section_content);
+                    }
+                }
+            } catch (error) {
+            }
+        }, 30000);
+
+        return () => clearInterval(interval);
+    }, [id, content]);
 
     const toggleFAQ = (id: string) => {
         setOpenFAQs((prev) => ({
@@ -51,24 +124,7 @@ export default function FaqSection({ id }: SectionProps) {
     };
 
     if (loading) {
-        return (
-            <main className="bg-[#f2f7ff]">
-                <div className="max-w-7xl mx-auto px-6 sm:px-6 lg:px-8 pt-30 pb-16">
-                    <div className="text-center mb-12">
-                        <div className="h-12 w-96 mx-auto bg-gray-300 animate-pulse rounded mb-4"></div>
-                        <div className="h-6 w-2/3 mx-auto bg-gray-300 animate-pulse rounded"></div>
-                    </div>
-                    <div className="max-w-4xl mx-auto mb-10">
-                        <div className="h-12 bg-gray-300 animate-pulse rounded"></div>
-                    </div>
-                    <div className="max-w-4xl mx-auto space-y-4">
-                        {[1, 2, 3].map((i) => (
-                            <div key={i} className="h-20 bg-gray-300 animate-pulse rounded-xl"></div>
-                        ))}
-                    </div>
-                </div>
-            </main>
-        );
+        return <LoadingSpinner />;
     }
 
     if (!content?.category_tabs || content.category_tabs.length === 0) {

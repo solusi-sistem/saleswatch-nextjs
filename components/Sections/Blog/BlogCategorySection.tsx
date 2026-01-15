@@ -6,12 +6,28 @@ import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
 import { getBlogsByCategory, getCategoryBySlug } from '@/hooks/getAllBlogs';
 import { BlogItem, BlogCategory } from '@/types/list/Blog';
+import LoadingSpinner from '@/components/loading/LoadingSpinner';
+
+const CACHE_KEY_CATEGORY = 'blog_category_cache';
+const CACHE_KEY_POSTS = 'blog_category_posts_cache';
+const CACHE_DURATION = 5 * 60 * 1000;
+
+interface CachedCategoryData {
+  data: BlogCategory;
+  slug: string;
+  timestamp: number;
+}
+
+interface CachedPostsData {
+  data: BlogItem[];
+  slug: string;
+  timestamp: number;
+}
 
 interface BlogCategorySectionProps {
   categorySlug: string;
 }
 
-// Tipe lokal untuk BlogCategorySection component
 type BlogLocale = 'en' | 'id';
 
 export default function BlogCategorySection({ categorySlug }: BlogCategorySectionProps) {
@@ -23,18 +39,105 @@ export default function BlogCategorySection({ categorySlug }: BlogCategorySectio
   const [posts, setPosts] = useState<BlogItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
+  const getCachedCategory = (slug: string): BlogCategory | null => {
+    try {
+      const cached = localStorage.getItem(`${CACHE_KEY_CATEGORY}_${slug}`);
+      if (!cached) return null;
+
+      const parsedCache: CachedCategoryData = JSON.parse(cached);
+      const now = Date.now();
+
+      if (now - parsedCache.timestamp < CACHE_DURATION && parsedCache.slug === slug) {
+        return parsedCache.data;
+      } else {
+        localStorage.removeItem(`${CACHE_KEY_CATEGORY}_${slug}`);
+        return null;
+      }
+    } catch (error) {
+      localStorage.removeItem(`${CACHE_KEY_CATEGORY}_${slug}`);
+      return null;
+    }
+  };
+
+  const setCachedCategory = (data: BlogCategory, slug: string) => {
+    try {
+      const cacheData: CachedCategoryData = {
+        data,
+        slug,
+        timestamp: Date.now(),
+      };
+      localStorage.setItem(`${CACHE_KEY_CATEGORY}_${slug}`, JSON.stringify(cacheData));
+    } catch (error) {
+    }
+  };
+
+  const getCachedPosts = (slug: string): BlogItem[] | null => {
+    try {
+      const cached = localStorage.getItem(`${CACHE_KEY_POSTS}_${slug}`);
+      if (!cached) return null;
+
+      const parsedCache: CachedPostsData = JSON.parse(cached);
+      const now = Date.now();
+
+      if (now - parsedCache.timestamp < CACHE_DURATION && parsedCache.slug === slug) {
+        return parsedCache.data;
+      } else {
+        localStorage.removeItem(`${CACHE_KEY_POSTS}_${slug}`);
+        return null;
+      }
+    } catch (error) {
+      localStorage.removeItem(`${CACHE_KEY_POSTS}_${slug}`);
+      return null;
+    }
+  };
+
+  const setCachedPosts = (data: BlogItem[], slug: string) => {
+    try {
+      const cacheData: CachedPostsData = {
+        data,
+        slug,
+        timestamp: Date.now(),
+      };
+      localStorage.setItem(`${CACHE_KEY_POSTS}_${slug}`, JSON.stringify(cacheData));
+    } catch (error) {
+    }
+  };
+
   useEffect(() => {
     const fetchData = async () => {
       try {
-        setIsLoading(true);
+        const cachedCategory = getCachedCategory(categorySlug);
+        const cachedPosts = getCachedPosts(categorySlug);
 
-        // Fetch category and posts
-        const [categoryData, postsData] = await Promise.all([getCategoryBySlug(categorySlug), getBlogsByCategory(categorySlug, 'published')]);
+        if (cachedCategory) {
+          setCategory(cachedCategory);
+          setIsLoading(false);
+        }
 
-        if (categoryData) setCategory(categoryData);
-        if (postsData) setPosts(postsData);
+        if (cachedPosts) {
+          setPosts(cachedPosts);
+        }
+
+        const [categoryData, postsData] = await Promise.all([
+          getCategoryBySlug(categorySlug),
+          getBlogsByCategory(categorySlug, 'published')
+        ]);
+
+        if (categoryData) {
+          setCategory(categoryData);
+          setCachedCategory(categoryData, categorySlug);
+        }
+        
+        if (postsData) {
+          setPosts(postsData);
+          setCachedPosts(postsData, categorySlug);
+        }
       } catch (error) {
-        console.error('Error fetching category data:', error);
+        const cachedCategory = getCachedCategory(categorySlug);
+        const cachedPosts = getCachedPosts(categorySlug);
+
+        if (!category && cachedCategory) setCategory(cachedCategory);
+        if (posts.length === 0 && cachedPosts) setPosts(cachedPosts);
       } finally {
         setIsLoading(false);
       }
@@ -43,6 +146,42 @@ export default function BlogCategorySection({ categorySlug }: BlogCategorySectio
     fetchData();
   }, [categorySlug]);
 
+  useEffect(() => {
+    if (!categorySlug) return;
+
+    const interval = setInterval(async () => {
+      try {
+        const [categoryData, postsData] = await Promise.all([
+          getCategoryBySlug(categorySlug),
+          getBlogsByCategory(categorySlug, 'published')
+        ]);
+
+        if (categoryData) {
+          const currentCategoryString = JSON.stringify(category);
+          const newCategoryString = JSON.stringify(categoryData);
+          
+          if (currentCategoryString !== newCategoryString) {
+            setCategory(categoryData);
+            setCachedCategory(categoryData, categorySlug);
+          }
+        }
+
+        if (postsData) {
+          const currentPostsString = JSON.stringify(posts);
+          const newPostsString = JSON.stringify(postsData);
+          
+          if (currentPostsString !== newPostsString) {
+            setPosts(postsData);
+            setCachedPosts(postsData, categorySlug);
+          }
+        }
+      } catch (error) {
+      }
+    }, 30000);
+
+    return () => clearInterval(interval);
+  }, [categorySlug, category, posts]);
+
   const handlePostClick = (slug: string) => {
     const href = language === 'id' ? `/id/blog/${slug}` : `/blog/${slug}`;
     window.scrollTo({ top: 0, behavior: 'instant' });
@@ -50,22 +189,20 @@ export default function BlogCategorySection({ categorySlug }: BlogCategorySectio
   };
 
   if (isLoading) {
-    return (
-      <div className="min-h-screen bg-[#f2f7ff] flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#061551] mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading...</p>
-        </div>
-      </div>
-    );
+    return <LoadingSpinner />;
   }
 
   if (!category) {
     return (
       <div className="min-h-screen bg-[#f2f7ff] flex items-center justify-center">
         <div className="text-center">
-          <h1 className="text-2xl font-bold mb-4">{language === 'id' ? 'Kategori tidak ditemukan' : 'Category not found'}</h1>
-          <Link href={language === 'id' ? '/id/blog' : '/blog'} className="text-[#061551] hover:underline">
+          <h1 className="text-2xl font-bold mb-4">
+            {language === 'id' ? 'Kategori tidak ditemukan' : 'Category not found'}
+          </h1>
+          <Link 
+            href={language === 'id' ? '/id/blog' : '/blog'} 
+            className="text-[#061551] hover:underline"
+          >
             {language === 'id' ? '← Kembali ke Blog' : '← Back to Blog'}
           </Link>
         </div>
@@ -73,9 +210,15 @@ export default function BlogCategorySection({ categorySlug }: BlogCategorySectio
     );
   }
 
-  const categoryName = language === 'id' ? category.name.id || category.name.en : category.name.en || category.name.id;
+  const categoryName = language === 'id' 
+    ? category.name.id || category.name.en 
+    : category.name.en || category.name.id;
 
-  const categoryDescription = category.description ? (language === 'id' ? category.description.id || category.description.en : category.description.en || category.description.id) : '';
+  const categoryDescription = category.description 
+    ? (language === 'id' 
+        ? category.description.id || category.description.en 
+        : category.description.en || category.description.id) 
+    : '';
 
   return (
     <div className="min-h-screen bg-[#f2f7ff] pt-16">
@@ -84,16 +227,22 @@ export default function BlogCategorySection({ categorySlug }: BlogCategorySectio
         <div className="container mx-auto max-w-4xl text-center">
           {/* Back Button */}
           <div className="mb-6">
-            <Link href={language === 'id' ? '/id/blog' : '/blog'} className="text-[#061551] hover:text-[#0a1f6f] inline-flex items-center gap-2 text-sm font-medium transition">
+            <Link 
+              href={language === 'id' ? '/id/blog' : '/blog'} 
+              className="text-[#061551] hover:text-[#0a1f6f] inline-flex items-center gap-2 text-sm font-medium transition"
+            >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
               </svg>
               {language === 'id' ? 'Kembali ke Semua Blog' : 'Back to All Blogs'}
             </Link>
           </div>
-
           {/* Category Description */}
-          {categoryDescription && <p className="text-xl text-gray-600 max-w-3xl mx-auto animate__animated animate__fadeInUp">{categoryDescription}</p>}
+          {categoryDescription && (
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto animate__animated animate__fadeInUp">
+              {categoryDescription}
+            </p>
+          )}
         </div>
       </section>
 
@@ -104,7 +253,9 @@ export default function BlogCategorySection({ categorySlug }: BlogCategorySectio
           {posts.length > 0 && (
             <div className="mb-6 md:mb-8">
               <p className="text-gray-600 text-sm">
-                {language === 'id' ? 'Menampilkan' : 'Showing'} {posts.length} {language === 'id' ? 'artikel dalam kategori' : 'articles in category'} <span className="font-semibold">{categoryName}</span>
+                {language === 'id' ? 'Menampilkan' : 'Showing'} {posts.length}{' '}
+                {language === 'id' ? 'artikel dalam kategori' : 'articles in category'}{' '}
+                <span className="font-semibold">{categoryName}</span>
               </p>
             </div>
           )}
@@ -115,20 +266,40 @@ export default function BlogCategorySection({ categorySlug }: BlogCategorySectio
               {posts.map((post) => {
                 const slug = post.slug?.current || '';
 
-                // Safe extraction with null checks
-                const postTitle = post.title ? (language === 'id' ? post.title.id || post.title.en : post.title.en || post.title.id) : 'Untitled';
+                const postTitle = post.title 
+                  ? (language === 'id' 
+                      ? post.title.id || post.title.en 
+                      : post.title.en || post.title.id) 
+                  : '';
 
-                const postExcerpt = post.excerpt ? (language === 'id' ? post.excerpt.id || post.excerpt.en : post.excerpt.en || post.excerpt.id) : '';
+                const postExcerpt = post.excerpt 
+                  ? (language === 'id' 
+                      ? post.excerpt.id || post.excerpt.en 
+                      : post.excerpt.en || post.excerpt.id) 
+                  : '';
 
-                const imageAlt = post.image?.alt ? (language === 'id' ? post.image.alt.id || post.image.alt.en : post.image.alt.en || post.image.alt.id) : postTitle;
+                const imageAlt = post.image?.alt 
+                  ? (language === 'id' 
+                      ? post.image.alt.id || post.image.alt.en 
+                      : post.image.alt.en || post.image.alt.id) 
+                  : postTitle;
 
                 return (
-                  <div key={post._id} className="block group cursor-pointer" onClick={() => handlePostClick(slug)}>
+                  <div 
+                    key={post._id} 
+                    className="block group cursor-pointer" 
+                    onClick={() => handlePostClick(slug)}
+                  >
                     <article className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300 h-full animate__animated animate__fadeInUp">
                       {/* Image */}
                       {post.image?.asset?.url && (
                         <div className="relative h-60 xl:h-92">
-                          <Image src={post.image.asset.url} alt={imageAlt} fill className="object-cover transition-transform duration-300 group-hover:scale-105" />
+                          <Image 
+                            src={post.image.asset.url} 
+                            alt={imageAlt} 
+                            fill 
+                            className="object-cover transition-transform duration-300 group-hover:scale-105" 
+                          />
                         </div>
                       )}
 
@@ -136,11 +307,14 @@ export default function BlogCategorySection({ categorySlug }: BlogCategorySectio
                         {/* Meta Information */}
                         <div className="flex items-center gap-2 text-sm text-gray-500 mb-2">
                           <time dateTime={post.date}>
-                            {new Date(post.date).toLocaleDateString(language === 'id' ? 'id-ID' : 'en-US', {
-                              year: 'numeric',
-                              month: 'long',
-                              day: 'numeric',
-                            })}
+                            {new Date(post.date).toLocaleDateString(
+                              language === 'id' ? 'id-ID' : 'en-US', 
+                              {
+                                year: 'numeric',
+                                month: 'long',
+                                day: 'numeric',
+                              }
+                            )}
                           </time>
                           {post.author && (
                             <>
@@ -151,16 +325,26 @@ export default function BlogCategorySection({ categorySlug }: BlogCategorySectio
                         </div>
 
                         {/* Category Badge */}
-                        <div className="inline-block px-3 py-1 text-xs font-medium bg-[#061551] text-white rounded-full mb-3">{categoryName}</div>
+                        <div className="inline-block px-3 py-1 text-xs font-medium bg-[#061551] text-white rounded-full mb-3">
+                          {categoryName}
+                        </div>
 
                         {/* Title */}
-                        <h2 className="text-xl font-bold mb-3 line-clamp-2 group-hover:text-[#061551] transition">{postTitle}</h2>
+                        <h2 className="text-xl font-bold mb-3 line-clamp-2 group-hover:text-[#061551] transition">
+                          {postTitle}
+                        </h2>
 
                         {/* Excerpt */}
-                        {postExcerpt && <p className="text-gray-700 mb-4 line-clamp-3">{postExcerpt}</p>}
+                        {postExcerpt && (
+                          <p className="text-gray-700 mb-4 line-clamp-3">
+                            {postExcerpt}
+                          </p>
+                        )}
 
                         {/* Read More Link */}
-                        <span className="text-[#061551] font-medium inline-flex items-center">{language === 'id' ? 'Baca Selengkapnya' : 'Read More'} →</span>
+                        <span className="text-[#061551] font-medium inline-flex items-center">
+                          {language === 'id' ? 'Baca Selengkapnya' : 'Read More'} →
+                        </span>
                       </div>
                     </article>
                   </div>
@@ -168,16 +352,33 @@ export default function BlogCategorySection({ categorySlug }: BlogCategorySectio
               })}
             </div>
           ) : (
-            // Empty State
             <div className="text-center py-16 bg-white rounded-xl shadow-md max-w-2xl mx-auto">
-              <svg className="w-20 h-20 text-gray-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              <svg 
+                className="w-20 h-20 text-gray-300 mx-auto mb-4" 
+                fill="none" 
+                stroke="currentColor" 
+                viewBox="0 0 24 24"
+              >
+                <path 
+                  strokeLinecap="round" 
+                  strokeLinejoin="round" 
+                  strokeWidth={1.5} 
+                  d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" 
+                />
               </svg>
-              <h3 className="text-2xl font-bold mb-2 text-gray-800">{language === 'id' ? 'Belum Ada Artikel' : 'No Articles Yet'}</h3>
+              <h3 className="text-2xl font-bold mb-2 text-gray-800">
+                {language === 'id' ? 'Belum Ada Artikel' : 'No Articles Yet'}
+              </h3>
               <p className="text-gray-600 mb-6 max-w-md mx-auto">
-                {language === 'id' ? 'Belum ada artikel yang dipublikasikan dalam kategori' : 'No articles published in category'} <span className="font-semibold">{categoryName}</span>
+                {language === 'id' 
+                  ? 'Belum ada artikel yang dipublikasikan dalam kategori' 
+                  : 'No articles published in category'}{' '}
+                <span className="font-semibold">{categoryName}</span>
               </p>
-              <Link href={language === 'id' ? '/id/blog' : '/blog'} className="inline-block px-6 py-3 bg-[#061551] text-white rounded-lg hover:bg-[#0a1f6f] transition font-medium">
+              <Link 
+                href={language === 'id' ? '/id/blog' : '/blog'} 
+                className="inline-block px-6 py-3 bg-[#061551] text-white rounded-lg hover:bg-[#0a1f6f] transition font-medium"
+              >
                 {language === 'id' ? 'Lihat Semua Artikel' : 'View All Articles'}
               </Link>
             </div>

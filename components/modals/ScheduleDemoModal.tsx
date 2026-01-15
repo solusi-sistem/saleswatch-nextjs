@@ -88,6 +88,8 @@ export default function ScheduleDemoModal({ isOpen, onClose }: ScheduleDemoModal
     setIsSubmitting(true);
 
     try {
+      console.log('📤 Sending demo request...', formData);
+      
       const response = await fetch('/api/send-demo-request', {
         method: 'POST',
         headers: {
@@ -97,8 +99,12 @@ export default function ScheduleDemoModal({ isOpen, onClose }: ScheduleDemoModal
       });
 
       const data = await response.json();
+      
+      console.log('📥 Response status:', response.status);
+      console.log('📥 Response data:', data);
 
       if (response.ok) {
+        console.log('✅ Email sent successfully to', data.sentTo, 'recipients');
         showToast('Demo request successfully sent! Our team will contact you soon.', 'success');
 
         setFormData({
@@ -114,10 +120,12 @@ export default function ScheduleDemoModal({ isOpen, onClose }: ScheduleDemoModal
           handleClose();
         }, 1500);
       } else {
+        console.error('❌ Failed to send email:', data.error);
+        console.error('Details:', data.details);
         showToast(data.error || 'Failed to send demo request. Please try again.', 'error');
       }
     } catch (error) {
-      console.error('Error submitting form:', error);
+      console.error('❌ Error submitting form:', error);
       showToast('An error occurred. Please try again later.', 'error');
     } finally {
       setIsSubmitting(false);

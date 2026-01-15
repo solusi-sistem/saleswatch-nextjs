@@ -6,6 +6,15 @@ import { ChevronLeft, ChevronRight } from 'lucide-react';
 import type { LangKey } from '@/types';
 import { SectionProps, TestimonialContent } from '@/types/section';
 import { getSectionData } from '@/hooks/getSectionData';
+import LoadingSpinner from '@/components/loading/LoadingSpinner';
+
+const CACHE_KEY = 'testimonial_cache';
+const CACHE_DURATION = 5 * 60 * 1000;
+
+interface CachedData {
+  data: TestimonialContent;
+  timestamp: number;
+}
 
 export default function Testimonial({ id }: SectionProps) {
     const pathname = usePathname();
@@ -17,25 +26,85 @@ export default function Testimonial({ id }: SectionProps) {
     const leftSideRef = useRef<HTMLDivElement>(null);
     const rightSideRef = useRef<HTMLDivElement>(null);
 
-    // Fetch data dari Sanity
+    const getCachedData = (): TestimonialContent | null => {
+        try {
+            const cached = localStorage.getItem(CACHE_KEY);
+            if (!cached) return null;
+
+            const parsedCache: CachedData = JSON.parse(cached);
+            const now = Date.now();
+
+            if (now - parsedCache.timestamp < CACHE_DURATION) {
+                return parsedCache.data;
+            } else {
+                localStorage.removeItem(CACHE_KEY);
+                return null;
+            }
+        } catch (error) {
+            localStorage.removeItem(CACHE_KEY);
+            return null;
+        }
+    };
+
+    const setCachedData = (data: TestimonialContent) => {
+        try {
+            const cacheData: CachedData = {
+                data,
+                timestamp: Date.now(),
+            };
+            localStorage.setItem(CACHE_KEY, JSON.stringify(cacheData));
+        } catch (error) {
+        }
+    };
+
     useEffect(() => {
         async function fetchContent() {
             if (!id) return;
 
+            const cachedContent = getCachedData();
+            if (cachedContent) {
+                setContent(cachedContent);
+                setLoading(false);
+            }
+
             try {
-                setLoading(true);
                 const sectionData = await getSectionData(id);
                 if (sectionData?.testimonial_content) {
                     setContent(sectionData.testimonial_content);
+                    setCachedData(sectionData.testimonial_content);
                 }
             } catch (error) {
-                console.error('Error fetching testimonial content:', error);
+                if (!content && cachedContent) {
+                    setContent(cachedContent);
+                }
             } finally {
                 setLoading(false);
             }
         }
         fetchContent();
     }, [id]);
+
+    useEffect(() => {
+        if (!id) return;
+
+        const interval = setInterval(async () => {
+            try {
+                const sectionData = await getSectionData(id);
+                if (sectionData?.testimonial_content) {
+                    const currentDataString = JSON.stringify(content);
+                    const newDataString = JSON.stringify(sectionData.testimonial_content);
+                    
+                    if (currentDataString !== newDataString) {
+                        setContent(sectionData.testimonial_content);
+                        setCachedData(sectionData.testimonial_content);
+                    }
+                }
+            } catch (error) {
+            }
+        }, 30000);
+
+        return () => clearInterval(interval);
+    }, [id, content]);
 
     const testimonials = content?.testimonials || [];
 
@@ -84,24 +153,7 @@ export default function Testimonial({ id }: SectionProps) {
     };
 
     if (loading) {
-        return (
-            <section className="relative w-full bg-[#2D2D2F] py-16 md:py-24 overflow-hidden">
-                <div className="mx-auto max-w-6xl px-6">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
-                        <div className="space-y-6 animate-pulse">
-                            <div className="h-20 bg-white/10 rounded w-3/4"></div>
-                            <div className="w-20 h-20 rounded-full bg-white/10"></div>
-                            <div className="h-6 bg-white/10 rounded w-1/2"></div>
-                        </div>
-                        <div className="space-y-4 animate-pulse">
-                            <div className="h-32 bg-white/10 rounded"></div>
-                            <div className="h-6 bg-white/10 rounded w-1/3"></div>
-                            <div className="h-4 bg-white/10 rounded w-1/4"></div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-        );
+        return <LoadingSpinner />;
     }
 
     if (!content || testimonials.length === 0) {
@@ -110,7 +162,7 @@ export default function Testimonial({ id }: SectionProps) {
 
     return (
         <section className="relative w-full bg-[#2D2D2F] py-16 md:py-24 overflow-hidden">
-         <div className="mx-auto max-w-4xl min-[1272px]:max-w-6xl px-6">
+            <div className="mx-auto max-w-4xl min-[1272px]:max-w-6xl px-6">
                 <div className="relative overflow-hidden">
                     <div className="flex transition-transform duration-700 ease-in-out" style={{ transform: `translateX(-${currentIndex * 100}%)` }}>
                         {testimonials.map((item, index) => {

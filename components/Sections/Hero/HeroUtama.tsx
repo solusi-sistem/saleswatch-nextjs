@@ -8,12 +8,22 @@ import { SectionProps, HeroUtamaContent } from '@/types/section';
 import { usePathname } from 'next/navigation';
 import { LangKey } from '@/types';
 import { getSectionData } from '@/hooks/getSectionData';
+import LoadingSpinner from '@/components/loading/LoadingSpinner';
+
+const CACHE_KEY = 'hero_utama_cache';
+const CACHE_DURATION = 5 * 60 * 1000;
+
+interface CachedData {
+  data: HeroUtamaContent;
+  timestamp: number;
+}
 
 export default function HeroUtama({ id }: SectionProps) {
   const pathname = usePathname();
   const locale: LangKey = pathname.startsWith('/id') ? 'id' : '';
 
   const [content, setContent] = useState<HeroUtamaContent | null>(null);
+  const [loading, setLoading] = useState(true);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isVisible, setIsVisible] = useState(false);
   const [isTransitioning, setIsTransitioning] = useState(false);
@@ -25,22 +35,86 @@ export default function HeroUtama({ id }: SectionProps) {
   const stat3Ref = useRef<HTMLDivElement>(null);
   const stat4Ref = useRef<HTMLDivElement>(null);
 
-  // Fetch data dari Sanity
+  const getCachedData = (): HeroUtamaContent | null => {
+    try {
+      const cached = localStorage.getItem(CACHE_KEY);
+      if (!cached) return null;
+
+      const parsedCache: CachedData = JSON.parse(cached);
+      const now = Date.now();
+
+      if (now - parsedCache.timestamp < CACHE_DURATION) {
+        return parsedCache.data;
+      } else {
+        localStorage.removeItem(CACHE_KEY);
+        return null;
+      }
+    } catch (error) {
+      localStorage.removeItem(CACHE_KEY);
+      return null;
+    }
+  };
+
+  const setCachedData = (data: HeroUtamaContent) => {
+    try {
+      const cacheData: CachedData = {
+        data,
+        timestamp: Date.now(),
+      };
+      localStorage.setItem(CACHE_KEY, JSON.stringify(cacheData));
+    } catch (error) {
+    }
+  };
+
   useEffect(() => {
     async function fetchContent() {
       if (!id) return;
+
+      const cachedContent = getCachedData();
+      if (cachedContent) {
+        setContent(cachedContent);
+        setLoading(false);
+      }
 
       try {
         const sectionData = await getSectionData(id);
         if (sectionData?.hero_content) {
           setContent(sectionData.hero_content);
+          setCachedData(sectionData.hero_content);
         }
       } catch (error) {
-        console.error('Error fetching hero content:', error);
+        if (!content && cachedContent) {
+          setContent(cachedContent);
+        }
+      } finally {
+        setLoading(false);
       }
     }
+    
     fetchContent();
   }, [id]);
+
+  useEffect(() => {
+    if (!id) return;
+
+    const interval = setInterval(async () => {
+      try {
+        const sectionData = await getSectionData(id);
+        if (sectionData?.hero_content) {
+          const currentDataString = JSON.stringify(content);
+          const newDataString = JSON.stringify(sectionData.hero_content);
+          
+          if (currentDataString !== newDataString) {
+            setContent(sectionData.hero_content);
+            setCachedData(sectionData.hero_content);
+          }
+        }
+      } catch (error) {
+      }
+    }, 30000);
+
+    return () => clearInterval(interval);
+  }, [id, content]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -70,8 +144,9 @@ export default function HeroUtama({ id }: SectionProps) {
     return () => clearInterval(interval);
   }, [content?.slider_images]);
 
-  // Intersection Observer untuk animasi scroll stats section
   useEffect(() => {
+    if (loading) return;
+
     const observerOptions = {
       threshold: 0.1,
       rootMargin: '0px 0px -50px 0px',
@@ -95,20 +170,16 @@ export default function HeroUtama({ id }: SectionProps) {
     return () => {
       observer.disconnect();
     };
-  }, []);
+  }, [loading]);
 
-  // Loading state
-  if (!content) {
-    return (
-      <div className="relative w-full overflow-hidden bg-[#061551] pt-12 px-6 md:px-14 lg:px-18 pb-5 md:pb-0">
-        <div className="relative w-full overflow-hidden rounded-4xl min-h-[600px] flex items-center justify-center">
-          <p className="text-white">Loading...</p>
-        </div>
-      </div>
-    );
+  if (loading) {
+    return <LoadingSpinner />;
   }
 
-  // Get localized text helper
+  if (!content) {
+    return null;
+  }
+
   const titleText = content.title_lines ? (locale === 'id' ? content.title_lines.text_id : content.title_lines.text_en) : '';
 
   const descriptionText = content.description_lines ? (locale === 'id' ? content.description_lines.text_id : content.description_lines.text_en) : '';
@@ -136,18 +207,15 @@ export default function HeroUtama({ id }: SectionProps) {
 
           <div className="relative z-10 flex flex-col items-center justify-center px-4 py-12 md:py-20 mt-5 md:mt-0 text-center text-[#DFE1E4]">
             <div className="max-w-3xl">
-              {/* Title */}
               {titleText && <h1 className="md:mb-4 text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl lg:text-5xl animate__animated animate__fadeIn">{titleText}</h1>}
             </div>
 
-            {/* Description */}
             {descriptionText && (
               <div className="mt-4 md:mt-6 mb-6 md:mb-8">
                 <p className="max-w-2xl text-md text-gray-200 text-md md:text-xl animate__animated animate__fadeIn">{descriptionText}</p>
               </div>
             )}
 
-            {/* Speech Bubble */}
             {speechBubbleLines && (
               <div className="relative mb-6 w-full max-w-md mx-auto animate__animated animate__fadeIn">
                 <div className="relative rounded-3xl bg-[#CFE3C0] px-4 py-3 sm:px-6">
@@ -164,7 +232,6 @@ export default function HeroUtama({ id }: SectionProps) {
               </div>
             )}
 
-            {/* CTA Button */}
             {ctaButtonText && (
               <div className="flex gap-4 mt-0 mb-3 md:mb-0 animate__animated animate__fadeIn">
                 <CustomButton size="lg" className="mt-3" onClick={() => setIsModalOpen(true)}>
@@ -173,7 +240,6 @@ export default function HeroUtama({ id }: SectionProps) {
               </div>
             )}
 
-            {/* Image Slider */}
             {images.length > 0 && (
               <>
                 <div className={`relative w-full max-w-[1200px] h-[200px] md:h-[250px] md:h-[450px] overflow-hidden transition-all duration-1000 ease-out ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0'}`}>
@@ -211,7 +277,6 @@ export default function HeroUtama({ id }: SectionProps) {
           </div>
         </div>
 
-        {/* Stats Section - FIXED VERSION */}
         {statistics.length > 0 && (
           <div 
             ref={statsRef} 
@@ -232,12 +297,10 @@ export default function HeroUtama({ id }: SectionProps) {
                       animationFillMode: 'both' 
                     }}
                   >
-                    {/* Number */}
                     <h1 className="mb-2 md:mb-4 text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl lg:text-6xl">
                       {stat.number}
                     </h1>
                     
-                    {/* Label - Responsive text wrapping */}
                     <p className="font-normal text-sm md:text-base lg:text-lg leading-tight px-2 break-words max-w-[180px]">
                       {statLabel}
                     </p>

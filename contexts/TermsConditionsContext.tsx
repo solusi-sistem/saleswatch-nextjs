@@ -24,7 +24,6 @@ export function TermsConditionsProvider({ children }: { children: React.ReactNod
         const result = await getTermsConditionsData();
         setData(result);
       } catch (err) {
-        console.error('Error fetching terms and conditions:', err);
         setError('Failed to load terms and conditions');
       } finally {
         setLoading(false);

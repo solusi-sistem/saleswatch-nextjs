@@ -19,7 +19,6 @@ export async function getIndustryOptions(): Promise<IndustryOption[]> {
     const result = await client.fetch(query, {}, { cache: 'no-store' });
     return result || [];
   } catch (error) {
-    console.error('Error fetching industry options:', error);
     return [];
   }
 }
@@ -41,7 +40,6 @@ export async function getCompanySizeOptions(): Promise<CompanySizeOption[]> {
     const result = await client.fetch(query, {}, { cache: 'no-store' });
     return result || [];
   } catch (error) {
-    console.error('Error fetching company size options:', error);
     return [];
   }
 }

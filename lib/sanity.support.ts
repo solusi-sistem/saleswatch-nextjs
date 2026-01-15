@@ -73,13 +73,11 @@ export async function getSupportData(): Promise<SupportSection | null> {
     let data = await client.fetch<SupportSection>(SUPPORT_QUERY);
     
     if (!data?.support_content?.items || data.support_content.items.length === 0) {
-      console.log('Trying alternative support query...');
       data = await client.fetch<SupportSection>(SUPPORT_QUERY_SIMPLE);
     }
     
     return data;
   } catch (error) {
-    console.error('Error fetching Support data:', error);
     return null;
   }
 }
@@ -96,7 +94,6 @@ export function listenToSupportChanges(
         }
       },
       error: (err) => {
-        console.error('Support subscription error:', err);
       },
     });
 

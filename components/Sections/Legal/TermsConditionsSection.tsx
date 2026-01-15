@@ -6,13 +6,19 @@ import { ChevronDown, ChevronUp } from 'lucide-react';
 import Image from 'next/image';
 
 import { getSectionData } from '@/hooks/getSectionData';
+import LoadingSpinner from '@/components/loading/LoadingSpinner';
 import type { Section, SectionProps, PrivacyPolicyItem } from '@/types/section';
 import type { LangKey } from '@/types';
 import type { TermsConditionsBlock } from '@/types/termsConditions';
 
-/* ===============================
-   Portable Text Renderer
-================================ */
+const CACHE_KEY = 'terms_conditions_cache';
+const CACHE_DURATION = 5 * 60 * 1000;
+
+interface CachedData {
+  data: Section;
+  timestamp: number;
+}
+
 function PortableTextRenderer({ blocks }: { blocks: TermsConditionsBlock[] }) {
   return (
     <div className="space-y-4">
@@ -136,16 +142,57 @@ export default function TermsConditionsSection({ id }: SectionProps) {
   const [loading, setLoading] = useState(true);
   const [expanded, setExpanded] = useState<Set<string>>(new Set());
 
+  const getCachedData = (): Section | null => {
+    try {
+      const cached = localStorage.getItem(CACHE_KEY);
+      if (!cached) return null;
+
+      const parsedCache: CachedData = JSON.parse(cached);
+      const now = Date.now();
+
+      if (now - parsedCache.timestamp < CACHE_DURATION) {
+        return parsedCache.data;
+      } else {
+        localStorage.removeItem(CACHE_KEY);
+        return null;
+      }
+    } catch (error) {
+      localStorage.removeItem(CACHE_KEY);
+      return null;
+    }
+  };
+
+  const setCachedData = (data: Section) => {
+    try {
+      const cacheData: CachedData = {
+        data,
+        timestamp: Date.now(),
+      };
+      localStorage.setItem(CACHE_KEY, JSON.stringify(cacheData));
+    } catch (error) {
+    }
+  };
+
   useEffect(() => {
     async function fetchData() {
       if (!id) return;
 
-      setLoading(true);
+      const cachedContent = getCachedData();
+      if (cachedContent) {
+        setSectionData(cachedContent);
+        setLoading(false);
+      }
+
       try {
         const data = await getSectionData(id);
-        setSectionData(data);
-      } catch (err) {
-        console.error('Error fetching terms and conditions:', err);
+        if (data) {
+          setSectionData(data);
+          setCachedData(data);
+        }
+      } catch (error) {
+        if (!sectionData && cachedContent) {
+          setSectionData(cachedContent);
+        }
       } finally {
         setLoading(false);
       }
@@ -154,6 +201,28 @@ export default function TermsConditionsSection({ id }: SectionProps) {
     fetchData();
   }, [id]);
 
+  useEffect(() => {
+    if (!id) return;
+
+    const interval = setInterval(async () => {
+      try {
+        const data = await getSectionData(id);
+        if (data) {
+          const currentDataString = JSON.stringify(sectionData);
+          const newDataString = JSON.stringify(data);
+          
+          if (currentDataString !== newDataString) {
+            setSectionData(data);
+            setCachedData(data);
+          }
+        }
+      } catch (error) {
+      }
+    }, 30000);
+
+    return () => clearInterval(interval);
+  }, [id, sectionData]);
+
   const toggle = (itemId: string) => {
     const s = new Set(expanded);
     s.has(itemId) ? s.delete(itemId) : s.add(itemId);
@@ -161,22 +230,7 @@ export default function TermsConditionsSection({ id }: SectionProps) {
   };
 
   if (loading) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
-        <div className="max-w-5xl mx-auto px-4 py-12 sm:px-6 lg:px-8">
-          <div className="space-y-4">
-            {[1, 2, 3, 4, 5].map((i) => (
-              <div key={i} className="bg-white rounded-xl shadow-md p-6 animate-pulse">
-                <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 bg-gray-200 rounded-lg"></div>
-                  <div className="h-6 w-48 bg-gray-200 rounded"></div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-    );
+    return <LoadingSpinner />;
   }
 
   const items: PrivacyPolicyItem[] =

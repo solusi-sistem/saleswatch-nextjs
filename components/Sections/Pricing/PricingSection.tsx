@@ -5,8 +5,17 @@ import { usePathname } from 'next/navigation';
 import { getSectionData } from '@/hooks/getSectionData';
 import { PricingContent } from '@/types/section';
 import ScheduleDemoModal from '@/components/modals/ScheduleDemoModal';
+import LoadingSpinner from '@/components/loading/LoadingSpinner';
 
 type BlogLocale = 'en' | 'id';
+
+const CACHE_KEY = 'pricing_section_cache';
+const CACHE_DURATION = 5 * 60 * 1000;
+
+interface CachedData {
+  data: PricingContent;
+  timestamp: number;
+}
 
 const isValidLanguage = (lang: string): lang is BlogLocale => {
   return lang === 'en' || lang === 'id';
@@ -34,18 +43,57 @@ export default function PricingSection({ id }: PricingSectionProps) {
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+  const getCachedData = (): PricingContent | null => {
+    try {
+      const cached = localStorage.getItem(CACHE_KEY);
+      if (!cached) return null;
+
+      const parsedCache: CachedData = JSON.parse(cached);
+      const now = Date.now();
+
+      if (now - parsedCache.timestamp < CACHE_DURATION) {
+        return parsedCache.data;
+      } else {
+        localStorage.removeItem(CACHE_KEY);
+        return null;
+      }
+    } catch (error) {
+      localStorage.removeItem(CACHE_KEY);
+      return null;
+    }
+  };
+
+  const setCachedData = (data: PricingContent) => {
+    try {
+      const cacheData: CachedData = {
+        data,
+        timestamp: Date.now(),
+      };
+      localStorage.setItem(CACHE_KEY, JSON.stringify(cacheData));
+    } catch (error) {
+    }
+  };
+
   useEffect(() => {
     async function fetchContent() {
       if (!id) return;
 
+      const cachedContent = getCachedData();
+      if (cachedContent) {
+        setContent(cachedContent);
+        setLoading(false);
+      }
+
       try {
-        setLoading(true);
         const sectionData = await getSectionData(id);
         if (sectionData?.pricing_content) {
           setContent(sectionData.pricing_content);
+          setCachedData(sectionData.pricing_content);
         }
       } catch (error) {
-        console.error('Error fetching pricing content:', error);
+        if (!content && cachedContent) {
+          setContent(cachedContent);
+        }
       } finally {
         setLoading(false);
       }
@@ -53,14 +101,30 @@ export default function PricingSection({ id }: PricingSectionProps) {
     fetchContent();
   }, [id]);
 
+  useEffect(() => {
+    if (!id) return;
+
+    const interval = setInterval(async () => {
+      try {
+        const sectionData = await getSectionData(id);
+        if (sectionData?.pricing_content) {
+          const currentDataString = JSON.stringify(content);
+          const newDataString = JSON.stringify(sectionData.pricing_content);
+          
+          if (currentDataString !== newDataString) {
+            setContent(sectionData.pricing_content);
+            setCachedData(sectionData.pricing_content);
+          }
+        }
+      } catch (error) {
+      }
+    }, 30000);
+
+    return () => clearInterval(interval);
+  }, [id, content]);
+
   if (loading) {
-    return (
-      <div className="bg-[#f2f7ff] py-12 px-4">
-        <div className="max-w-7xl mx-auto text-center">
-          <p className="text-gray-500">Loading pricing plans...</p>
-        </div>
-      </div>
-    );
+    return <LoadingSpinner />;
   }
 
   if (!content || !content.pricing_plans || content.pricing_plans.length === 0) {
@@ -239,7 +303,7 @@ export default function PricingSection({ id }: PricingSectionProps) {
                   onClick={() => setIsModalOpen(true)}
                   className="mt-3 inline-block w-full py-2 font-medium rounded-md transition text-sm bg-[#6587A8] text-white hover:bg-[#CFE3C0] hover:text-[#6587A8]"
                 >
-                  {currentLang === 'id' ? plan.cta_button?.text_id || 'Jadwalkan Demo' : plan.cta_button?.text_en || 'Schedule Demo'}
+                  {currentLang === 'id' ? plan.cta_button?.text_id || 'Jadwalkan Demo' : plan.cta_button?.text_en || ''}
                 </button>
               </div>
 

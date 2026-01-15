@@ -3,52 +3,120 @@ import nodemailer from 'nodemailer';
 
 export async function POST(request) {
   try {
-    const { companyName, contactPersonName, companySize, whatsapp, industry, message } = await request.json();
+    const body = await request.json();
+    const { companyName, contactPersonName, companySize, whatsapp, industry, message } = body;
 
+    console.log('📧 Demo Request received:', { companyName, contactPersonName, companySize, whatsapp, industry });
+
+    // Validasi input
     if (!companyName || !contactPersonName || !companySize || !whatsapp || !industry) {
+      console.error('❌ Validation failed: Missing required fields');
       return NextResponse.json(
         { error: 'Semua field wajib diisi kecuali pesan' },
         { status: 400 }
       );
     }
 
-    const requiredEnvs = [
-      'MAIL_HOST',
-      'MAIL_PORT', 
-      'MAIL_USERNAME',
-      'MAIL_PASSWORD',
-      'MAIL_FROM_ADDRESS'
-    ];
-
-    for (const env of requiredEnvs) {
-      if (!process.env[env]) {
-        return NextResponse.json(
-          { error: `Konfigurasi email tidak lengkap: ${env}` },
-          { status: 500 }
-        );
+    // Fetch settings dari Sanity
+    console.log('🔍 Fetching settings from Sanity...');
+    const settingsUrl = `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/api/settings`;
+    console.log('📍 Settings URL:', settingsUrl);
+    
+    const settingsResponse = await fetch(settingsUrl, { 
+      cache: 'no-store',
+      headers: {
+        'Content-Type': 'application/json',
       }
+    });
+    
+    console.log('📥 Settings response status:', settingsResponse.status);
+
+    if (!settingsResponse.ok) {
+      const errorText = await settingsResponse.text();
+      console.error('❌ Failed to fetch settings:', errorText);
+      return NextResponse.json(
+        { 
+          error: 'Gagal mengambil konfigurasi email dari Sanity. Pastikan Website Settings sudah diisi di Sanity Studio.',
+          details: errorText
+        },
+        { status: 500 }
+      );
     }
 
+    const settings = await settingsResponse.json();
+    console.log('✅ Settings fetched successfully');
+    console.log('📧 SMTP Config:', {
+      host: settings.emailSettings?.smtp?.host,
+      port: settings.emailSettings?.smtp?.port,
+      username: settings.emailSettings?.smtp?.username,
+      fromAddress: settings.emailSettings?.smtp?.fromAddress,
+    });
+    console.log('👥 Admin Emails:', settings.emailSettings?.adminEmails);
+    
+    // Validasi settings
+    if (!settings.emailSettings?.smtp) {
+      console.error('❌ SMTP configuration not found in settings');
+      return NextResponse.json(
+        { error: 'Konfigurasi SMTP tidak ditemukan. Silakan isi Website Settings di Sanity Studio.' },
+        { status: 500 }
+      );
+    }
+
+    const { smtp, adminEmails } = settings.emailSettings;
+
+    // Validasi admin emails
+    if (!adminEmails || adminEmails.length === 0) {
+      console.error('❌ No active admin emails found');
+      return NextResponse.json(
+        { error: 'Tidak ada email admin yang aktif. Silakan tambahkan admin email di Website Settings.' },
+        { status: 500 }
+      );
+    }
+
+    console.log('📧 Admin emails found:', adminEmails.map(a => `${a.name} <${a.email}>`));
+
+    // Konfigurasi transporter
+    console.log('🔧 Configuring SMTP transporter...');
+    console.log('🔑 Using SMTP:', {
+      host: smtp.host,
+      port: smtp.port,
+      user: smtp.username,
+      secure: smtp.port === 465,
+    });
+
     const transporter = nodemailer.createTransport({
-      host: process.env.MAIL_HOST,
-      port: parseInt(process.env.MAIL_PORT),
-      secure: process.env.MAIL_PORT === '465',
+      host: smtp.host,
+      port: smtp.port,
+      secure: smtp.port === 465, // true untuk port 465, false untuk port lainnya
       auth: {
-        user: process.env.MAIL_USERNAME,
-        pass: process.env.MAIL_PASSWORD,
+        user: smtp.username,
+        pass: smtp.password,
       },
       tls: {
         rejectUnauthorized: false
       },
-      debug: true,
-      logger: true
+      debug: true, // Enable debug output
+      logger: true // Log information to console
     });
 
+    // Verify koneksi SMTP
     try {
+      console.log('🔍 Verifying SMTP connection...');
       await transporter.verify();
+      console.log('✅ SMTP connection verified successfully');
     } catch (verifyError) {
+      console.error('❌ SMTP Verification Error:', verifyError);
+      console.error('Error details:', {
+        message: verifyError.message,
+        code: verifyError.code,
+        command: verifyError.command
+      });
       return NextResponse.json(
-        { error: 'Koneksi email server gagal: ' + verifyError.message },
+        { 
+          error: 'Koneksi ke server email gagal. Periksa konfigurasi SMTP di Sanity.', 
+          details: verifyError.message,
+          code: verifyError.code
+        },
         { status: 500 }
       );
     }
@@ -62,9 +130,13 @@ export async function POST(request) {
       minute: '2-digit'
     });
 
+    // Siapkan list penerima
+    const recipients = adminEmails.map(admin => admin.email).join(', ');
+    console.log('📬 Sending to recipients:', recipients);
+
     const mailOptions = {
-      from: `"${process.env.MAIL_FROM_NAME || 'Saleswatch'}" <${process.env.MAIL_FROM_ADDRESS}>`,
-      to: 'saleswatchid@gmail.com',
+      from: `"${smtp.fromName || 'Saleswatch'}" <${smtp.fromAddress}>`,
+      to: recipients,
       subject: `📋 Demo Request Baru - ${companyName}`,
       html: `
         <!DOCTYPE html>
@@ -180,6 +252,9 @@ export async function POST(request) {
               <p style="color: #999; font-size: 12px; margin: 0;">
                 Email ini dikirim otomatis dari sistem Saleswatch
               </p>
+              <p style="color: #999; font-size: 12px; margin: 5px 0 0 0;">
+                Dikirim ke: ${adminEmails.map(admin => admin.name).join(', ')}
+              </p>
               <p style="color: #999; font-size: 12px; margin: 10px 0 0 0;">
                 © ${new Date().getFullYear()} Saleswatch. All rights reserved.
               </p>
@@ -206,21 +281,42 @@ export async function POST(request) {
         ${message ? `PESAN:\n${message}\n` : ''}
         
         Hubungi via WhatsApp: https://wa.me/${whatsapp.replace(/[^0-9]/g, '')}
+        
+        ---
+        Dikirim ke: ${adminEmails.map(admin => `${admin.name} (${admin.email})`).join(', ')}
       `,
     };
 
+    console.log('📤 Attempting to send email...');
+    console.log('From:', mailOptions.from);
+    console.log('To:', mailOptions.to);
+    console.log('Subject:', mailOptions.subject);
+
     const info = await transporter.sendMail(mailOptions);
+
+    console.log('✅ Email sent successfully!');
+    console.log('📧 Message ID:', info.messageId);
+    console.log('📧 Response:', info.response);
+    console.log('📬 Sent to:', adminEmails.map(a => a.email).join(', '));
 
     return NextResponse.json(
       { 
         success: true,
         message: 'Demo request berhasil dikirim',
-        messageId: info.messageId 
+        messageId: info.messageId,
+        sentTo: adminEmails.length,
+        recipients: adminEmails.map(a => a.email)
       },
       { status: 200 }
     );
 
   } catch (error) {
+    console.error('❌ Send Email Error:', error);
+    console.error('Error details:', {
+      message: error.message,
+      code: error.code,
+      stack: error.stack
+    });
     return NextResponse.json(
       { 
         success: false,

@@ -8,6 +8,15 @@ import { getSectionData } from '@/hooks/getSectionData';
 import { Section } from '@/types/section';
 import { BlogItem } from '@/types/list/Blog';
 import { usePathname } from 'next/navigation';
+import LoadingSpinner from '@/components/loading/LoadingSpinner';
+
+const CACHE_KEY = 'blog_section_cache';
+const CACHE_DURATION = 5 * 60 * 1000;
+
+interface CachedData {
+  data: Section;
+  timestamp: number;
+}
 
 interface BlogProps {
     id?: string;
@@ -27,16 +36,57 @@ export default function Blog({ id }: BlogProps) {
     const card2Ref = useRef<HTMLElement>(null);
     const card3Ref = useRef<HTMLElement>(null);
 
+    const getCachedData = (): Section | null => {
+        try {
+            const cached = localStorage.getItem(CACHE_KEY);
+            if (!cached) return null;
+
+            const parsedCache: CachedData = JSON.parse(cached);
+            const now = Date.now();
+
+            if (now - parsedCache.timestamp < CACHE_DURATION) {
+                return parsedCache.data;
+            } else {
+                localStorage.removeItem(CACHE_KEY);
+                return null;
+            }
+        } catch (error) {
+            localStorage.removeItem(CACHE_KEY);
+            return null;
+        }
+    };
+
+    const setCachedData = (data: Section) => {
+        try {
+            const cacheData: CachedData = {
+                data,
+                timestamp: Date.now(),
+            };
+            localStorage.setItem(CACHE_KEY, JSON.stringify(cacheData));
+        } catch (error) {
+        }
+    };
+
     useEffect(() => {
         const fetchSectionData = async () => {
             if (!id) return;
 
-            setLoading(true);
+            const cachedContent = getCachedData();
+            if (cachedContent) {
+                setSectionData(cachedContent);
+                setLoading(false);
+            }
+
             try {
                 const data = await getSectionData(id);
-                setSectionData(data);
+                if (data) {
+                    setSectionData(data);
+                    setCachedData(data);
+                }
             } catch (error) {
-                console.error('Error fetching section data:', error);
+                if (!sectionData && cachedContent) {
+                    setSectionData(cachedContent);
+                }
             } finally {
                 setLoading(false);
             }
@@ -44,6 +94,28 @@ export default function Blog({ id }: BlogProps) {
 
         fetchSectionData();
     }, [id]);
+
+    useEffect(() => {
+        if (!id) return;
+
+        const interval = setInterval(async () => {
+            try {
+                const data = await getSectionData(id);
+                if (data) {
+                    const currentDataString = JSON.stringify(sectionData);
+                    const newDataString = JSON.stringify(data);
+                    
+                    if (currentDataString !== newDataString) {
+                        setSectionData(data);
+                        setCachedData(data);
+                    }
+                }
+            } catch (error) {
+            }
+        }, 30000);
+
+        return () => clearInterval(interval);
+    }, [id, sectionData]);
 
     useEffect(() => {
         if (loading || !sectionData?.blog_content) return;
@@ -74,26 +146,16 @@ export default function Blog({ id }: BlogProps) {
     }, [loading, sectionData]);
 
     if (loading) {
-        return (
-            <section className="bg-white py-16 md:py-20">
-                <div className="container mx-auto px-6 sm:px-6 lg:px-12 xl:px-24">
-                    <div className="flex justify-center items-center min-h-[400px]">
-                        <div className="text-gray-500">Loading...</div>
-                    </div>
-                </div>
-            </section>
-        );
+        return <LoadingSpinner />;
     }
 
     if (!sectionData?.blog_content) {
-        console.warn('No blog_content available');
         return null;
     }
 
     const { blog_content } = sectionData;
 
     if (!blog_content.list_blog || !Array.isArray(blog_content.list_blog)) {
-        console.warn('No blog list available');
         return null;
     }
 
@@ -105,15 +167,7 @@ export default function Blog({ id }: BlogProps) {
     const cardRefs = [card1Ref, card2Ref, card3Ref];
 
     if (latestBlogs.length === 0) {
-        return (
-            <section className="bg-white py-16 md:py-20">
-                <div className="container mx-auto px-6 sm:px-6 lg:px-12 xl:px-24">
-                    <div className="text-center text-gray-500">
-                        No published blogs available
-                    </div>
-                </div>
-            </section>
-        );
+        return null;
     }
 
     const title = locale === 'id'
@@ -151,7 +205,6 @@ export default function Blog({ id }: BlogProps) {
                         const author = blog.author || 'Unknown';
 
                         if (!blogSlug) {
-                            console.warn(`Blog ${index} has no slug, skipping`);
                             return null;
                         }
 
