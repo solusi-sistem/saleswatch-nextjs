@@ -9,12 +9,26 @@ import { BlogListSectionContent } from '@/types/section';
 import { BlogItem } from '@/types/list/Blog';
 import { usePathname } from 'next/navigation';
 import { getAllBlogs } from '@/hooks/getAllBlogs';
+import LoadingSpinner from '@/components/loading/LoadingSpinner';
+
+const CACHE_KEY_SECTION = 'blog_list_section_cache';
+const CACHE_KEY_ALL_BLOGS = 'blog_list_all_blogs_cache';
+const CACHE_DURATION = 5 * 60 * 1000;
+
+interface CachedSectionData {
+  data: BlogListSectionContent;
+  timestamp: number;
+}
+
+interface CachedBlogsData {
+  data: BlogItem[];
+  timestamp: number;
+}
 
 interface BlogListSectionProps {
   id: string;
 }
 
-// Type definition for language
 type BlogLocale = 'en' | 'id';
 
 const isValidLanguage = (lang: string): lang is BlogLocale => {
@@ -33,13 +47,90 @@ export default function BlogListSection({ id }: BlogListSectionProps) {
   const [isLoading, setIsLoading] = useState(true);
   const [showAll, setShowAll] = useState(false);
 
+  const getCachedSectionData = (): BlogListSectionContent | null => {
+    try {
+      const cached = localStorage.getItem(CACHE_KEY_SECTION);
+      if (!cached) return null;
+
+      const parsedCache: CachedSectionData = JSON.parse(cached);
+      const now = Date.now();
+
+      if (now - parsedCache.timestamp < CACHE_DURATION) {
+        return parsedCache.data;
+      } else {
+        localStorage.removeItem(CACHE_KEY_SECTION);
+        return null;
+      }
+    } catch (error) {
+      localStorage.removeItem(CACHE_KEY_SECTION);
+      return null;
+    }
+  };
+
+  const setCachedSectionData = (data: BlogListSectionContent) => {
+    try {
+      const cacheData: CachedSectionData = {
+        data,
+        timestamp: Date.now(),
+      };
+      localStorage.setItem(CACHE_KEY_SECTION, JSON.stringify(cacheData));
+    } catch (error) {
+    }
+  };
+
+  const getCachedAllBlogs = (): BlogItem[] | null => {
+    try {
+      const cached = localStorage.getItem(CACHE_KEY_ALL_BLOGS);
+      if (!cached) return null;
+
+      const parsedCache: CachedBlogsData = JSON.parse(cached);
+      const now = Date.now();
+
+      if (now - parsedCache.timestamp < CACHE_DURATION) {
+        return parsedCache.data;
+      } else {
+        localStorage.removeItem(CACHE_KEY_ALL_BLOGS);
+        return null;
+      }
+    } catch (error) {
+      localStorage.removeItem(CACHE_KEY_ALL_BLOGS);
+      return null;
+    }
+  };
+
+  const setCachedAllBlogs = (data: BlogItem[]) => {
+    try {
+      const cacheData: CachedBlogsData = {
+        data,
+        timestamp: Date.now(),
+      };
+      localStorage.setItem(CACHE_KEY_ALL_BLOGS, JSON.stringify(cacheData));
+    } catch (error) {
+    }
+  };
+
   useEffect(() => {
     const fetchData = async () => {
       try {
-        setIsLoading(true);
+        const cachedSection = getCachedSectionData();
+        const cachedBlogs = getCachedAllBlogs();
+
+        if (cachedSection) {
+          setSectionData(cachedSection);
+          const tampilkanSemua = cachedSection.tampilkan_semua || false;
+          setShowAll(tampilkanSemua);
+
+          if (tampilkanSemua && cachedBlogs) {
+            setAllBlogs(cachedBlogs);
+          }
+          setIsLoading(false);
+        }
+
         const data = await getSectionData(id);
         if (data?.blog_list_section_content) {
           setSectionData(data.blog_list_section_content);
+          setCachedSectionData(data.blog_list_section_content);
+          
           const tampilkanSemua = data.blog_list_section_content.tampilkan_semua || false;
           setShowAll(tampilkanSemua);
 
@@ -47,11 +138,23 @@ export default function BlogListSection({ id }: BlogListSectionProps) {
             const blogs = await getAllBlogs('published', undefined, 'dateDesc');
             if (blogs) {
               setAllBlogs(blogs);
+              setCachedAllBlogs(blogs);
             }
           }
         }
       } catch (error) {
-        console.error('Error fetching blog list section:', error);
+        const cachedSection = getCachedSectionData();
+        const cachedBlogs = getCachedAllBlogs();
+        
+        if (!sectionData && cachedSection) {
+          setSectionData(cachedSection);
+          const tampilkanSemua = cachedSection.tampilkan_semua || false;
+          setShowAll(tampilkanSemua);
+
+          if (tampilkanSemua && cachedBlogs) {
+            setAllBlogs(cachedBlogs);
+          }
+        }
       } finally {
         setIsLoading(false);
       }
@@ -60,15 +163,46 @@ export default function BlogListSection({ id }: BlogListSectionProps) {
     fetchData();
   }, [id]);
 
+  useEffect(() => {
+    if (!id) return;
+
+    const interval = setInterval(async () => {
+      try {
+        const data = await getSectionData(id);
+        if (data?.blog_list_section_content) {
+          const currentDataString = JSON.stringify(sectionData);
+          const newDataString = JSON.stringify(data.blog_list_section_content);
+          
+          if (currentDataString !== newDataString) {
+            setSectionData(data.blog_list_section_content);
+            setCachedSectionData(data.blog_list_section_content);
+            
+            const tampilkanSemua = data.blog_list_section_content.tampilkan_semua || false;
+            setShowAll(tampilkanSemua);
+
+            if (tampilkanSemua) {
+              const blogs = await getAllBlogs('published', undefined, 'dateDesc');
+              if (blogs) {
+                const currentBlogsString = JSON.stringify(allBlogs);
+                const newBlogsString = JSON.stringify(blogs);
+                
+                if (currentBlogsString !== newBlogsString) {
+                  setAllBlogs(blogs);
+                  setCachedAllBlogs(blogs);
+                }
+              }
+            }
+          }
+        }
+      } catch (error) {
+      }
+    }, 30000);
+
+    return () => clearInterval(interval);
+  }, [id, sectionData, allBlogs]);
+
   if (isLoading) {
-    return (
-      <div className="min-h-screen bg-[#f2f7ff] flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#061551] mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading...</p>
-        </div>
-      </div>
-    );
+    return <LoadingSpinner />;
   }
 
   if (!sectionData || (!showAll && !sectionData.list_blogs?.length)) {
@@ -139,23 +273,19 @@ export default function BlogListSection({ id }: BlogListSectionProps) {
               {currentPosts.map((post: BlogItem, index) => {
                 const slug = post.slug?.current || '';
                 
-                // Safe extraction with null checks for category
                 const categoryName = post.category?.name
                   ? (language === 'id' ? (post.category.name.id || post.category.name.en) : (post.category.name.en || post.category.name.id))
                   : '';
                 const categorySlug = post.category?.slug?.current || '';
 
-                // Safe extraction with null checks for title
                 const postTitle = post.title
                   ? (language === 'id' ? (post.title.id || post.title.en) : (post.title.en || post.title.id))
-                  : 'Untitled';
+                  : '';
 
-                // Safe extraction with null checks for excerpt
                 const postExcerpt = post.excerpt
                   ? (language === 'id' ? (post.excerpt.id || post.excerpt.en) : (post.excerpt.en || post.excerpt.id))
                   : '';
 
-                // Safe extraction for image alt with proper null checks
                 const imageAlt = post.image?.alt
                   ? (language === 'id' ? (post.image.alt.id || post.image.alt.en) : (post.image.alt.en || post.image.alt.id)) || postTitle
                   : postTitle;

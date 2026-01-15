@@ -33,7 +33,6 @@ export function ListOptionsProvider({ children }: { children: ReactNode }) {
       setIndustryOptions(industries);
       setCompanySizeOptions(companySizes);
     } catch (err) {
-      console.error('Error loading list options:', err);
       setError('Failed to load options');
     } finally {
       setIsLoading(false);

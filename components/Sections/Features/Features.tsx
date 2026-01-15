@@ -6,7 +6,16 @@ import Image from 'next/image';
 import CustomButton from '@/components/button/button';
 import { SectionProps, FeaturesContent } from '@/types/section';
 import { getSectionData } from '@/hooks/getSectionData';
+import LoadingSpinner from '@/components/loading/LoadingSpinner';
 import type { LangKey } from '@/types';
+
+const CACHE_KEY = 'features_cache';
+const CACHE_DURATION = 5 * 60 * 1000;
+
+interface CachedData {
+  data: FeaturesContent;
+  timestamp: number;
+}
 
 export default function Features({ id }: SectionProps) {
   const pathname = usePathname();
@@ -19,25 +28,83 @@ export default function Features({ id }: SectionProps) {
   const mobileFeaturesRef = useRef<HTMLDivElement>(null);
   const suiteModulesRef = useRef<HTMLDivElement>(null);
 
-  // Fetch data dari Sanity
+  const getCachedData = (): FeaturesContent | null => {
+    try {
+      const cached = localStorage.getItem(CACHE_KEY);
+      if (!cached) return null;
+
+      const parsedCache: CachedData = JSON.parse(cached);
+      const now = Date.now();
+
+      if (now - parsedCache.timestamp < CACHE_DURATION) {
+        return parsedCache.data;
+      } else {
+        localStorage.removeItem(CACHE_KEY);
+        return null;
+      }
+    } catch (error) {
+      localStorage.removeItem(CACHE_KEY);
+      return null;
+    }
+  };
+
+  const setCachedData = (data: FeaturesContent) => {
+    try {
+      const cacheData: CachedData = {
+        data,
+        timestamp: Date.now(),
+      };
+      localStorage.setItem(CACHE_KEY, JSON.stringify(cacheData));
+    } catch (error) {}
+  };
+
   useEffect(() => {
     async function fetchContent() {
       if (!id) return;
 
+      const cachedContent = getCachedData();
+      if (cachedContent) {
+        setContent(cachedContent);
+        setLoading(false);
+      }
+
       try {
-        setLoading(true);
         const sectionData = await getSectionData(id);
         if (sectionData?.features_content) {
           setContent(sectionData.features_content);
+          setCachedData(sectionData.features_content);
         }
       } catch (error) {
-        console.error('Error fetching features content:', error);
+        if (!content && cachedContent) {
+          setContent(cachedContent);
+        }
       } finally {
         setLoading(false);
       }
     }
     fetchContent();
   }, [id]);
+
+  useEffect(() => {
+    if (!id) return;
+
+    const interval = setInterval(async () => {
+      try {
+        const sectionData = await getSectionData(id);
+        if (sectionData?.features_content) {
+          const currentDataString = JSON.stringify(content);
+          const newDataString = JSON.stringify(sectionData.features_content);
+
+          if (currentDataString !== newDataString) {
+            setContent(sectionData.features_content);
+            setCachedData(sectionData.features_content);
+          }
+        }
+      } catch (error) {}
+    }, 30000);
+
+    return () => clearInterval(interval);
+  }, [id, content]);
 
   useEffect(() => {
     if (loading) return;
@@ -81,22 +148,20 @@ export default function Features({ id }: SectionProps) {
   };
 
   if (loading) {
-    return <div className="bg-[#f2f7ff]"></div>;
+    return <LoadingSpinner />;
   }
 
   if (!content || !content.mobile_features || content.mobile_features.length === 0) {
     return null;
   }
 
-  // Pisahkan fitur berdasarkan type - handle null/undefined dengan fallback ke fiturSuite
   const fiturUtamaList = content.mobile_features.filter((f) => f.type_features === 'fiturUtama');
   const fiturSuiteList = content.mobile_features.filter((f) => f.type_features === 'fiturSuite' || !f.type_features);
 
-  // Ambil data dari content
-  const logoText = content.logo_text || 'SALESWATCH';
+  const logoText = content.logo_text || '';
   const logoImage = content.logo_features?.asset?.url;
-  const logoTeksFeatures = content.logo_teks_features || 'Saleswatch';
-  const suiteText = content.suite_text || 'SUITE';
+  const logoTeksFeatures = content.logo_teks_features || '';
+  const suiteText = content.suite_text || '';
 
   return (
     <div className="bg-[#f2f7ff]">
@@ -104,11 +169,12 @@ export default function Features({ id }: SectionProps) {
         <div className="bg-[#061551] rounded-4xl px-8 py-12 mx-4 animate__animated animate__fadeIn">
           <div className="flex flex-col lg:flex-row items-stretch justify-center gap-8 lg:gap-0">
             {/* Saleswatch Section */}
-            <div className="flex flex-col md:w-[230px] gap-4 justify-between">
-              <div className="flex items-center justify-center md:justify-start">
+            <div className="flex flex-col gap-4 justify-between items-center lg:items-start">
+              <div className="flex items-center justify-center lg:justify-start w-full">
                 <h5 className="text-[#CFE3C0] font-semibold text-2xl leading-none">{logoText}</h5>
               </div>
-              <div className="flex flex-wrap justify-center md:justify-start gap-3">
+
+              <div className="flex flex-row flex-wrap justify-center items-center gap-3 w-full">
                 {fiturUtamaList.map((feature, index) => {
                   const btnText = currentLang === 'id' ? feature.section_title_id || feature.section_title_en : feature.section_title_en || feature.section_title_id;
 
@@ -137,7 +203,7 @@ export default function Features({ id }: SectionProps) {
                 </div>
               </div>
 
-              <div className="flex flex-wrap gap-3 justify-center md:justify-start">
+              <div className="flex flex-wrap gap-3 justify-center xl:justify-start">
                 {fiturSuiteList.flatMap((feature) =>
                   (feature.features_list || []).map((item, itemIndex) => {
                     const btnText = currentLang === 'id' ? item.title?.id || item.title?.en : item.title?.en || item.title?.id;

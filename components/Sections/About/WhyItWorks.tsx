@@ -8,6 +8,15 @@ import CustomButton from '@/components/button/button';
 import type { LangKey } from '@/types';
 import { SectionProps, WhyItWorksContent } from '@/types/section';
 import { getSectionData } from '@/hooks/getSectionData';
+import LoadingSpinner from '@/components/loading/LoadingSpinner';
+
+const CACHE_KEY = 'why_it_works_cache';
+const CACHE_DURATION = 5 * 60 * 1000;
+
+interface CachedData {
+  data: WhyItWorksContent;
+  timestamp: number;
+}
 
 export default function WhyItWorks({ id }: SectionProps) {
     const pathname = usePathname();
@@ -19,24 +28,85 @@ export default function WhyItWorks({ id }: SectionProps) {
     const titleRef = useRef<HTMLHeadingElement>(null);
     const featureRefs = useRef<(HTMLDivElement | null)[]>([]);
 
+    const getCachedData = (): WhyItWorksContent | null => {
+        try {
+            const cached = localStorage.getItem(CACHE_KEY);
+            if (!cached) return null;
+
+            const parsedCache: CachedData = JSON.parse(cached);
+            const now = Date.now();
+
+            if (now - parsedCache.timestamp < CACHE_DURATION) {
+                return parsedCache.data;
+            } else {
+                localStorage.removeItem(CACHE_KEY);
+                return null;
+            }
+        } catch (error) {
+            localStorage.removeItem(CACHE_KEY);
+            return null;
+        }
+    };
+
+    const setCachedData = (data: WhyItWorksContent) => {
+        try {
+            const cacheData: CachedData = {
+                data,
+                timestamp: Date.now(),
+            };
+            localStorage.setItem(CACHE_KEY, JSON.stringify(cacheData));
+        } catch (error) {
+        }
+    };
+
     useEffect(() => {
         async function fetchContent() {
             if (!id) return;
 
+            const cachedContent = getCachedData();
+            if (cachedContent) {
+                setContent(cachedContent);
+                setLoading(false);
+            }
+
             try {
-                setLoading(true);
                 const sectionData = await getSectionData(id);
                 if (sectionData?.why_it_works) {
                     setContent(sectionData.why_it_works);
+                    setCachedData(sectionData.why_it_works);
                 }
             } catch (error) {
-                console.error('Error fetching why it works content:', error);
+                if (!content && cachedContent) {
+                    setContent(cachedContent);
+                }
             } finally {
                 setLoading(false);
             }
         }
         fetchContent();
     }, [id]);
+
+    useEffect(() => {
+        if (!id) return;
+
+        const interval = setInterval(async () => {
+            try {
+                const sectionData = await getSectionData(id);
+                if (sectionData?.why_it_works) {
+                    const currentDataString = JSON.stringify(content);
+                    const newDataString = JSON.stringify(sectionData.why_it_works);
+                    
+                    if (currentDataString !== newDataString) {
+                        setContent(sectionData.why_it_works);
+                        setCachedData(sectionData.why_it_works);
+                    }
+                }
+            } catch (error) {
+            }
+        }, 30000);
+
+        return () => clearInterval(interval);
+    }, [id, content]);
 
     useEffect(() => {
         if (loading) return;
@@ -67,27 +137,7 @@ export default function WhyItWorks({ id }: SectionProps) {
     }, [loading]);
 
     if (loading) {
-        return (
-            <section className="bg-[#f2f7ff] py-16 md:py-24 px-6">
-                <div className="max-w-6xl mx-auto space-y-24">
-                    <div className="h-16 bg-white/50 animate-pulse rounded w-1/2 mx-auto"></div>
-                    {[1, 2, 3].map((i) => (
-                        <div key={i} className="grid md:grid-cols-2 gap-10 items-center">
-                            <div className="h-80 bg-white/50 animate-pulse rounded"></div>
-                            <div className="space-y-4">
-                                <div className="h-10 bg-white/50 animate-pulse rounded w-3/4"></div>
-                                <div className="h-20 bg-white/50 animate-pulse rounded"></div>
-                                <div className="space-y-2">
-                                    {[1, 2, 3, 4].map((j) => (
-                                        <div key={j} className="h-6 bg-white/50 animate-pulse rounded"></div>
-                                    ))}
-                                </div>
-                            </div>
-                        </div>
-                    ))}
-                </div>
-            </section>
-        );
+        return <LoadingSpinner />;
     }
 
     if (!content) {

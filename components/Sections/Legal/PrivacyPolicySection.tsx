@@ -5,10 +5,18 @@ import { usePathname } from 'next/navigation';
 import { ChevronDown, ChevronUp } from 'lucide-react';
 import Image from 'next/image';
 import { getSectionData } from '@/hooks/getSectionData';
+import LoadingSpinner from '@/components/loading/LoadingSpinner';
 import type { Section } from '@/types/section';
 import type { SectionProps } from '@/types/section';
 
-// Interface untuk Privacy Policy Block
+const CACHE_KEY = 'privacy_policy_cache';
+const CACHE_DURATION = 5 * 60 * 1000;
+
+interface CachedData {
+  data: Section;
+  timestamp: number;
+}
+
 interface PrivacyPolicyBlock {
   _key?: string;
   _type: string;
@@ -34,7 +42,6 @@ interface PrivacyPolicyBlock {
 
 type LangKey = '' | 'id';
 
-// Portable Text Renderer Component
 function PortableTextRenderer({ blocks }: { blocks: PrivacyPolicyBlock[] }) {
   return (
     <div className="space-y-4">
@@ -148,20 +155,62 @@ function PortableTextRenderer({ blocks }: { blocks: PrivacyPolicyBlock[] }) {
 export default function PrivacyPolicySection({ id }: SectionProps) {
   const pathname = usePathname();
   const currentLang: LangKey = pathname.startsWith('/id') ? 'id' : '';
+  
   const [sectionData, setSectionData] = useState<Section | null>(null);
   const [loading, setLoading] = useState(true);
   const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set());
+
+  const getCachedData = (): Section | null => {
+    try {
+      const cached = localStorage.getItem(CACHE_KEY);
+      if (!cached) return null;
+
+      const parsedCache: CachedData = JSON.parse(cached);
+      const now = Date.now();
+
+      if (now - parsedCache.timestamp < CACHE_DURATION) {
+        return parsedCache.data;
+      } else {
+        localStorage.removeItem(CACHE_KEY);
+        return null;
+      }
+    } catch (error) {
+      localStorage.removeItem(CACHE_KEY);
+      return null;
+    }
+  };
+
+  const setCachedData = (data: Section) => {
+    try {
+      const cacheData: CachedData = {
+        data,
+        timestamp: Date.now(),
+      };
+      localStorage.setItem(CACHE_KEY, JSON.stringify(cacheData));
+    } catch (error) {
+    }
+  };
 
   useEffect(() => {
     async function fetchData() {
       if (!id) return;
 
-      setLoading(true);
+      const cachedContent = getCachedData();
+      if (cachedContent) {
+        setSectionData(cachedContent);
+        setLoading(false);
+      }
+
       try {
         const data = await getSectionData(id);
-        setSectionData(data);
+        if (data) {
+          setSectionData(data);
+          setCachedData(data);
+        }
       } catch (error) {
-        console.error('Error fetching privacy policy section:', error);
+        if (!sectionData && cachedContent) {
+          setSectionData(cachedContent);
+        }
       } finally {
         setLoading(false);
       }
@@ -169,6 +218,28 @@ export default function PrivacyPolicySection({ id }: SectionProps) {
 
     fetchData();
   }, [id]);
+
+  useEffect(() => {
+    if (!id) return;
+
+    const interval = setInterval(async () => {
+      try {
+        const data = await getSectionData(id);
+        if (data) {
+          const currentDataString = JSON.stringify(sectionData);
+          const newDataString = JSON.stringify(data);
+          
+          if (currentDataString !== newDataString) {
+            setSectionData(data);
+            setCachedData(data);
+          }
+        }
+      } catch (error) {
+      }
+    }, 30000);
+
+    return () => clearInterval(interval);
+  }, [id, sectionData]);
 
   const toggleSection = (sectionId: string) => {
     const newExpanded = new Set(expandedSections);
@@ -181,22 +252,7 @@ export default function PrivacyPolicySection({ id }: SectionProps) {
   };
 
   if (loading) {
-    return (
-      <div className="min-h-screen bg-[#f2f7ff]">
-        <div className="max-w-5xl mx-auto px-4 py-12 sm:px-6 lg:px-8">
-          <div className="space-y-4">
-            {[1, 2, 3, 4, 5].map((i) => (
-              <div key={i} className="bg-white rounded-xl shadow-md p-6 animate-pulse">
-                <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 bg-gray-200 rounded-lg"></div>
-                  <div className="h-6 w-48 bg-gray-200 rounded"></div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-    );
+    return <LoadingSpinner />;
   }
 
   if (!sectionData?.privacy_policy_section_content?.privacy_policy) {
@@ -210,7 +266,6 @@ export default function PrivacyPolicySection({ id }: SectionProps) {
   const privacyPolicies =
     sectionData.privacy_policy_section_content?.privacy_policy ?? [];
 
-  // Jika privacy policy adalah single item (reference)
   if (privacyPolicies) {
     return (
       <div className="min-h-screen bg-[#f2f7ff]">

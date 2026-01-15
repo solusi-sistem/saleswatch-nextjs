@@ -8,6 +8,7 @@ import { Facebook, Linkedin, Instagram, Youtube, Twitter, ChevronUp } from 'luci
 import ScheduleDemoModal from '@/components/modals/ScheduleDemoModal';
 import { useLayout } from '@/contexts/LayoutContext';
 import { urlFor } from '@/lib/sanity.realtime';
+import LoadingSpinner from '@/components/loading/LoadingSpinner';
 import type { LangKey, SocialMediaItem, FooterColumn, FooterLink } from '@/types';
 
 const SOCIAL_ICONS = {
@@ -147,6 +148,14 @@ export default function Footer() {
     return href;
   };
 
+  if (loading) {
+    return <LoadingSpinner />;
+  }
+
+  if (!layoutData?.footer) {
+    return null;
+  }
+
   return (
     <>
       <footer className="bg-[#061551] text-white py-25 px-6 md:px-12">
@@ -154,15 +163,13 @@ export default function Footer() {
           <div className="grid grid-cols-1 md:grid-cols-12 gap-9">
             <div className="md:col-span-5 pe-8">
               <Link href={currentLang === '' ? '/' : '/id'} className="flex items-center gap-0 mb-0">
-                {!loading && (footerLogoUrls.logo || footerLogoUrls.logoTeks) ? (
+                {footerLogoUrls.logo || footerLogoUrls.logoTeks ? (
                   <>
                     {footerLogoUrls.logo && <Image src={footerLogoUrls.logo} alt="Company Logo Icon" width={100} height={100} priority className="w-[70px] h-[70px] object-contain -ms-2" />}
                     {footerLogoUrls.logoTeks && <Image src={footerLogoUrls.logoTeks} alt="Company Logo Text" width={200} height={70} priority className="w-[150px] h-auto object-contain -ms-2" />}
                   </>
-                ) : !loading ? (
-                  <span className="text-2xl font-bold text-white">SALESWATCH</span>
                 ) : (
-                  <div className="w-[220px] h-[70px] bg-white/10 animate-pulse rounded"></div>
+                  <span className="text-2xl font-bold text-white">SALESWATCH</span>
                 )}
               </Link>
 

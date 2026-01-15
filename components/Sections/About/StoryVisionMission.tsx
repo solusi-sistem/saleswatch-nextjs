@@ -5,6 +5,15 @@ import { usePathname } from 'next/navigation';
 import type { LangKey } from '@/types';
 import { SectionProps, StoryVisionMissionContent } from '@/types/section';
 import { getSectionData } from '@/hooks/getSectionData';
+import LoadingSpinner from '@/components/loading/LoadingSpinner';
+
+const CACHE_KEY = 'story_vision_mission_cache';
+const CACHE_DURATION = 5 * 60 * 1000;
+
+interface CachedData {
+  data: StoryVisionMissionContent;
+  timestamp: number;
+}
 
 const iconComponents = {
   cross: (
@@ -40,25 +49,85 @@ export default function StoryVisionMission({ id }: SectionProps) {
   const card2Ref = useRef<HTMLDivElement>(null);
   const card3Ref = useRef<HTMLDivElement>(null);
 
-  // Fetch data dari Sanity
+  const getCachedData = (): StoryVisionMissionContent | null => {
+    try {
+      const cached = localStorage.getItem(CACHE_KEY);
+      if (!cached) return null;
+
+      const parsedCache: CachedData = JSON.parse(cached);
+      const now = Date.now();
+
+      if (now - parsedCache.timestamp < CACHE_DURATION) {
+        return parsedCache.data;
+      } else {
+        localStorage.removeItem(CACHE_KEY);
+        return null;
+      }
+    } catch (error) {
+      localStorage.removeItem(CACHE_KEY);
+      return null;
+    }
+  };
+
+  const setCachedData = (data: StoryVisionMissionContent) => {
+    try {
+      const cacheData: CachedData = {
+        data,
+        timestamp: Date.now(),
+      };
+      localStorage.setItem(CACHE_KEY, JSON.stringify(cacheData));
+    } catch (error) {
+    }
+  };
+
   useEffect(() => {
     async function fetchContent() {
       if (!id) return;
 
+      const cachedContent = getCachedData();
+      if (cachedContent) {
+        setContent(cachedContent);
+        setLoading(false);
+      }
+
       try {
-        setLoading(true);
         const sectionData = await getSectionData(id);
         if (sectionData?.story_vision_mission) {
           setContent(sectionData.story_vision_mission);
+          setCachedData(sectionData.story_vision_mission);
         }
       } catch (error) {
-        console.error('Error fetching story vision mission content:', error);
+        if (!content && cachedContent) {
+          setContent(cachedContent);
+        }
       } finally {
         setLoading(false);
       }
     }
     fetchContent();
   }, [id]);
+
+  useEffect(() => {
+    if (!id) return;
+
+    const interval = setInterval(async () => {
+      try {
+        const sectionData = await getSectionData(id);
+        if (sectionData?.story_vision_mission) {
+          const currentDataString = JSON.stringify(content);
+          const newDataString = JSON.stringify(sectionData.story_vision_mission);
+          
+          if (currentDataString !== newDataString) {
+            setContent(sectionData.story_vision_mission);
+            setCachedData(sectionData.story_vision_mission);
+          }
+        }
+      } catch (error) {
+      }
+    }, 30000);
+
+    return () => clearInterval(interval);
+  }, [id, content]);
 
   useEffect(() => {
     if (loading) return;
@@ -88,21 +157,7 @@ export default function StoryVisionMission({ id }: SectionProps) {
   }, [loading]);
 
   if (loading) {
-    return (
-      <section className="bg-[#DFE1E4] py-16 md:py-24 px-4" style={{ scrollMarginTop: '100px' }}>
-        <div className="max-w-6xl mx-auto">
-          <div className="grid gap-12 md:gap-16 lg:gap-20 md:grid-cols-3 text-center">
-            {[1, 2, 3].map((i) => (
-              <div key={i} className="flex flex-col items-center space-y-4">
-                <div className="h-14 w-14 bg-white/50 animate-pulse rounded-full"></div>
-                <div className="h-6 w-32 bg-white/50 animate-pulse rounded"></div>
-                <div className="h-20 w-full max-w-xs bg-white/50 animate-pulse rounded"></div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-    );
+    return <LoadingSpinner />;
   }
 
   if (!content?.items || content.items.length === 0) {

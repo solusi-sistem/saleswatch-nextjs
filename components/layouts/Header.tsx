@@ -31,7 +31,6 @@ export default function Header() {
 
   const currentLang: LangKey = pathname.startsWith('/id') ? 'id' : '';
 
-  // Memoize logo URLs
   const logoUrls = useMemo(() => {
     const logoHeader = layoutData?.header?.logo_header;
 
@@ -60,9 +59,9 @@ export default function Header() {
   const showRequestDemo = ctaButtons?.request_demo_button?.show_button === true;
   const showLogin = ctaButtons?.login_button?.show_button === true;
 
-  const requestDemoText = currentLang === '' ? ctaButtons?.request_demo_button?.text_en || 'Request Demo' : ctaButtons?.request_demo_button?.text_id || 'Minta Demo';
+  const requestDemoText = currentLang === '' ? ctaButtons?.request_demo_button?.text_en || '' : ctaButtons?.request_demo_button?.text_id || '';
 
-  const loginText = currentLang === '' ? ctaButtons?.login_button?.text_en || 'Login' : ctaButtons?.login_button?.text_id || 'Masuk';
+  const loginText = currentLang === '' ? ctaButtons?.login_button?.text_en || '' : ctaButtons?.login_button?.text_id || '';
 
   const loginUrl = ctaButtons?.login_button?.login_url || 'https://dash.saleswatch.id/login';
 
@@ -71,7 +70,7 @@ export default function Header() {
     setTimeout(() => {
       setMobileMenuOpen(false);
       setLangOpen(false);
-    }, 300); // Wait for animation to complete
+    }, 300);
   };
 
   const openMobileMenu = () => {
@@ -189,7 +188,6 @@ export default function Header() {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  // Prevent body scroll when mobile menu is open
   useEffect(() => {
     if (mobileMenuOpen) {
       document.body.style.overflow = 'hidden';
