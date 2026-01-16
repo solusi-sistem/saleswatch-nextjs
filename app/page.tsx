@@ -9,7 +9,7 @@ import Link from 'next/link';
 import { isPagePublished, isSectionPublished } from '@/lib/isPublished';
 import { renderSection } from '@/contexts/renderSection';
 import { redirect } from 'next/navigation';
-import { getLocaleCookie, setLocaleCookie, getGeoDataCookie, setGeoDataCookie } from '@/app/actions/locale';
+import { cookies } from 'next/headers';
 
 // Force dynamic rendering
 export const dynamic = 'force-dynamic';
@@ -72,30 +72,18 @@ export default async function EnglishPage({ params }: PageProps) {
   const resolvedParams = await params;
   const slug = resolvedParams.slug ? `/${resolvedParams.slug}` : '/';
 
-  // Check if locale cookie exists
-  const existingLocale = await getLocaleCookie();
-  const existingGeoData = await getGeoDataCookie();
+  // Get cookies
+  const cookieStore = await cookies();
+  const localeCookie = cookieStore.get('locale');
+  const geoDataCookie = cookieStore.get('geoData');
 
-  // Only redirect based on geolocation if this is the homepage and no manual selection has been made
-  if (slug === '/' && !existingLocale && !existingGeoData) {
-    // First visit - fetch geo data and set cookies
-    const geoData = await getGeoData();
-
-    // Save geo data to cookie
-    await setGeoDataCookie(geoData);
-
-    // If user is from Indonesia, set locale and redirect
-    if (geoData.languages === 'id') {
-      await setLocaleCookie('id');
-      redirect('/id');
-    } else {
-      // Set English locale for non-Indonesian users
-      await setLocaleCookie('en');
-    }
+  if (slug === '/' && !localeCookie && !geoDataCookie) {
+    // trigger backend to set cookie
+    redirect('/api/geo');
   }
 
   // If user manually selected Indonesian, redirect to /id
-  if (existingLocale === 'id') {
+  if (localeCookie?.value === 'id') {
     redirect('/id');
   }
 
