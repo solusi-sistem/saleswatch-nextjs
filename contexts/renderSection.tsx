@@ -9,7 +9,6 @@ import SupportHeader from "@/components/Sections/Support/SupportHeader";
 import WhyItWorks from "@/components/Sections/About/WhyItWorks";
 import StoryVisionMission from "@/components/Sections/About/StoryVisionMission";
 import Testimonial from "@/components/Sections/Testimonial/Testimonial";
-import Faq from "@/components/Sections/Faq/Faq";
 import Blog from "@/components/Sections/Blog/Blog";
 import RequestDemoSection from "@/components/Sections/Demo/RequestDemoSection";
 import Features from "@/components/Sections/Features/Features";
