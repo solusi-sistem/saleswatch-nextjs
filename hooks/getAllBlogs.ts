@@ -107,7 +107,7 @@ export async function getAllBlogs(
         const result = await client.fetch<BlogItem[]>(query, {}, {
             next: { revalidate: 3600 }
         });
-        console.log(`Fetched ${result?.length || 0} blog posts from Sanity`);
+        // console.log(`Fetched ${result?.length || 0} blog posts from Sanity`);
         return result || [];
     } catch (error) {
         console.error("Error fetching all blogs:", error);
@@ -124,7 +124,7 @@ export async function getBlogBySlug(slug: string): Promise<BlogItem | null> {
         const result = await client.fetch<BlogItem>(query, { slug }, {
             next: { revalidate: 3600 }
         });
-        console.log("Blog post by slug:", result ? "Found" : "Not found");
+        // console.log("Blog post by slug:", result ? "Found" : "Not found");
         return result || null;
     } catch (error) {
         console.error("Error fetching blog by slug:", error);
@@ -146,11 +146,11 @@ export async function getBlogsByCategory(
 
     try {
         const result = await client.fetch<BlogItem[]>(
-            query, 
+            query,
             { status, categorySlug },
             { next: { revalidate: 3600 } }
         );
-        console.log(`Fetched ${result?.length || 0} posts for category: ${categorySlug}`);
+        // console.log(`Fetched ${result?.length || 0} posts for category: ${categorySlug}`);
         return result || [];
     } catch (error) {
         console.error("Error fetching blogs by category:", error);
@@ -180,7 +180,7 @@ export async function getAllCategories(): Promise<BlogCategory[] | null> {
         const result = await client.fetch<BlogCategory[]>(query, {}, {
             next: { revalidate: 3600 }
         });
-        console.log(`Fetched ${result?.length || 0} blog categories`);
+        // console.log(`Fetched ${result?.length || 0} blog categories`);
         return result || [];
     } catch (error) {
         console.error("Error fetching blog categories:", error);
@@ -231,7 +231,7 @@ export async function getBlogsWithPagination(
     const offset = (page - 1) * postsPerPage;
 
     let filterConditions = `_type == "list_blog" && status == $status`;
-    
+
     if (categorySlug) {
         filterConditions += ` && category->slug.current == $categorySlug`;
     }
@@ -242,21 +242,21 @@ export async function getBlogsWithPagination(
     }`;
 
     try {
-        const params = categorySlug 
+        const params = categorySlug
             ? { status, categorySlug, offset, limit: offset + postsPerPage }
             : { status, offset, limit: offset + postsPerPage };
 
         const totalPosts = await client.fetch<number>(countQuery, params, {
             next: { revalidate: 3600 }
         });
-        
+
         const posts = await client.fetch<BlogItem[]>(postsQuery, params, {
             next: { revalidate: 3600 }
         });
 
         const totalPages = Math.ceil(totalPosts / postsPerPage);
 
-        console.log(`Fetched page ${page} of ${totalPages} (${posts.length} posts)`);
+        // console.log(`Fetched page ${page} of ${totalPages} (${posts.length} posts)`);
 
         return {
             posts: posts || [],
@@ -280,7 +280,7 @@ export async function getRelatedBlogs(
 ): Promise<BlogItem[] | null> {
     // Build filter conditions
     let filterConditions = `_type == "list_blog" && _id != $currentBlogId && status == "published"`;
-    
+
     if (categorySlug) {
         filterConditions += ` && category->slug.current == $categorySlug`;
     }
@@ -290,7 +290,7 @@ export async function getRelatedBlogs(
     }`;
 
     try {
-        const params = categorySlug 
+        const params = categorySlug
             ? { currentBlogId, categorySlug, limit }
             : { currentBlogId, limit };
 
@@ -338,10 +338,10 @@ export async function getRecentBlogs(
  */
 export async function getBlogCategories(): Promise<Array<{ en: string; id: string }> | null> {
     console.warn('getBlogCategories is deprecated. Use getAllCategories instead.');
-    
+
     const categories = await getAllCategories();
     if (!categories) return null;
-    
+
     return categories.map(cat => ({
         en: cat.name.en,
         id: cat.name.id

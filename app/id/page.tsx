@@ -8,7 +8,7 @@ import Link from 'next/link';
 import { isPagePublished, isSectionPublished } from '@/lib/isPublished';
 import { renderSection } from '@/contexts/renderSection';
 import { redirect } from 'next/navigation';
-import { getLocaleCookie } from '@/app/actions/locale';
+import { cookies } from 'next/headers';
 
 // Force dynamic rendering
 export const dynamic = 'force-dynamic';
@@ -71,11 +71,12 @@ export default async function IndonesianPage({ params }: PageProps) {
   const resolvedParams = await params;
   const slug = resolvedParams.slug ? `/${resolvedParams.slug}` : '/';
 
-  // Check if user selected English
-  const existingLocale = await getLocaleCookie();
+  // Get cookies
+  const cookieStore = await cookies();
+  const localeCookie = cookieStore.get('locale');
 
   // If user manually selected English, redirect to English version
-  if (existingLocale === 'en') {
+  if (localeCookie?.value === 'en') {
     const pathWithoutId = slug === '/id' ? '/' : slug.replace(/^\/id/, '');
     redirect(pathWithoutId || '/');
   }

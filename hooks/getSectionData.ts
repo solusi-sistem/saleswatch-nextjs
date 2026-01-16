@@ -561,7 +561,7 @@ export async function getSectionData(sectionId: string): Promise<Section | null>
 
     try {
         const result = await client.fetch(query, { sectionId }, { cache: 'no-store' });
-        console.log('Section data for ID ' + sectionId, result);
+        // console.log('Section data for ID ' + sectionId, result);
         return result || null;
     } catch (error) {
         console.error('Error fetching section data:', error);
