@@ -7,6 +7,7 @@ import ScheduleDemoModal from '@/components/modals/ScheduleDemoModal';
 import type { LangKey } from '@/types';
 import { SectionProps, RequestDemoContent } from '@/types/section';
 import { getSectionData } from '@/hooks/getSectionData';
+import LoadingSpinner from '@/components/loading/LoadingSpinner';
 
 export default function RequestDemoSection({ id }: SectionProps) {
   const pathname = usePathname();
@@ -105,24 +106,7 @@ export default function RequestDemoSection({ id }: SectionProps) {
   }, [loading, content]);
 
   if (loading) {
-    return (
-      <>
-        <div className="fixed inset-0 -z-20 bg-gray-200 animate-pulse" />
-        <section ref={sectionRef} className="relative w-full overflow-hidden py-16 md:py-24">
-          <div className="relative z-10 flex justify-center px-4">
-            <div className="w-full max-w-4xl text-center md:text-left space-y-4">
-              <div className="h-8 w-48 bg-white/50 animate-pulse rounded mb-4"></div>
-              <div className="space-y-2">
-                {[1, 2, 3, 4, 5].map((i) => (
-                  <div key={i} className="h-12 w-full bg-white/50 animate-pulse rounded"></div>
-                ))}
-              </div>
-              <div className="h-12 w-40 bg-white/50 animate-pulse rounded mt-8"></div>
-            </div>
-          </div>
-        </section>
-      </>
-    );
+    return <LoadingSpinner />;
   }
 
   if (!content) {
@@ -138,15 +122,14 @@ export default function RequestDemoSection({ id }: SectionProps) {
     <>
       {backgroundImage && (
         <div
-          className={`fixed inset-0 -z-20 bg-cover bg-center transition-opacity duration-500 ${
-            isVisible ? 'opacity-100' : 'opacity-0'
-          }`}
+          className={`fixed inset-0 -z-20 bg-cover bg-center transition-opacity duration-500 ${isVisible ? 'opacity-100' : 'opacity-0'
+            }`}
           style={{
             backgroundImage: `linear-gradient(rgba(6, 21, 81, 0.6), rgba(6, 21, 81, 0.6)), url('${backgroundImage}')`,
           }}
         />
       )}
-      
+
       <section ref={sectionRef} className="relative w-full overflow-hidden py-16 md:py-24 min-h-[400px]">
         <div className="relative z-10 flex justify-center px-4 text-[#DFE1E4]">
           <div className="w-full max-w-4xl text-center md:text-left">
@@ -154,11 +137,10 @@ export default function RequestDemoSection({ id }: SectionProps) {
             {badgeText && (
               <h2
                 ref={badgeRef}
-                className={`mb-4 text-lg sm:text-xl md:text-3xl font-semibold text-white flex items-center justify-center md:justify-start gap-3 transition-all duration-700 ${
-                  animationStates.badge 
-                    ? 'opacity-100 translate-y-0' 
+                className={`mb-4 text-lg sm:text-xl md:text-3xl font-semibold text-white flex items-center justify-center md:justify-start gap-3 transition-all duration-700 ${animationStates.badge
+                    ? 'opacity-100 translate-y-0'
                     : 'opacity-0 -translate-y-4'
-                }`}
+                  }`}
               >
                 <svg viewBox="0 0 60 60" className="w-5 h-5 md:w-7 md:h-7" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                   <path d="M30 1.9C14.5 1.9 1.9 14.5 1.9 30c0 15.5 12.6 28.1 28.1 28.1S58.1 45.5 58.1 30C58.1 14.5 45.5 1.9 30 1.9zm0 44c-8.8 0-15.9-7.1-15.9-15.9S21.2 14.1 30 14.1 45.9 21.2 45.9 30 38.8 45.9 30 45.9z" />
@@ -171,11 +153,10 @@ export default function RequestDemoSection({ id }: SectionProps) {
             {titleText && (
               <div
                 ref={titleContainerRef}
-                className={`transition-all duration-700 delay-200 ${
-                  animationStates.title 
-                    ? 'opacity-100 translate-y-0' 
+                className={`transition-all duration-700 delay-200 ${animationStates.title
+                    ? 'opacity-100 translate-y-0'
                     : 'opacity-0 translate-y-4'
-                }`}
+                  }`}
               >
                 <p className="text-xl sm:text-2xl md:text-[50px] font-bold leading-tight text-white">
                   {titleText}
@@ -187,11 +168,10 @@ export default function RequestDemoSection({ id }: SectionProps) {
             {buttonText && (
               <div
                 ref={buttonRef}
-                className={`mt-8 flex justify-center md:justify-center transition-all duration-700 delay-500 ${
-                  animationStates.button 
-                    ? 'opacity-100 scale-100' 
+                className={`mt-8 flex justify-center md:justify-center transition-all duration-700 delay-500 ${animationStates.button
+                    ? 'opacity-100 scale-100'
                     : 'opacity-0 scale-95'
-                }`}
+                  }`}
               >
                 <CustomButton
                   size="lg"

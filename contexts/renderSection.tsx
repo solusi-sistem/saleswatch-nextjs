@@ -21,6 +21,7 @@ import FaqSection from "@/components/Sections/Faq/FaqSection";
 import BlogListSection from "@/components/Sections/Blog/BlogListSection";
 
 import { isSectionPublished } from "@/lib/isPublished";
+import About from "@/components/Sections/About/About";
 
 // Komponen untuk render section
 export function renderSection(section: Section, index: number): JSX.Element | null {
@@ -43,8 +44,8 @@ export function renderSection(section: Section, index: number): JSX.Element | nu
             return <StoryVisionMission {...sectionProps} />;
         case 'testimonial':
             return <Testimonial {...sectionProps} />;
-        case 'faq':
-            return <Faq {...sectionProps} />;
+        case 'about':
+            return <About {...sectionProps} />;
         case 'blog':
             return <Blog {...sectionProps} />;
         case 'requestDemo':

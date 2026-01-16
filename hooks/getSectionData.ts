@@ -4,7 +4,7 @@ import { groq } from 'next-sanity';
 
 // Fungsi untuk fetch data section berdasarkan ID
 export async function getSectionData(sectionId: string): Promise<Section | null> {
-  const query = groq`*[_type == "section" && _id == $sectionId][0]{
+    const query = groq`*[_type == "section" && _id == $sectionId][0]{
         _id,
         _type,
         name_section,
@@ -205,12 +205,12 @@ export async function getSectionData(sectionId: string): Promise<Section | null>
         },
 
         // FAQ Content
-        faq_content {
+        about_content {
             title_en,
             title_id,
             description_en,
             description_id,
-            faq_items[] {
+            about_items[] {
                 question_en,
                 question_id,
                 answer_en,
@@ -559,12 +559,12 @@ export async function getSectionData(sectionId: string): Promise<Section | null>
 }
     }`;
 
-  try {
-    const result = await client.fetch(query, { sectionId }, { cache: 'no-store' });
-    console.log('Section data for ID ' + sectionId, result);
-    return result || null;
-  } catch (error) {
-    console.error('Error fetching section data:', error);
-    return null;
-  }
+    try {
+        const result = await client.fetch(query, { sectionId }, { cache: 'no-store' });
+        console.log('Section data for ID ' + sectionId, result);
+        return result || null;
+    } catch (error) {
+        console.error('Error fetching section data:', error);
+        return null;
+    }
 }

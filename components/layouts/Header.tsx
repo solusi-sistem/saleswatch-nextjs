@@ -91,7 +91,9 @@ export default function Header() {
     setLangOpen(false);
     if (newLang === currentLang) return;
 
-    await setLocaleCookie(newLang === '' ? 'en' : 'id');
+    // Set cookie untuk language preference
+    const localeValue = newLang === '' ? 'en' : 'id';
+    await setLocaleCookie(localeValue);
 
     let pathWithoutLang = pathname;
     if (currentLang === 'id' && pathname.startsWith('/id')) {
@@ -258,9 +260,9 @@ export default function Header() {
             )}
           </div>
 
-          <button 
-            className="lg:hidden p-2 text-2xl hover:bg-white/10 rounded-md transition-colors" 
-            onClick={openMobileMenu} 
+          <button
+            className="lg:hidden p-2 text-2xl hover:bg-white/10 rounded-md transition-colors"
+            onClick={openMobileMenu}
             aria-label="Open menu"
           >
             ☰
@@ -271,49 +273,47 @@ export default function Header() {
         {mobileMenuOpen && (
           <>
             {/* Backdrop with fade animation */}
-            <div 
-              className={`fixed inset-0 bg-black/50 z-40 lg:hidden transition-opacity duration-300 ${
-                isAnimating ? 'opacity-100' : 'opacity-0'
-              }`}
+            <div
+              className={`fixed inset-0 bg-black/50 z-40 lg:hidden transition-opacity duration-300 ${isAnimating ? 'opacity-100' : 'opacity-0'
+                }`}
               onClick={closeAll}
             />
-            
+
             {/* Sliding Panel */}
-            <div 
+            <div
               className={`fixed top-0 right-0 bottom-0 w-full sm:w-96 bg-[#061551] z-50 lg:hidden 
-                transform transition-transform duration-300 ease-out shadow-2xl ${
-                isAnimating ? 'translate-x-0' : 'translate-x-full'
-              }`}
+                transform transition-transform duration-300 ease-out shadow-2xl ${isAnimating ? 'translate-x-0' : 'translate-x-full'
+                }`}
             >
               <div className="flex items-center justify-between px-6 py-5 border-b border-white/10">
                 <div className="flex items-center gap-2">
                   {logoUrls.logo && (
-                    <Image 
-                      src={logoUrls.logo} 
-                      alt="Company Logo Icon" 
-                      width={100} 
-                      height={100} 
-                      priority 
-                      className="w-[50px] md:w-[70px] md:h-[50px] md:h-[70px] object-contain" 
+                    <Image
+                      src={logoUrls.logo}
+                      alt="Company Logo Icon"
+                      width={100}
+                      height={100}
+                      priority
+                      className="w-[50px] md:w-[70px] md:h-[50px] md:h-[70px] object-contain"
                     />
                   )}
                   {logoUrls.logoTeks && (
-                    <Image 
-                      src={logoUrls.logoTeks} 
-                      alt="Company Logo Text" 
-                      width={200} 
-                      height={70} 
-                      priority 
-                      className="w-[130px] md:w-[150px] h-auto object-contain -ms-1" 
+                    <Image
+                      src={logoUrls.logoTeks}
+                      alt="Company Logo Text"
+                      width={200}
+                      height={70}
+                      priority
+                      className="w-[130px] md:w-[150px] h-auto object-contain -ms-1"
                     />
                   )}
                   {!logoUrls.logo && !logoUrls.logoTeks && (
                     <span className="text-2xl font-bold text-white"></span>
                   )}
                 </div>
-                <button 
-                  onClick={closeAll} 
-                  className="text-2xl leading-none hover:bg-white/10 rounded-md p-2 transition-colors" 
+                <button
+                  onClick={closeAll}
+                  className="text-2xl leading-none hover:bg-white/10 rounded-md p-2 transition-colors"
                   aria-label="Close menu"
                 >
                   ✕
@@ -326,12 +326,11 @@ export default function Header() {
                 {showLanguageSwitcher && (
                   <div className="flex gap-3 pt-4">
                     {(Object.keys(LANGUAGES) as LangKey[]).map((key) => (
-                      <button 
-                        key={key} 
-                        onClick={() => handleLanguageSwitch(key)} 
-                        className={`flex items-center gap-2 px-3 py-2 rounded-md text-sm transition-colors ${
-                          currentLang === key ? 'bg-white/20' : 'bg-white/10 hover:bg-white/15'
-                        }`}
+                      <button
+                        key={key}
+                        onClick={() => handleLanguageSwitch(key)}
+                        className={`flex items-center gap-2 px-3 py-2 rounded-md text-sm transition-colors ${currentLang === key ? 'bg-white/20' : 'bg-white/10 hover:bg-white/15'
+                          }`}
                       >
                         <img src={LANGUAGES[key].flag} className="w-5 h-3" alt="" />
                         {LANGUAGES[key].label}
@@ -343,8 +342,8 @@ export default function Header() {
                 {(showRequestDemo || showLogin) && (
                   <div className="flex flex-col gap-4 pt-6">
                     {showRequestDemo && (
-                      <button 
-                        onClick={handleRequestDemoClick} 
+                      <button
+                        onClick={handleRequestDemoClick}
                         className="w-full bg-[#6587A8] hover:bg-[#CFE3C0] hover:text-[#6587A8] px-4 py-2 rounded-md transition cursor-pointer text-white"
                       >
                         {requestDemoText}
@@ -352,8 +351,8 @@ export default function Header() {
                     )}
 
                     {showLogin && (
-                      <button 
-                        onClick={handleLoginClick} 
+                      <button
+                        onClick={handleLoginClick}
                         className="w-full bg-[#6587A8] hover:bg-[#CFE3C0] hover:text-[#6587A8] px-4 py-2 rounded-md transition cursor-pointer text-white"
                       >
                         {loginText}

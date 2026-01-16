@@ -10,6 +10,7 @@ import ScheduleDemoModal from '@/components/modals/ScheduleDemoModal';
 import type { Section, SectionProps, SupportPlan } from '@/types/section';
 import type { SupportBlock } from '@/types/support';
 import { LangKey } from '@/types';
+import LoadingSpinner from '@/components/loading/LoadingSpinner';
 
 function PortableTextRenderer({ blocks }: { blocks: SupportBlock[] }) {
   if (!blocks) return null;
@@ -138,7 +139,7 @@ export default function SupportSection({ id }: SectionProps) {
   const bottomCTA = section?.support_section_content?.bottom_cta;
   const emptyState = section?.support_section_content?.empty_state;
 
-  const ctaTitle = currentLang === 'id' 
+  const ctaTitle = currentLang === 'id'
     ? (bottomCTA?.cta_title?.id || bottomCTA?.cta_title?.en)
     : (bottomCTA?.cta_title?.en || bottomCTA?.cta_title?.id);
   const ctaDescription = currentLang === 'id'
@@ -148,7 +149,7 @@ export default function SupportSection({ id }: SectionProps) {
     ? (bottomCTA?.cta_button?.button_text?.id || bottomCTA?.cta_button?.button_text?.en || 'Hubungi Support')
     : (bottomCTA?.cta_button?.button_text?.en || bottomCTA?.cta_button?.button_text?.id || 'Contact Support');
   const ctaButtonLink = bottomCTA?.cta_button?.button_link;
-  
+
   const showCTA = bottomCTA?.show_cta === true && !!ctaTitle && !!ctaDescription;
 
   const emptyStateTitle = currentLang === 'id'
@@ -189,12 +190,12 @@ export default function SupportSection({ id }: SectionProps) {
     if (subKey) {
       setSelectedItem(subKey);
       setOpenAccordions({ [subKey]: true });
-      
+
       // Scroll to content on mobile after a short delay
       if (window.innerWidth < 1024 && contentRef.current) {
         setTimeout(() => {
-          contentRef.current?.scrollIntoView({ 
-            behavior: 'smooth', 
+          contentRef.current?.scrollIntoView({
+            behavior: 'smooth',
             block: 'start'
           });
         }, 100);
@@ -216,32 +217,7 @@ export default function SupportSection({ id }: SectionProps) {
   };
 
   if (loading) {
-    return (
-      <div className="min-h-screen bg-[#f2f7ff] py-8 md:py-12">
-        <div className="container mx-auto px-4 md:px-6 max-w-7xl">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 md:gap-6">
-            <div className="lg:col-span-4">
-              <div className="bg-white rounded-xl shadow-lg p-3 md:p-4 space-y-3 md:space-y-4">
-                {[1, 2, 3].map((i) => (
-                  <div key={i} className="animate-pulse">
-                    <div className="h-14 md:h-16 bg-gray-200 rounded-lg"></div>
-                  </div>
-                ))}
-              </div>
-            </div>
-            <div className="lg:col-span-8">
-              <div className="bg-white rounded-xl shadow-lg p-4 md:p-8">
-                <div className="animate-pulse space-y-3 md:space-y-4">
-                  <div className="h-5 md:h-6 bg-gray-200 rounded w-1/3"></div>
-                  <div className="h-24 md:h-32 bg-gray-200 rounded"></div>
-                  <div className="h-24 md:h-32 bg-gray-200 rounded"></div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
+    return <LoadingSpinner />;
   }
 
   if (!supportPlans.length) {
@@ -263,7 +239,7 @@ export default function SupportSection({ id }: SectionProps) {
               <div className="p-3 md:p-4 space-y-2">
                 {supportPlans.map((item) => {
                   const isActive = selectedCategory === item.key;
-                  const title = currentLang === 'id' 
+                  const title = currentLang === 'id'
                     ? (item.title?.id || item.title?.en || '')
                     : (item.title?.en || item.title?.id || '');
 
@@ -336,7 +312,7 @@ export default function SupportSection({ id }: SectionProps) {
                   <span>Support</span>
                   <ChevronRight className="w-3 h-3 md:w-4 md:h-4" />
                   <span className="text-[#061551] font-medium line-clamp-1">
-                    {currentLang === 'id' 
+                    {currentLang === 'id'
                       ? (currentCategory.title?.id || currentCategory.title?.en)
                       : (currentCategory.title?.en || currentCategory.title?.id)}
                   </span>
@@ -388,7 +364,7 @@ export default function SupportSection({ id }: SectionProps) {
                         <p className="text-sm md:text-base text-gray-600 mb-3 md:mb-4 animate__animated animate__fadeInUp">
                           {ctaDescription}
                         </p>
-                        <button 
+                        <button
                           onClick={handleCTAClick}
                           className="bg-[#061551] hover:bg-[#061551]/90 text-white font-semibold px-5 py-2.5 md:px-6 md:py-3 
                             text-sm md:text-base animate__animated animate__fadeInUp rounded-lg transition-all duration-200 hover:shadow-lg
