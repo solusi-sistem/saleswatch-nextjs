@@ -262,12 +262,12 @@ export interface TestimonialContent {
 // ==========================================
 // FAQ CONTENT
 // ==========================================
-export interface FaqContent {
+export interface AboutContent {
     title_en: string;
     title_id: string;
     description_en?: string;
     description_id?: string;
-    faq_items?: {
+    about_items?: {
         question_en: string;
         question_id: string;
         answer_en: string;
@@ -414,7 +414,7 @@ export interface Section {
     why_it_works?: WhyItWorksContent;
     features_content?: FeaturesContent;
     testimonial_content?: TestimonialContent;
-    faq_content?: FaqContent;
+    about_content?: AboutContent;
     blog_content?: BlogContent;
     request_demo_content?: RequestDemoContent;
     pricing_content?: PricingContent;

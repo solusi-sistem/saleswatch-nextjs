@@ -2,11 +2,14 @@ import Header from '@/components/layouts/Header';
 import Footer from '@/components/layouts/Footer';
 
 import { getPageData } from '@/hooks/getPageData';
+import { getGeoData } from '@/lib/getGeoData';
 import { Metadata } from 'next';
 import { PageProps } from '@/types/page';
 import Link from 'next/link';
 import { isPagePublished, isSectionPublished } from '@/lib/isPublished';
 import { renderSection } from '@/contexts/renderSection';
+import { redirect } from 'next/navigation';
+import { getLocaleCookie, setLocaleCookie, getGeoDataCookie, setGeoDataCookie } from '@/app/actions/locale';
 
 // Force dynamic rendering
 export const dynamic = 'force-dynamic';
@@ -20,21 +23,21 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
   if (!pageData) {
     return {
-      title: 'Halaman Tidak Ditemukan',
-      description: 'Halaman yang Anda cari tidak dapat ditemukan.',
+      title: 'Page Not Found',
+      description: 'The page you are looking for cannot be found.',
     };
   }
 
   const title =
-    pageData?.seo_title?.seo_title_id ||
+    pageData?.seo_title?.seo_title_en ||
     pageData?.name_page ||
-    'Halaman Tanpa Judul';
+    'Untitled Page';
 
   const description =
-    pageData?.seo_description?.seo_description_id || '';
+    pageData?.seo_description?.seo_description_en || '';
 
   const keywords =
-    pageData?.seo_keyword?.seo_keyword_id || '';
+    pageData?.seo_keyword?.seo_keyword_en || '';
 
   const imageUrl =
     pageData?.seo_icon?.secure_url || pageData?.seo_icon?.url;
@@ -65,9 +68,37 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   };
 }
 
-export default async function IndonesianPage({ params }: PageProps) {
+export default async function EnglishPage({ params }: PageProps) {
   const resolvedParams = await params;
   const slug = resolvedParams.slug ? `/${resolvedParams.slug}` : '/';
+
+  // Check if locale cookie exists
+  const existingLocale = await getLocaleCookie();
+  const existingGeoData = await getGeoDataCookie();
+
+  // Only redirect based on geolocation if this is the homepage and no manual selection has been made
+  if (slug === '/' && !existingLocale && !existingGeoData) {
+    // First visit - fetch geo data and set cookies
+    const geoData = await getGeoData();
+
+    // Save geo data to cookie
+    await setGeoDataCookie(geoData);
+
+    // If user is from Indonesia, set locale and redirect
+    if (geoData.languages === 'id') {
+      await setLocaleCookie('id');
+      redirect('/id');
+    } else {
+      // Set English locale for non-Indonesian users
+      await setLocaleCookie('en');
+    }
+  }
+
+  // If user manually selected Indonesian, redirect to /id
+  if (existingLocale === 'id') {
+    redirect('/id');
+  }
+
   const pageData = await getPageData(slug);
 
   // Jika data tidak ditemukan
@@ -94,17 +125,17 @@ export default async function IndonesianPage({ params }: PageProps) {
           </div>
 
           <h1 className="text-white fw-bold mb-3">
-            Halaman Tidak Ditemukan
+            Page Not Found
           </h1>
 
           <p className="text-white-50 fs-5 mb-4" style={{ maxWidth: '600px' }}>
-            Maaf, kami tidak dapat menemukan halaman yang Anda cari.
-            Halaman tersebut mungkin telah dipindahkan atau dihapus.
+            Sorry, we couldn't find the page you were looking for.
+            The page may have been moved or deleted.
           </p>
 
           <div className="d-flex flex-wrap justify-content-center gap-3">
             <Link href="/" className="btn btn-outline-light btn-lg fw-semibold">
-              Kembali ke Beranda
+              Return to Home
             </Link>
           </div>
 
@@ -137,10 +168,10 @@ export default async function IndonesianPage({ params }: PageProps) {
         >
           <div className="text-center">
             <h1 className="fs-1 text-white fw-bold mb-3">
-              Halaman Ini Belum Dipublikasikan
+              This Page Has Not Been Published
             </h1>
             <p className="text-white mb-4 fs-4">
-              Maaf, halaman yang Anda cari belum tersedia saat ini.
+              Sorry, the page you are looking for is not available at this time.
             </p>
             <div className="d-flex gap-3 justify-content-center">
               <Link
@@ -151,7 +182,7 @@ export default async function IndonesianPage({ params }: PageProps) {
                   transition: 'all 0.3s ease',
                 }}
               >
-                Kembali ke Halaman Utama
+                Return to Home Page
               </Link>
             </div>
           </div>
@@ -168,7 +199,7 @@ export default async function IndonesianPage({ params }: PageProps) {
     ) || [];
 
   return (
-    <div lang="id">
+    <div lang="en">
       <Header />
       {publishedSections.length > 0 ? (
         publishedSections.map((section, index) =>
@@ -184,7 +215,7 @@ export default async function IndonesianPage({ params }: PageProps) {
           }}
         >
           <h1 className="fs-4 text-black fw-semibold">
-            Tidak Ada Konten yang Tersedia
+            No Content Available
           </h1>
         </div>
       )}

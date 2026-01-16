@@ -1,4 +1,4 @@
-import { cookies, headers } from "next/headers";
+import { headers } from "next/headers";
 
 export interface GeoData {
     ip: string;
@@ -35,23 +35,26 @@ export async function getGeoData(): Promise<GeoData> {
         const currencyMap: Record<string, string> = {
             ID: "IDR",
             US: "USD",
+            GB: "GBP",
+            EU: "EUR",
+            JP: "JPY",
+            SG: "SGD",
+            MY: "MYR",
+            // Tambahkan negara lain sesuai kebutuhan
         };
 
         // Country Name Map
         const countryNameMap: Record<string, string> = {
             ID: "Indonesia",
             US: "United States",
+            GB: "United Kingdom",
+            SG: "Singapore",
+            MY: "Malaysia",
+            // Tambahkan negara lain sesuai kebutuhan
         };
 
+        // Language detection based on country
         const languages = country === "ID" ? "id" : "en";
-
-        // 🔥 SET COOKIES OTOMATIS BERDASARKAN GEO
-        const cookieStore = await cookies();
-        cookieStore.set('locale', languages, {
-            path: '/',
-            maxAge: 60 * 60 * 24 * 365, // 1 tahun
-            sameSite: 'lax',
-        });
 
         return {
             ip,
@@ -66,6 +69,7 @@ export async function getGeoData(): Promise<GeoData> {
             longitude,
         };
     } catch (error) {
+        console.error("Error fetching geo data:", error);
         return {
             ip: "Unknown",
             country: "US",
@@ -77,6 +81,6 @@ export async function getGeoData(): Promise<GeoData> {
             timezone: "UTC",
             latitude: "",
             longitude: "",
-        }
+        };
     }
 }

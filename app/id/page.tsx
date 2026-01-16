@@ -1,14 +1,14 @@
 import Header from '@/components/layouts/Header';
 import Footer from '@/components/layouts/Footer';
 
-import { cookies } from 'next/headers';
-import { redirect } from 'next/navigation';
 import { getPageData } from '@/hooks/getPageData';
 import { Metadata } from 'next';
 import { PageProps } from '@/types/page';
 import Link from 'next/link';
 import { isPagePublished, isSectionPublished } from '@/lib/isPublished';
 import { renderSection } from '@/contexts/renderSection';
+import { redirect } from 'next/navigation';
+import { getLocaleCookie } from '@/app/actions/locale';
 
 // Force dynamic rendering
 export const dynamic = 'force-dynamic';
@@ -70,28 +70,17 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 export default async function IndonesianPage({ params }: PageProps) {
   const resolvedParams = await params;
   const slug = resolvedParams.slug ? `/${resolvedParams.slug}` : '/';
-  const pageData = await getPageData(slug);
 
-  // Check cookie - jika user pilih bahasa Inggris, redirect ke English version
-  const cookieStore = await cookies();
-  const localeCookie = cookieStore.get('locale');
-  
-  // ✅ HANYA redirect jika user memilih English
-  if (localeCookie?.value === 'en') {
-    redirect('/');
+  // Check if user selected English
+  const existingLocale = await getLocaleCookie();
+
+  // If user manually selected English, redirect to English version
+  if (existingLocale === 'en') {
+    const pathWithoutId = slug === '/id' ? '/' : slug.replace(/^\/id/, '');
+    redirect(pathWithoutId || '/');
   }
 
-  // ❌ HAPUS BAGIAN INI - PENYEBAB LOOP!
-  // if (localeCookie?.value === 'id') {
-  //   redirect('/id');
-  // }
-  //
-  // if (!localeCookie) {
-  //   const geoData = await getGeoData();
-  //   if (geoData.languages === 'id') {
-  //     redirect('/id');
-  //   }
-  // }
+  const pageData = await getPageData(slug);
 
   // Jika data tidak ditemukan
   if (!pageData) {

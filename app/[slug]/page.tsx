@@ -84,23 +84,23 @@ export default async function EnglishSlugPage({ params }: PageProps) {
         <section className="min-h-screen bg-[#f2f7ff] flex items-center justify-center px-4 py-20">
           <div className="text-center max-w-2xl mx-auto">
             <p className="text-gray-600 text-sm font-medium uppercase tracking-wider mb-4">
-              KESALAHAN: HALAMAN TIDAK DITEMUKAN
+              ERROR: PAGE NOT FOUND
             </p>
-            
+
             <h1 className="text-[120px] md:text-[180px] font-black text-gray-800 leading-none mb-6">
               404
             </h1>
-            
+
             <p className="text-gray-700 text-lg mb-8">
-              Halaman ini tidak tersedia.
+              This page is not available.
             </p>
 
-            <Link 
-              href="/" 
+            <Link
+              href="/"
               className="inline-block bg-gray-800 text-white font-semibold px-8 py-3 rounded-full 
                          hover:bg-gray-900 transition-all duration-200 hover:shadow-lg"
             >
-              Pergi ke beranda
+              Go to the homepage
             </Link>
           </div>
         </section>

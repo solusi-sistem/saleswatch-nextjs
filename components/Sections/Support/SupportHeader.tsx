@@ -12,13 +12,14 @@ import {
 
 import { getSectionData } from '@/hooks/getSectionData';
 import type { Section, SectionProps, SupportHeaderContent } from '@/types/section';
+import LoadingSpinner from '@/components/loading/LoadingSpinner';
 
 const CACHE_KEY = 'support_header_cache';
 const CACHE_DURATION = 5 * 60 * 1000;
 
 interface CachedData {
-  data: SupportHeaderContent;
-  timestamp: number;
+    data: SupportHeaderContent;
+    timestamp: number;
 }
 
 function getIcon(iconType?: string) {
@@ -80,7 +81,7 @@ export default function SupportHeader({ id }: SectionProps) {
     useEffect(() => {
         async function fetchData() {
             if (!id) return;
- 
+
             const cachedContent = getCachedData();
             if (cachedContent) {
                 setSection({
@@ -126,7 +127,7 @@ export default function SupportHeader({ id }: SectionProps) {
                 if (res?.support_header_content) {
                     const currentDataString = JSON.stringify(section?.support_header_content);
                     const newDataString = JSON.stringify(res.support_header_content);
-                    
+
                     if (currentDataString !== newDataString) {
                         setSection(res);
                         setCachedData(res.support_header_content);
@@ -140,23 +141,7 @@ export default function SupportHeader({ id }: SectionProps) {
     }, [id, section]);
 
     if (loading) {
-        return (
-            <header className="relative w-full bg-[#061551] pt-12 pb-16 px-6 md:px-14 lg:px-18">
-                <div className="relative w-full bg-[#f2f7ff] rounded-4xl pt-30 pb-10">
-                    {isLoadingFromAPI && (
-                        <div className="text-center mb-12 px-4 md:px-8 animate-pulse">
-                            <div className="h-12 bg-gray-200 rounded w-2/3 mx-auto mb-4"></div>
-                            <div className="w-24 h-1 bg-gray-200 mx-auto rounded-full mb-4"></div>
-                            <div className="h-6 bg-gray-200 rounded w-1/2 mx-auto mb-8"></div>
-                            <div className="flex gap-4 justify-center">
-                                <div className="h-12 bg-gray-200 rounded w-40"></div>
-                                <div className="h-12 bg-gray-200 rounded w-40"></div>
-                            </div>
-                        </div>
-                    )}
-                </div>
-            </header>
-        );
+        return <LoadingSpinner />;
     }
 
     const header = section?.support_header_content;
@@ -174,7 +159,7 @@ export default function SupportHeader({ id }: SectionProps) {
                         </h1>
                         <div className="w-24 h-1 bg-blue-200 mx-auto rounded-full mb-4"></div>
                         <p className="text-gray-600 text-lg max-w-2xl mx-auto">
-                            {lang === 'id' 
+                            {lang === 'id'
                                 ? 'Temukan bantuan yang Anda butuhkan'
                                 : 'Find the help you need'}
                         </p>
