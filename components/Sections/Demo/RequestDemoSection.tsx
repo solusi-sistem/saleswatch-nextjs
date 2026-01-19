@@ -40,7 +40,6 @@ export default function RequestDemoSection({ id }: SectionProps) {
           setContent(sectionData.request_demo_content);
         }
       } catch (error) {
-        // console.error('Error fetching content:', error);
       } finally {
         setLoading(false);
       }
@@ -116,41 +115,18 @@ export default function RequestDemoSection({ id }: SectionProps) {
   const badgeText = currentLang === '' ? content.badge_text_en : content.badge_text_id;
   const titleText = currentLang === '' ? content.title_lines?.text_en : content.title_lines?.text_id;
   const buttonText = currentLang === '' ? content.cta_button?.text_en : content.cta_button?.text_id;
-
-  // ✅ FIX: Tambahkan validasi lebih ketat dan auto-format URL
-  const backgroundImage = content.background_image?.asset?.url ? `${content.background_image.asset.url}?w=1920&q=90&auto=format` : '';
-
-  // Debug log untuk production
-  if (process.env.NODE_ENV === 'production') {
-    console.log('🖼️ Background Image URL:', backgroundImage);
-  }
+  const backgroundImage = content.background_image?.asset?.url || '';
 
   return (
     <>
       <section ref={sectionRef} className="relative w-full overflow-hidden py-16 md:py-24 min-h-[400px]">
-        {/* Background Image - IMPROVED */}
-        {backgroundImage ? (
+        {/* Background Image */}
+        {backgroundImage && (
           <div className="absolute inset-0 -z-10">
-            <Image
-              src={backgroundImage}
-              alt="Request Demo Background"
-              fill
-              className="object-cover"
-              priority
-              quality={90}
-              sizes="100vw"
-              unoptimized={false}
-              onError={(e) => {
-                e.currentTarget.style.display = 'none';
-              }}
-              onLoad={() => {}}
-            />
+            <Image src={backgroundImage} alt="Request Demo Background" fill className="object-cover" priority quality={90} />
             {/* Overlay */}
             <div className="absolute inset-0 bg-[#061551]/60" />
           </div>
-        ) : (
-          // Fallback jika image tidak ada
-          <div className="absolute inset-0 -z-10 bg-gradient-to-br from-[#061551] to-[#0a2270]" />
         )}
 
         {/* Content */}
