@@ -18,6 +18,7 @@ export default function RequestDemoSection({ id }: SectionProps) {
   const [loading, setLoading] = useState(true);
   const [isVisible, setIsVisible] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [imageError, setImageError] = useState(false);
   const [animationStates, setAnimationStates] = useState({
     badge: false,
     title: false,
@@ -36,10 +37,22 @@ export default function RequestDemoSection({ id }: SectionProps) {
       try {
         setLoading(true);
         const sectionData = await getSectionData(id);
+        
+        // ✅ DEBUG: Log lengkap di production
+        console.log('=== REQUEST DEMO SECTION DEBUG ===');
+        console.log('Environment:', process.env.NODE_ENV);
+        console.log('Full sectionData:', JSON.stringify(sectionData, null, 2));
+        console.log('request_demo_content:', sectionData?.request_demo_content);
+        console.log('background_image:', sectionData?.request_demo_content?.background_image);
+        console.log('background_image.asset:', sectionData?.request_demo_content?.background_image?.asset);
+        console.log('URL:', sectionData?.request_demo_content?.background_image?.asset?.url);
+        console.log('================================');
+        
         if (sectionData?.request_demo_content) {
           setContent(sectionData.request_demo_content);
         }
       } catch (error) {
+        console.error('Error fetching request demo content:', error);
       } finally {
         setLoading(false);
       }
@@ -117,15 +130,65 @@ export default function RequestDemoSection({ id }: SectionProps) {
   const buttonText = currentLang === '' ? content.cta_button?.text_en : content.cta_button?.text_id;
   const backgroundImage = content.background_image?.asset?.url || '';
 
+  // ✅ DEBUG: Log final URL yang digunakan
+  console.log('Final backgroundImage URL:', backgroundImage);
+
   return (
     <>
       <section ref={sectionRef} className="relative w-full overflow-hidden py-16 md:py-24 min-h-[400px]">
-        {/* Background Image */}
-        {backgroundImage && (
+        {/* ✅ DEBUG: Tampilkan URL di UI untuk cek di production */}
+        {process.env.NODE_ENV !== 'production' && backgroundImage && (
+          <div className="absolute top-0 left-0 z-50 bg-black text-white text-xs p-2 max-w-md break-all">
+            URL: {backgroundImage}
+          </div>
+        )}
+
+        {/* Background Image dengan Multiple Fallbacks */}
+        {backgroundImage ? (
           <div className="absolute inset-0 -z-10">
-            <Image src={backgroundImage} alt="Request Demo Background" fill className="object-cover" priority quality={90} />
+            {!imageError ? (
+              <>
+                {/* Method 1: Next.js Image Component */}
+                <Image
+                  src={backgroundImage}
+                  alt="Request Demo Background"
+                  fill
+                  className="object-cover"
+                  priority
+                  quality={90}
+                  onError={(e) => {
+                    console.error('Next.js Image failed to load:', e);
+                    console.error('Failed URL:', backgroundImage);
+                    setImageError(true);
+                  }}
+                  onLoadingComplete={() => {
+                    console.log('✅ Image loaded successfully via Next.js Image');
+                  }}
+                />
+              </>
+            ) : (
+              <>
+                {/* Method 2: Fallback to native img tag */}
+                <img
+                  src={backgroundImage}
+                  alt="Request Demo Background"
+                  className="w-full h-full object-cover"
+                  onError={(e) => {
+                    console.error('Native img also failed:', e);
+                    console.error('Failed URL:', backgroundImage);
+                  }}
+                  onLoad={() => {
+                    console.log('✅ Image loaded successfully via native img');
+                  }}
+                />
+              </>
+            )}
             {/* Overlay */}
             <div className="absolute inset-0 bg-[#061551]/60" />
+          </div>
+        ) : (
+          <div className="absolute inset-0 -z-10 bg-[#061551]">
+            <p className="text-white text-center pt-10">⚠️ No background image URL found</p>
           </div>
         )}
 
