@@ -8,6 +8,7 @@ import type { LangKey } from '@/types';
 import { SectionProps, RequestDemoContent } from '@/types/section';
 import { getSectionData } from '@/hooks/getSectionData';
 import LoadingSpinner from '@/components/loading/LoadingSpinner';
+import { urlFor } from '@/lib/sanity';
 
 export default function RequestDemoSection({ id }: SectionProps) {
   const pathname = usePathname();
@@ -113,10 +114,17 @@ export default function RequestDemoSection({ id }: SectionProps) {
     return null;
   }
 
+  console.log(content);
+
   const badgeText = currentLang === '' ? content.badge_text_en : content.badge_text_id;
   const titleText = currentLang === '' ? content.title_lines?.text_en : content.title_lines?.text_id;
   const buttonText = currentLang === '' ? content.cta_button?.text_en : content.cta_button?.text_id;
-  const backgroundImage = content.background_image?.asset?.url || '';
+  const backgroundImage = content.background_image
+    ? urlFor(content.background_image)
+      .format('webp')
+      .quality(90)
+      .url()
+    : '';
 
   return (
     <>
@@ -138,8 +146,8 @@ export default function RequestDemoSection({ id }: SectionProps) {
               <h2
                 ref={badgeRef}
                 className={`mb-4 text-lg sm:text-xl md:text-3xl font-semibold text-white flex items-center justify-center md:justify-start gap-3 transition-all duration-700 ${animationStates.badge
-                    ? 'opacity-100 translate-y-0'
-                    : 'opacity-0 -translate-y-4'
+                  ? 'opacity-100 translate-y-0'
+                  : 'opacity-0 -translate-y-4'
                   }`}
               >
                 <svg viewBox="0 0 60 60" className="w-5 h-5 md:w-7 md:h-7" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
@@ -154,8 +162,8 @@ export default function RequestDemoSection({ id }: SectionProps) {
               <div
                 ref={titleContainerRef}
                 className={`transition-all duration-700 delay-200 ${animationStates.title
-                    ? 'opacity-100 translate-y-0'
-                    : 'opacity-0 translate-y-4'
+                  ? 'opacity-100 translate-y-0'
+                  : 'opacity-0 translate-y-4'
                   }`}
               >
                 <p className="text-xl sm:text-2xl md:text-[50px] font-bold leading-tight text-white">
@@ -169,8 +177,8 @@ export default function RequestDemoSection({ id }: SectionProps) {
               <div
                 ref={buttonRef}
                 className={`mt-8 flex justify-center md:justify-center transition-all duration-700 delay-500 ${animationStates.button
-                    ? 'opacity-100 scale-100'
-                    : 'opacity-0 scale-95'
+                  ? 'opacity-100 scale-100'
+                  : 'opacity-0 scale-95'
                   }`}
               >
                 <CustomButton
