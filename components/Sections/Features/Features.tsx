@@ -179,7 +179,7 @@ export default function Features({ id }: SectionProps) {
                   const btnText = currentLang === 'id' ? feature.section_title_id || feature.section_title_en : feature.section_title_en || feature.section_title_id;
 
                   return (
-                    <CustomButton key={index} className="h-14 w-[203px] text-sm" onClick={() => scrollToSection(`feature-${index}`)}>
+                    <CustomButton key={index} className="h-14 w-[203px] !text-[16px]" onClick={() => scrollToSection(`feature-${index}`)}>
                       {btnText}
                     </CustomButton>
                   );
@@ -209,7 +209,7 @@ export default function Features({ id }: SectionProps) {
                     const btnText = currentLang === 'id' ? item.title?.id || item.title?.en : item.title?.en || item.title?.id;
 
                     return (
-                      <CustomButton key={`suite-btn-${item._id}-${itemIndex}`} className="py-4 h-14 w-[203px] text-sm" onClick={() => scrollToSection('suite-modules')}>
+                      <CustomButton key={`suite-btn-${item._id}-${itemIndex}`} className="h-14 min-w-[203px] !text-[16px]" onClick={() => scrollToSection('suite-modules')}>
                         {btnText}
                       </CustomButton>
                     );
