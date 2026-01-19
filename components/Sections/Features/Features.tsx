@@ -166,20 +166,20 @@ export default function Features({ id }: SectionProps) {
   return (
     <div className="bg-[#f2f7ff]">
       <div className="container mx-auto py-10 xl:px-30">
-        <div className="bg-[#061551] rounded-4xl px-8 py-12 mx-4 animate__animated animate__fadeIn">
+<div className="bg-[#061551] max-w-5xl rounded-4xl px-8 py-12 mx-4 md:mx-auto animate__animated animate__fadeIn">
           <div className="flex flex-col lg:flex-row items-stretch justify-center gap-8 lg:gap-0">
             {/* Saleswatch Section */}
-            <div className="flex flex-col gap-4 justify-between items-center lg:items-start">
-              <div className="flex items-center justify-center lg:justify-start w-full">
+            <div className="flex flex-col gap-4 justify-between items-start lg:items-start">
+              <div className="flex items-center justify-center lg:justify-start w-full md:ms-6 xl:ms-16">
                 <h5 className="text-[#CFE3C0] font-semibold text-2xl leading-none">{logoText}</h5>
               </div>
 
-              <div className="flex flex-row flex-wrap justify-center items-center gap-3 w-full">
+              <div className="flex flex-row flex-wrap justify-center items-center gap-2 w-full">
                 {fiturUtamaList.map((feature, index) => {
                   const btnText = currentLang === 'id' ? feature.section_title_id || feature.section_title_en : feature.section_title_en || feature.section_title_id;
 
                   return (
-                    <CustomButton key={index} className="py-4 px-6 h-14 w-[204px] text-sm" onClick={() => scrollToSection(`feature-${index}`)}>
+                    <CustomButton key={index} className="h-14 w-[203px] text-sm" onClick={() => scrollToSection(`feature-${index}`)}>
                       {btnText}
                     </CustomButton>
                   );
@@ -188,7 +188,7 @@ export default function Features({ id }: SectionProps) {
             </div>
 
             {/* Divider with Character Image */}
-            <div className="hidden lg:flex items-end justify-center relative px-8 pb-[0px]">
+            <div className="hidden lg:flex items-end justify-center relative px-8 pb-[0px] -ms-7">
               <div className="w-[4px] bg-[#6587A8] h-[120px]"></div>
               {logoImage && <Image src={logoImage} alt={logoTeksFeatures} width={120} height={120} priority className="rounded-full absolute -left-0 -top-3" />}
             </div>
@@ -203,17 +203,17 @@ export default function Features({ id }: SectionProps) {
                 </div>
               </div>
 
-              <div className="flex flex-wrap gap-3 justify-center xl:justify-start">
+              <div className="flex flex-wrap gap-2 justify-center [@media(min-width:1200px)]:justify-start">
                 {fiturSuiteList.flatMap((feature) =>
                   (feature.features_list || []).map((item, itemIndex) => {
                     const btnText = currentLang === 'id' ? item.title?.id || item.title?.en : item.title?.en || item.title?.id;
 
                     return (
-                      <CustomButton key={`suite-btn-${item._id}-${itemIndex}`} className="py-4 px-6 h-14 w-[204px] text-sm" onClick={() => scrollToSection('suite-modules')}>
+                      <CustomButton key={`suite-btn-${item._id}-${itemIndex}`} className="py-4 h-14 w-[203px] text-sm" onClick={() => scrollToSection('suite-modules')}>
                         {btnText}
                       </CustomButton>
                     );
-                  })
+                  }),
                 )}
               </div>
             </div>
