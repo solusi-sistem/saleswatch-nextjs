@@ -17,7 +17,7 @@ export function urlFor(source: any) {
 
 export async function getLayoutData() {
   try {
-    console.log('🔍 Fetching layout data from Sanity...');
+    // console.log('🔍 Fetching layout data from Sanity...');
 
     const data = await client.fetch(`
       *[_type == "layout"][0] {
@@ -60,13 +60,13 @@ export async function getLayoutData() {
       }
     `);
 
-    console.log('✅ Layout data fetched:', data);
-    console.log('📸 Header Logo data:', data?.header?.logo);
-    console.log('🖼️ Footer Logo data:', data?.footer?.logo_footer);
+    // console.log('✅ Layout data fetched:', data);
+    // console.log('📸 Header Logo data:', data?.header?.logo);
+    // console.log('🖼️ Footer Logo data:', data?.footer?.logo_footer);
 
     return data;
   } catch (error) {
-    console.error('❌ Error fetching layout data:', error);
+    // console.error('❌ Error fetching layout data:', error);
     return null;
   }
 }
