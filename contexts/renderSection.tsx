@@ -1,4 +1,3 @@
-
 import { JSX } from "react";
 import { Section } from "@/types/page";
 
@@ -23,48 +22,51 @@ import { isSectionPublished } from "@/lib/isPublished";
 import About from "@/components/Sections/About/About";
 
 // Komponen untuk render section
-export function renderSection(section: Section, index: number): JSX.Element | null {
-    if (!isSectionPublished(section)) {
-        return null;
-    }
+export function renderSection(
+  section: Section,
+  index: number,
+): JSX.Element | null {
+  if (!isSectionPublished(section)) {
+    return null;
+  }
 
-    const sectionProps = { id: section._id, key: index };
+  const sectionProps = { id: section._id, key: index };
 
-    switch (section.type_section) {
-        case 'heroUtama':
-            return <HeroUtama {...sectionProps} />;
-        case 'heroUmum':
-            return <HeroUmum {...sectionProps} />;
-        case 'supportHeader':
-            return <SupportHeader {...sectionProps} />;
-        case 'whyItWorks':
-            return <WhyItWorks {...sectionProps} />;
-        case 'storyVisionMission':
-            return <StoryVisionMission {...sectionProps} />;
-        case 'testimonial':
-            return <Testimonial {...sectionProps} />;
-        case 'about':
-            return <About {...sectionProps} />;
-        case 'blog':
-            return <Blog {...sectionProps} />;
-        case 'requestDemo':
-            return <RequestDemoSection {...sectionProps} />;
-        case 'features':
-            return <Features {...sectionProps} />;
-        case 'pricing':
-            return <PricingSection {...sectionProps} />;
-        case 'supportSection':
-            return <SupportSection {...sectionProps} />;
-        case 'privacyPolicySection':
-            return <PrivacyPolicySection {...sectionProps} />;
-        case 'termsAndConditionsSection':
-            return <TermsConditionsSection {...sectionProps} />;
-        case 'faqSection':
-            return <FaqSection {...sectionProps} />;
-        case 'blogListSection':
-            return <BlogListSection {...sectionProps} />;
-        default:
-            console.warn(`Unknown section type: ${section.type_section}`);
-            return null;
-    }
+  switch (section.type_section) {
+    case "heroUtama":
+      return <HeroUtama {...sectionProps} />;
+    case "heroUmum":
+      return <HeroUmum {...sectionProps} />;
+    case "supportHeader":
+      return <SupportHeader {...sectionProps} />;
+    case "whyItWorks":
+      return <WhyItWorks {...sectionProps} />;
+    case "storyVisionMission":
+      return <StoryVisionMission {...sectionProps} />;
+    case "testimonial":
+      return <Testimonial {...sectionProps} />;
+    case "about":
+      return <About {...sectionProps} />;
+    case "blog":
+      return <Blog {...sectionProps} />;
+    case "requestDemo":
+      return <RequestDemoSection {...sectionProps} />;
+    case "features":
+      return <Features {...sectionProps} />;
+    case "pricing":
+      return <PricingSection {...sectionProps} />;
+    case "supportSection":
+      return <SupportSection {...sectionProps} />;
+    case "privacyPolicySection":
+      return <PrivacyPolicySection {...sectionProps} />;
+    case "termsAndConditionsSection":
+      return <TermsConditionsSection {...sectionProps} />;
+    case "faqSection":
+      return <FaqSection {...sectionProps} />;
+    case "blogListSection":
+      return <BlogListSection {...sectionProps} />;
+    default:
+      console.warn(`Unknown section type: ${section.type_section}`);
+      return null;
+  }
 }
