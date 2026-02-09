@@ -1,12 +1,12 @@
-import { createClient } from 'next-sanity';
-import imageUrlBuilder from '@sanity/image-url';
+import { createClient } from "next-sanity";
+import imageUrlBuilder from "@sanity/image-url";
 
 export const client = createClient({
-  projectId: "sbx4nhlt",
-  dataset: "production",
-  apiVersion: '2026-01-01',
+  projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID!,
+  dataset: process.env.NEXT_PUBLIC_SANITY_DATASET!,
+  apiVersion: process.env.NEXT_PUBLIC_SANITY_API_VERSION!,
   useCdn: false,
-  token: "skYI8kZuRRtyTmUWzmRvCwa1dM4KM27AncrQtCf5wVRuVzr8kFNGzH61aCQxwViOdqN4Tl77MfbGCQccXmVeRc44CIUYAHeTRacSrNTfo09sroYL18P86XyKzk5KPgN7akuYpyVBsrQeNRwJTDKPD9FjB5Ione8ZS7Ipe3M1Z5QC1n8meFtk",
+  token: process.env.SANITY_API_TOKEN,
 });
 
 const builder = imageUrlBuilder(client);
