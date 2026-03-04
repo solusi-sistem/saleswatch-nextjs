@@ -47,9 +47,19 @@ export default function Header() {
     }
   }, [layoutData]);
 
+  const isPricingEnabled = process.env.NEXT_PUBLIC_SHOW_PRICING === 'true';
+
   const regularMenuItems =
     layoutData?.header?.menu_header
       ?.filter((item) => item.show_menu !== false)
+      ?.filter((item) => {
+        // Hide pricing link if pricing feature is disabled
+        if (!isPricingEnabled) {
+          const path = item.path_menu || '';
+          return path !== '/pricing' && path !== '/id/pricing';
+        }
+        return true;
+      })
       ?.map((item) => ({
         label: currentLang === '' ? item.label_menu?.label_menu_en || '' : item.label_menu?.label_menu_id || '',
         href: item.path_menu || '/',

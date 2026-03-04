@@ -19,12 +19,62 @@ interface ToastState {
   type: "success" | "error";
 }
 
+const translations = {
+  "": {
+    title: "Schedule a Demo",
+    closeAriaLabel: "Close modal",
+    companyName: "Company Name",
+    contactPersonName: "Contact Person Name",
+    companySize: "Company Size",
+    whatsapp: "WhatsApp Number",
+    industry: "Industry",
+    message: "What would you like to know?",
+    required: "Please fill in all required fields",
+    successMessage: "Demo request successfully sent! Our team will contact you soon.",
+    errorMessage: "Failed to send demo request. Please try again.",
+    genericError: "An error occurred. Please try again later.",
+    placeholderCompanyName: "Enter your company name",
+    placeholderContactName: "Enter your full name",
+    placeholderWhatsapp: "+62 812 3456 7890",
+    placeholderMessage: "Tell us about your requirements or questions...",
+    selectCompanySize: "Select company size",
+    selectIndustry: "Select your industry",
+    loading: "Loading...",
+    sending: "Sending...",
+    scheduleDemo: "Schedule Demo",
+  },
+  id: {
+    title: "Jadwalkan Demo",
+    closeAriaLabel: "Tutup modal",
+    companyName: "Nama Perusahaan",
+    contactPersonName: "Nama Kontak",
+    companySize: "Ukuran Perusahaan",
+    whatsapp: "Nomor WhatsApp",
+    industry: "Industri",
+    message: "Apa yang ingin Anda ketahui?",
+    required: "Harap isi semua kolom yang wajib diisi",
+    successMessage: "Permintaan demo berhasil dikirim! Tim kami akan segera menghubungi Anda.",
+    errorMessage: "Gagal mengirim permintaan demo. Silakan coba lagi.",
+    genericError: "Terjadi kesalahan. Silakan coba lagi nanti.",
+    placeholderCompanyName: "Masukkan nama perusahaan Anda",
+    placeholderContactName: "Masukkan nama lengkap Anda",
+    placeholderWhatsapp: "+62 812 3456 7890",
+    placeholderMessage: "Ceritakan tentang kebutuhan atau pertanyaan Anda...",
+    selectCompanySize: "Pilih ukuran perusahaan",
+    selectIndustry: "Pilih industri Anda",
+    loading: "Memuat...",
+    sending: "Mengirim...",
+    scheduleDemo: "Jadwalkan Demo",
+  },
+};
+
 export default function ScheduleDemoModal({
   isOpen,
   onClose,
 }: ScheduleDemoModalProps) {
   const pathname = usePathname();
   const currentLang: LangKey = pathname.startsWith("/id") ? "id" : "";
+  const t = translations[currentLang];
 
   const {
     industryOptions,
@@ -94,7 +144,7 @@ export default function ScheduleDemoModal({
       !formData.whatsapp ||
       !formData.industry
     ) {
-      showToast("Please fill in all required fields", "error");
+      showToast(t.required, "error");
       return;
     }
 
@@ -118,10 +168,7 @@ export default function ScheduleDemoModal({
 
       if (response.ok) {
         console.log("✅ Email sent successfully to", data.sentTo, "recipients");
-        showToast(
-          "Demo request successfully sent! Our team will contact you soon.",
-          "success",
-        );
+        showToast(t.successMessage, "success");
 
         setFormData({
           companyName: "",
@@ -138,14 +185,11 @@ export default function ScheduleDemoModal({
       } else {
         console.error("❌ Failed to send email:", data.error);
         console.error("Details:", data.details);
-        showToast(
-          data.error || "Failed to send demo request. Please try again.",
-          "error",
-        );
+        showToast(data.error || t.errorMessage, "error");
       }
     } catch (error) {
       console.error("❌ Error submitting form:", error);
-      showToast("An error occurred. Please try again later.", "error");
+      showToast(t.genericError, "error");
     } finally {
       setIsSubmitting(false);
     }
@@ -178,13 +222,11 @@ export default function ScheduleDemoModal({
           onClick={(e) => e.stopPropagation()}
         >
           <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 rounded-t-2xl flex items-center justify-between z-10">
-            <h2 className="text-2xl font-bold text-[#061551]">
-              Schedule a Demo
-            </h2>
+            <h2 className="text-2xl font-bold text-[#061551]">{t.title}</h2>
             <button
               onClick={handleClose}
               className="p-1 hover:bg-gray-100 rounded-full transition-all duration-200 hover:rotate-90"
-              aria-label="Close modal"
+              aria-label={t.closeAriaLabel}
               disabled={isSubmitting}
             >
               <X className="w-6 h-6 text-gray-500" />
@@ -201,12 +243,12 @@ export default function ScheduleDemoModal({
                   htmlFor="companyName"
                   className="block text-sm font-medium text-[#061551]"
                 >
-                  Company Name <span className="text-red-500">*</span>
+                  {t.companyName} <span className="text-red-500">*</span>
                 </label>
                 <input
                   id="companyName"
                   type="text"
-                  placeholder="Enter your company name"
+                  placeholder={t.placeholderCompanyName}
                   value={formData.companyName}
                   onChange={(e) => handleChange("companyName", e.target.value)}
                   disabled={isSubmitting}
@@ -222,12 +264,12 @@ export default function ScheduleDemoModal({
                   htmlFor="contactPersonName"
                   className="block text-sm font-medium text-[#061551]"
                 >
-                  Contact Person Name <span className="text-red-500">*</span>
+                  {t.contactPersonName} <span className="text-red-500">*</span>
                 </label>
                 <input
                   id="contactPersonName"
                   type="text"
-                  placeholder="Enter your full name"
+                  placeholder={t.placeholderContactName}
                   value={formData.contactPersonName}
                   onChange={(e) =>
                     handleChange("contactPersonName", e.target.value)
@@ -247,7 +289,7 @@ export default function ScheduleDemoModal({
                   htmlFor="companySize"
                   className="block text-sm font-medium text-[#061551]"
                 >
-                  Company Size <span className="text-red-500">*</span>
+                  {t.companySize} <span className="text-red-500">*</span>
                 </label>
                 <select
                   id="companySize"
@@ -257,7 +299,7 @@ export default function ScheduleDemoModal({
                   className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#6587A8] focus:border-transparent transition-all duration-200 bg-white disabled:bg-gray-100 disabled:cursor-not-allowed"
                 >
                   <option value="">
-                    {isLoadingOptions ? "Loading..." : "Select company size"}
+                    {isLoadingOptions ? t.loading : t.selectCompanySize}
                   </option>
                   {companySizeOptions.map((option) => (
                     <option key={option._id} value={option.value}>
@@ -275,12 +317,12 @@ export default function ScheduleDemoModal({
                   htmlFor="whatsapp"
                   className="block text-sm font-medium text-[#061551]"
                 >
-                  WhatsApp Number <span className="text-red-500">*</span>
+                  {t.whatsapp} <span className="text-red-500">*</span>
                 </label>
                 <input
                   id="whatsapp"
                   type="tel"
-                  placeholder="+62 812 3456 7890"
+                  placeholder={t.placeholderWhatsapp}
                   value={formData.whatsapp}
                   onChange={(e) => handleChange("whatsapp", e.target.value)}
                   disabled={isSubmitting}
@@ -297,7 +339,7 @@ export default function ScheduleDemoModal({
                 htmlFor="industry"
                 className="block text-sm font-medium text-[#061551]"
               >
-                Industry <span className="text-red-500">*</span>
+                {t.industry} <span className="text-red-500">*</span>
               </label>
               <select
                 id="industry"
@@ -307,7 +349,7 @@ export default function ScheduleDemoModal({
                 className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#6587A8] focus:border-transparent transition-all duration-200 bg-white disabled:bg-gray-100 disabled:cursor-not-allowed"
               >
                 <option value="">
-                  {isLoadingOptions ? "Loading..." : "Select your industry"}
+                  {isLoadingOptions ? t.loading : t.selectIndustry}
                 </option>
                 {industryOptions.map((option) => (
                   <option key={option._id} value={option.value}>
@@ -325,11 +367,11 @@ export default function ScheduleDemoModal({
                 htmlFor="message"
                 className="block text-sm font-medium text-[#061551]"
               >
-                What would you like to know?
+                {t.message}
               </label>
               <textarea
                 id="message"
-                placeholder="Tell us about your requirements or questions..."
+                placeholder={t.placeholderMessage}
                 value={formData.message}
                 onChange={(e) => handleChange("message", e.target.value)}
                 disabled={isSubmitting}
@@ -370,10 +412,10 @@ export default function ScheduleDemoModal({
                         d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                       ></path>
                     </svg>
-                    Sending...
+                    {t.sending}
                   </span>
                 ) : (
-                  "Schedule Demo"
+                  t.scheduleDemo
                 )}
               </CustomButton>
             </div>
