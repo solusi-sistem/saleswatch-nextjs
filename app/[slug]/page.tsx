@@ -61,17 +61,6 @@ export default async function EnglishSlugPage({ params }: PageProps) {
 
   // middleware checks if the user should be on the /id version.
 
-  if (localeCookie?.value === 'id') {
-    redirect(`/id${slug}`);
-  }
-
-  if (!localeCookie) {
-    const geoData = await getGeoData();
-    if (geoData.languages === 'id') {
-      redirect(`/id${slug}`);
-    }
-  }
-
   const pageData = await getPageData(slug);
 
   if (!pageData) {
