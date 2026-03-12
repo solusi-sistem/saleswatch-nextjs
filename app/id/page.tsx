@@ -11,8 +11,8 @@ import { redirect } from 'next/navigation';
 import { cookies } from 'next/headers';
 
 // Force dynamic rendering
-export const dynamic = 'force-dynamic';
-export const revalidate = 0;
+// export const dynamic = 'force-dynamic';
+export const revalidate = 3600;
 
 // Generate Metadata untuk SEO (SSR)
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
