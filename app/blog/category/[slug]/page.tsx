@@ -4,6 +4,7 @@ import Header from '@/components/layouts/Header';
 import Footer from '@/components/layouts/Footer';
 import BlogCategorySection from '@/components/Sections/Blog/BlogCategorySection';
 
+// Generate static params for all active categories
 import { client } from '@/lib/sanity';
 export const dynamicParams = true;
 
