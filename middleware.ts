@@ -20,7 +20,7 @@ export function middleware(request: NextRequest) {
   }
 
   // 3. Handle NEW visitors at the root (no cookies yet)
-  if (pathname === '/' && !locale && !geoData) {
+  if (pathname === '/' && !locale) {
     return NextResponse.redirect(new URL('/api/geo', request.url));
   }
 
