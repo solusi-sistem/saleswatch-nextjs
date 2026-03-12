@@ -63,7 +63,7 @@ export default async function IndonesianSlugPage({ params }: PageProps) {
   const slug = `/${resolvedParams.slug}`;
   const pageData = await getPageData(slug);
 
-  // middleware checks if the user should be on the /id version.
+  // middleware checks if the user should be on the other version.
 
   if (localeCookie?.value === 'en') {
     redirect(slug);
