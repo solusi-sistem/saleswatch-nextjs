@@ -11,7 +11,7 @@ import { client } from '@/lib/sanity';
 // REMOVED: redirect and cookies (handled by middleware now)
 
 // export const dynamic = 'force-dynamic';
-export const revalidate = 3600;
+export const revalidate = 86400;
 export const dynamicParams = true;
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
