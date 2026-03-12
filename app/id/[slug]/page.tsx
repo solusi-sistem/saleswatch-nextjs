@@ -1,14 +1,13 @@
 import Header from '@/components/layouts/Header';
 import Footer from '@/components/layouts/Footer';
 
-import { cookies } from 'next/headers';
-import { redirect } from 'next/navigation';
 import { getPageData } from '@/hooks/getPageData';
 import { Metadata } from 'next';
 import { PageProps } from '@/types/page';
 import Link from 'next/link';
 import { isPagePublished, isSectionPublished } from '@/lib/isPublished';
 import { renderSection } from '@/contexts/renderSection';
+// REMOVED: redirect and cookies (handled by middleware now)
 
 // export const dynamic = 'force-dynamic';
 export const revalidate = 3600;
@@ -64,8 +63,7 @@ export default async function IndonesianSlugPage({ params }: PageProps) {
   const slug = `/${resolvedParams.slug}`;
   const pageData = await getPageData(slug);
 
-  const cookieStore = await cookies();
-  const localeCookie = cookieStore.get('locale');
+  // middleware checks if the user should be on the /id version.
 
   if (localeCookie?.value === 'en') {
     redirect(slug);
