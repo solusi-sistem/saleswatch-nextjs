@@ -295,7 +295,7 @@ export async function getRelatedBlogs(
             : { currentBlogId, limit };
 
         const result = await client.fetch<BlogItem[]>(query, params, {
-            next: { revalidate: 3600 }
+            next: { revalidate: 86400 }
         });
         console.log(`Fetched ${result?.length || 0} related blog posts`);
         return result || [];
@@ -323,7 +323,7 @@ export async function getRecentBlogs(
         const result = await client.fetch<BlogItem[]>(
             query,
             { limit },
-            { next: { revalidate: 3600 } }
+            { next: { revalidate: 86400 } }
         );
         console.log(`Fetched ${result?.length || 0} recent blog posts`);
         return result || [];
