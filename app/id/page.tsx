@@ -11,7 +11,7 @@ import { renderSection } from '@/contexts/renderSection';
 
 // Force dynamic rendering
 // export const dynamic = 'force-dynamic';
-export const revalidate = 3600;
+export const revalidate = 86400;
 
 // Generate Metadata untuk SEO (SSR)
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
