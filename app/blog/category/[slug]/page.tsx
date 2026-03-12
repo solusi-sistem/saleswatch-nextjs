@@ -4,12 +4,19 @@ import Header from '@/components/layouts/Header';
 import Footer from '@/components/layouts/Footer';
 import BlogCategorySection from '@/components/Sections/Blog/BlogCategorySection';
 
+import { client } from '@/lib/sanity';
+export const dynamicParams = true;
+
+
 export async function generateStaticParams() {
-  const categories = await getAllCategories();
-  if (!categories) return [];
-  
-  return categories.map((category) => ({
-    slug: category.slug.current,
+  const categories = await client.fetch(
+    `*[_type == "list_blog_category" && defined(slug.current) && !(_id in path("drafts.**"))]{ 
+      "slug": slug.current 
+    }`
+  );
+
+  return categories.map((cat: any) => ({
+    slug: cat.slug.replace(/^\//, ''),
   }));
 }
 
