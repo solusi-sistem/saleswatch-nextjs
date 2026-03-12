@@ -41,7 +41,7 @@ export async function getPageData(slug: string): Promise<PageData | null> {
             { current_slug },
             {
                 next: {
-                    revalidate: 3600,
+                    revalidate: 86400,
                     tags: ['page-data']
                 }
             }

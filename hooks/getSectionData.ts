@@ -560,7 +560,7 @@ export async function getSectionData(sectionId: string): Promise<Section | null>
     }`;
 
     try {
-        const result = await client.fetch(query, { sectionId }, { next: { revalidate: 3600 } });
+        const result = await client.fetch(query, { sectionId }, { next: { revalidate: 86400 } });
         // console.log('Section data for ID ' + sectionId, result);
         return result || null;
     } catch (error) {

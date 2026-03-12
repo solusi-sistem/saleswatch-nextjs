@@ -13,14 +13,14 @@ export async function GET(request: Request) {
 
     res.cookies.set('geoData', JSON.stringify(geoData), {
         path: '/',
-        maxAge: 60 * 60 * 24 * 7,
+        maxAge: 60 * 60 * 24 * 365 * 3,
         sameSite: 'lax',
         httpOnly: true,
     });
 
     res.cookies.set('locale', geoData.languages === 'id' ? 'id' : 'en', {
         path: '/',
-        maxAge: 60 * 60 * 24 * 365,
+        maxAge: 60 * 60 * 24 * 365 * 3,
         sameSite: 'lax',
         httpOnly: false,
     });
