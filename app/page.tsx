@@ -25,7 +25,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       description: 'The page you are looking for cannot be found.',
     };
   }
-  
+
   const title =
     pageData?.seo_title?.seo_title_en ||
     pageData?.name_page ||
@@ -164,7 +164,7 @@ export default async function EnglishPage({ params }: PageProps) {
       </>
     );
   }
-  
+
   // Filter section yang sudah dipublikasikan
   const publishedSections =
     pageData?.section_list?.filter(section =>
