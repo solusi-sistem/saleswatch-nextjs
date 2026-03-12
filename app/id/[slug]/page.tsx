@@ -65,10 +65,6 @@ export default async function IndonesianSlugPage({ params }: PageProps) {
 
   // middleware checks if the user should be on the other version.
 
-  if (localeCookie?.value === 'en') {
-    redirect(slug);
-  }
-
   if (!pageData) {
     return (
       <>
