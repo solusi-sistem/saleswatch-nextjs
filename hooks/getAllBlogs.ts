@@ -247,11 +247,11 @@ export async function getBlogsWithPagination(
             : { status, offset, limit: offset + postsPerPage };
 
         const totalPosts = await client.fetch<number>(countQuery, params, {
-            next: { revalidate: 3600 }
+            next: { revalidate: 86400 }
         });
 
         const posts = await client.fetch<BlogItem[]>(postsQuery, params, {
-            next: { revalidate: 3600 }
+            next: { revalidate: 86400 }
         });
 
         const totalPages = Math.ceil(totalPosts / postsPerPage);
