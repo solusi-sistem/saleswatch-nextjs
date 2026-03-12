@@ -1,23 +1,29 @@
 import Header from '@/components/layouts/Header';
 import Footer from '@/components/layouts/Footer';
+
 import { getPageData } from '@/hooks/getPageData';
 import { Metadata } from 'next';
 import { PageProps } from '@/types/page';
 import Link from 'next/link';
 import { isPagePublished, isSectionPublished } from '@/lib/isPublished';
 import { renderSection } from '@/contexts/renderSection';
-// REMOVED: cookies, redirect, getGeoData (Middleware handles these now)
+// REMOVED: cookies, redirect, getGeoData (moved to middleware)
 
+// Force dynamic rendering
+// export const dynamic = 'force-dynamic'; <--- commented because it causes sanity CMS API request number to spike when a bot crawls the page
 export const revalidate = 3600;
 
-// Keep your Metadata function EXACTLY as it is
+// Generate Metadata untuk SEO (SSR)
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const resolvedParams = await params;
   const slug = resolvedParams.slug ? `/${resolvedParams.slug}` : '/';
   const pageData = await getPageData(slug);
 
   if (!pageData) {
-    return { title: 'Page Not Found' };
+    return {
+      title: 'Page Not Found',
+      description: 'The page you are looking for cannot be found.',
+    };
   }
 
   const title = pageData?.seo_title?.seo_title_en || pageData?.name_page || 'Untitled Page';
@@ -40,12 +46,11 @@ export default async function EnglishPage({ params }: PageProps) {
   const resolvedParams = await params;
   const slug = resolvedParams.slug ? `/${resolvedParams.slug}` : '/';
 
-  // --- REDIRECT LOGIC REMOVED FROM HERE ---
-  // (The middleware.ts file now handles checking cookies and redirecting to /id or /api/geo)
+  // (middleware.ts file now handles checking cookies and redirecting to /id or /api/geo)
 
   const pageData = await getPageData(slug);
 
-  // If data is not found (Keep your 404 UI)
+  // If data is not found
   if (!pageData) {
     return (
       <>
@@ -61,7 +66,7 @@ export default async function EnglishPage({ params }: PageProps) {
     );
   }
 
-  // Check if published (Keep this logic)
+  // Check if published
   if (!isPagePublished(pageData)) {
     return (
       <>
@@ -76,7 +81,8 @@ export default async function EnglishPage({ params }: PageProps) {
       </>
     );
   }
-
+  
+  // Filter published sections
   const publishedSections = pageData?.section_list?.filter(section => isSectionPublished(section)) || [];
 
   return (
