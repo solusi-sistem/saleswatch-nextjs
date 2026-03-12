@@ -37,7 +37,8 @@ export function middleware(request: NextRequest) {
   // 5. Logic for users on English pages
   // If user wants Indonesian but is on an English URL
   if (locale === 'id') {
-    return NextResponse.redirect(new URL(`/id${pathname}`, request.url));
+    const targetPath = pathname === '/' ? '/id' : `/id${pathname}`;
+    return NextResponse.redirect(new URL(targetPath, request.url));
   }
 
   return NextResponse.next();
