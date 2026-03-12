@@ -7,10 +7,12 @@ import { PageProps } from '@/types/page';
 import Link from 'next/link';
 import { isPagePublished, isSectionPublished } from '@/lib/isPublished';
 import { renderSection } from '@/contexts/renderSection';
+import { client } from '@/lib/sanity';
 // REMOVED: redirect and cookies (handled by middleware now)
 
 // export const dynamic = 'force-dynamic';
 export const revalidate = 3600;
+export const dynamicParams = true;
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const resolvedParams = await params;
@@ -147,4 +149,11 @@ export default async function IndonesianSlugPage({ params }: PageProps) {
       <Footer />
     </div>
   );
+}
+
+export async function generateStaticParams() {
+  const pages = await client.fetch(`*[_type == "page" && defined(slug.current)]{ "slug": slug.current }`);
+  return pages.map((page: any) => ({
+    slug: page.slug.replace(/^\//, ''),
+  }));
 }
