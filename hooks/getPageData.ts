@@ -36,7 +36,16 @@ export async function getPageData(slug: string): Promise<PageData | null> {
     }`;
 
     try {
-        const result = await client.fetch(query, { current_slug }, { cache: "no-store" });
+        const result = await client.fetch(
+            query, 
+            { current_slug },
+            {
+                next: {
+                    revalidate: 3600,
+                    tags: ['page-data']
+                }
+            }
+        );
         // console.log("result slug " + current_slug, result);
         return result || null;
     } catch (error) {

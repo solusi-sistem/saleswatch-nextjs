@@ -5,12 +5,19 @@ import Footer from '@/components/layouts/Footer';
 import BlogDetailSection from '@/components/Sections/Blog/BlogDetailSection';
 
 // Generate static params for all published blogs
+import { client } from '@/lib/sanity';
+export const dynamicParams = true;
+
 export async function generateStaticParams() {
-  const blogs = await getAllBlogs('published');
-  if (!blogs) return [];
-  
-  return blogs.map((post) => ({
-    slug: post.slug.current,
+  // Directly fetch ONLY the slugs. No "getAllBlogs" helper needed.
+  const posts = await client.fetch(
+    `*[_type == "list_blog" && defined(slug.current) && !(_id in path("drafts.**"))]{ 
+      "slug": slug.current 
+    }`
+  );
+
+  return posts.map((post: any) => ({
+    slug: post.slug.replace(/^\//, ''),
   }));
 }
 

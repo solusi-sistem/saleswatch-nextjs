@@ -16,7 +16,7 @@ export async function getIndustryOptions(): Promise<IndustryOption[]> {
   }`;
 
   try {
-    const result = await client.fetch(query, {}, { cache: 'no-store' });
+    const result = await client.fetch(query, {}, { next: { revalidate: 3600 } });
     return result || [];
   } catch (error) {
     return [];
@@ -37,7 +37,7 @@ export async function getCompanySizeOptions(): Promise<CompanySizeOption[]> {
   }`;
 
   try {
-    const result = await client.fetch(query, {}, { cache: 'no-store' });
+    const result = await client.fetch(query, {}, { next: { revalidate: 3600 } });
     return result || [];
   } catch (error) {
     return [];

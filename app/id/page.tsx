@@ -7,8 +7,7 @@ import { PageProps } from '@/types/page';
 import Link from 'next/link';
 import { isPagePublished, isSectionPublished } from '@/lib/isPublished';
 import { renderSection } from '@/contexts/renderSection';
-import { redirect } from 'next/navigation';
-import { cookies } from 'next/headers';
+// REMOVED: redirect and cookies (handled by middleware now)
 
 // Force dynamic rendering
 // export const dynamic = 'force-dynamic';
@@ -71,15 +70,7 @@ export default async function IndonesianPage({ params }: PageProps) {
   const resolvedParams = await params;
   const slug = resolvedParams.slug ? `/${resolvedParams.slug}` : '/';
 
-  // Get cookies
-  const cookieStore = await cookies();
-  const localeCookie = cookieStore.get('locale');
-
-  // If user manually selected English, redirect to English version
-  if (localeCookie?.value === 'en') {
-    const pathWithoutId = slug === '/id' ? '/' : slug.replace(/^\/id/, '');
-    redirect(pathWithoutId || '/');
-  }
+  // middleware handles moving 'en' users back to the English site.
 
   const pageData = await getPageData(slug);
 

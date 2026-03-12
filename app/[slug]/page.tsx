@@ -1,18 +1,18 @@
 import Header from '@/components/layouts/Header';
 import Footer from '@/components/layouts/Footer';
 
-import { cookies } from 'next/headers';
-import { redirect } from 'next/navigation';
-import { getGeoData } from '@/lib/getGeoData';
 import { getPageData } from '@/hooks/getPageData';
 import { Metadata } from "next";
 import { PageProps } from "@/types/page";
 import Link from 'next/link';
 import { isPagePublished, isSectionPublished } from '@/lib/isPublished';
 import { renderSection } from '@/contexts/renderSection';
+import { client } from '@/lib/sanity';
+// REMOVED: redirect and cookies (handled by middleware now)
 
 // export const dynamic = 'force-dynamic';
 export const revalidate = 3600;
+export const dynamicParams = true;
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const resolvedParams = await params;
@@ -61,19 +61,7 @@ export default async function EnglishSlugPage({ params }: PageProps) {
   const resolvedParams = await params;
   const slug = `/${resolvedParams.slug}`;
 
-  const cookieStore = await cookies();
-  const localeCookie = cookieStore.get('locale');
-
-  if (localeCookie?.value === 'id') {
-    redirect(`/id${slug}`);
-  }
-
-  if (!localeCookie) {
-    const geoData = await getGeoData();
-    if (geoData.languages === 'id') {
-      redirect(`/id${slug}`);
-    }
-  }
+  // middleware checks if the user should be on the /id version.
 
   const pageData = await getPageData(slug);
 
@@ -175,4 +163,11 @@ export default async function EnglishSlugPage({ params }: PageProps) {
       <Footer />
     </div>
   );
+}
+
+export async function generateStaticParams() {
+  const pages = await client.fetch(`*[_type == "page" && defined(slug.current)]{ "slug": slug.current }`);
+  return pages.map((page: any) => ({
+    slug: page.slug.replace(/^\//, ''),
+  }));
 }

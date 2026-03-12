@@ -2,14 +2,12 @@ import Header from '@/components/layouts/Header';
 import Footer from '@/components/layouts/Footer';
 
 import { getPageData } from '@/hooks/getPageData';
-import { getGeoData } from '@/lib/getGeoData';
 import { Metadata } from 'next';
 import { PageProps } from '@/types/page';
 import Link from 'next/link';
 import { isPagePublished, isSectionPublished } from '@/lib/isPublished';
 import { renderSection } from '@/contexts/renderSection';
-import { redirect } from 'next/navigation';
-import { cookies } from 'next/headers';
+// REMOVED: cookies, redirect, getGeoData (moved to middleware)
 
 // Force dynamic rendering
 // export const dynamic = 'force-dynamic'; <--- commented because it causes sanity CMS API request number to spike when a bot crawls the page
@@ -72,20 +70,7 @@ export default async function EnglishPage({ params }: PageProps) {
   const resolvedParams = await params;
   const slug = resolvedParams.slug ? `/${resolvedParams.slug}` : '/';
 
-  // Get cookies
-  const cookieStore = await cookies();
-  const localeCookie = cookieStore.get('locale');
-  const geoDataCookie = cookieStore.get('geoData');
-
-  if (slug === '/' && !localeCookie && !geoDataCookie) {
-    // trigger backend to set cookie
-    redirect('/api/geo');
-  }
-
-  // If user manually selected Indonesian, redirect to /id
-  if (localeCookie?.value === 'id') {
-    redirect('/id');
-  }
+  // middleware.ts file now handles checking cookies and redirecting to /id or /api/geo
 
   const pageData = await getPageData(slug);
 
