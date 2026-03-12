@@ -9,9 +9,11 @@ import { isPagePublished, isSectionPublished } from '@/lib/isPublished';
 import { renderSection } from '@/contexts/renderSection';
 // REMOVED: redirect and cookies (handled by middleware now)
 
+// Force dynamic rendering
+// export const dynamic = 'force-dynamic';
 export const revalidate = 3600;
 
-// Metadata stays exactly the same
+// Generate Metadata untuk SEO (SSR)
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const resolvedParams = await params;
   const slug = resolvedParams.slug ? `/${resolvedParams.slug}` : '/';
@@ -44,12 +46,11 @@ export default async function IndonesianPage({ params }: PageProps) {
   const resolvedParams = await params;
   const slug = resolvedParams.slug ? `/${resolvedParams.slug}` : '/';
 
-  // --- REDIRECT LOGIC REMOVED FROM HERE ---
-  // The Middleware handles moving 'en' users back to the English site.
+  // middleware handles moving 'en' users back to the English site.
 
   const pageData = await getPageData(slug);
 
-  // Jika data tidak ditemukan (Keep your UI)
+  // Jika data tidak ditemukan
   if (!pageData) {
     return (
       <>
@@ -61,13 +62,14 @@ export default async function IndonesianPage({ params }: PageProps) {
           <div className="d-flex flex-wrap justify-content-center gap-3">
             <Link href="/id" className="btn btn-outline-light btn-lg fw-semibold">Kembali ke Beranda</Link>
           </div>
+          <div className="position-absolute bottom-0 start-0 end-0" style={{ height: '150px', background: 'rgba(255,255,255,0.05)', clipPath: 'polygon(0 70%, 100% 0, 100% 100%, 0 100%)' }}></div>
         </section>
         <Footer />
       </>
     );
   }
 
-  // Cek apakah halaman sudah dipublikasikan (Keep your logic)
+  // Cek apakah halaman sudah dipublikasikan
   if (!isPagePublished(pageData)) {
     return (
       <>
@@ -84,6 +86,7 @@ export default async function IndonesianPage({ params }: PageProps) {
     );
   }
 
+  // Filter section yang sudah dipublikasikan
   const publishedSections = pageData?.section_list?.filter(section => isSectionPublished(section)) || [];
 
   return (
