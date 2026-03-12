@@ -10,7 +10,7 @@ export async function setLocaleCookie(locale: 'en' | 'id') {
 
     cookieStore.set('locale', locale, {
         path: '/',
-        maxAge: 60 * 24, // 1 day
+        maxAge: 60 * 60 * 24 * 365 * 3, // 3 years
         sameSite: 'lax',
         httpOnly: false, // Allow client-side access if needed
     });
