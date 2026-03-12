@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import { client } from '@/lib/sanity';
 
+export const revalidate = 86400;
+
 export async function GET() {
   try {
     const settings = await client.fetch(
@@ -21,7 +23,9 @@ export async function GET() {
             isActive
           }
         }
-      }`
+      }`,
+      {},
+      { next: { revalidate: 86400 } }
     );
 
     if (!settings) {
