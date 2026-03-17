@@ -104,7 +104,7 @@ export async function getLayoutData(): Promise<LayoutData | null> {
   }
 }
 
-// export function listenToLayoutChanges(callback: (data: LayoutData) => void) {
+export function listenToLayoutChanges(callback: (data: LayoutData) => void) {
 //   const subscription = client.listen<LayoutData>(LAYOUT_QUERY).subscribe({
 //     next: (update) => {
 //       if (update.result) {
@@ -115,4 +115,11 @@ export async function getLayoutData(): Promise<LayoutData | null> {
 //   });
 //
 //   return () => subscription.unsubscribe();
+//
 // }
+//
+// We've disabled the real-time listener to remove the token.
+// This function now returns a "do nothing" cleanup function.
+  console.log("Layout listener disabled.");
+  return () => {}; 
+}
