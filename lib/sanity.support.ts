@@ -83,8 +83,8 @@ export async function getSupportData(): Promise<SupportSection | null> {
 }
 
 export function listenToSupportChanges(
-//   callback: (data: SupportSection) => void
-// ) {
+  callback: (data: SupportSection) => void
+) {
 //   const subscription = client
 //     .listen<SupportSection>(SUPPORT_QUERY)
 //     .subscribe({
