@@ -116,8 +116,6 @@ export function listenToLayoutChanges(callback: (data: LayoutData) => void) {
 //
 //   return () => subscription.unsubscribe();
 //
-// }
-//
 // We've disabled the real-time listener to remove the token.
 // This function now returns a "do nothing" cleanup function.
   console.log("Layout listener disabled.");
