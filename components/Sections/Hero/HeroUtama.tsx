@@ -95,28 +95,6 @@ export default function HeroUtama({ id }: SectionProps) {
   }, [id]);
 
   useEffect(() => {
-    if (!id) return;
-
-    const interval = setInterval(async () => {
-      try {
-        const sectionData = await getSectionData(id);
-        if (sectionData?.hero_content) {
-          const currentDataString = JSON.stringify(content);
-          const newDataString = JSON.stringify(sectionData.hero_content);
-          
-          if (currentDataString !== newDataString) {
-            setContent(sectionData.hero_content);
-            setCachedData(sectionData.hero_content);
-          }
-        }
-      } catch (error) {
-      }
-    }, 30000);
-
-    return () => clearInterval(interval);
-  }, [id, content]);
-
-  useEffect(() => {
     const timer = setTimeout(() => {
       setIsVisible(true);
     }, 100);
