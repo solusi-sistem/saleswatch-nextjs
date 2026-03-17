@@ -86,27 +86,6 @@ export default function Features({ id }: SectionProps) {
   }, [id]);
 
   useEffect(() => {
-    if (!id) return;
-
-    const interval = setInterval(async () => {
-      try {
-        const sectionData = await getSectionData(id);
-        if (sectionData?.features_content) {
-          const currentDataString = JSON.stringify(content);
-          const newDataString = JSON.stringify(sectionData.features_content);
-
-          if (currentDataString !== newDataString) {
-            setContent(sectionData.features_content);
-            setCachedData(sectionData.features_content);
-          }
-        }
-      } catch (error) {}
-    }, 30000);
-
-    return () => clearInterval(interval);
-  }, [id, content]);
-
-  useEffect(() => {
     if (loading) return;
 
     const observerOptions = {
