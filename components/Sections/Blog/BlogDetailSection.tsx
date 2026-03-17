@@ -239,6 +239,8 @@ export default function BlogDetailSection({ slug }: BlogDetailSectionProps) {
         setIsLoading(false);
       }
     };
+    fetchData();
+  }, [slug]);
 
   if (isLoading) {
     return <LoadingSpinner />;
