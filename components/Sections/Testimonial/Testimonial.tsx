@@ -84,28 +84,6 @@ export default function Testimonial({ id }: SectionProps) {
         fetchContent();
     }, [id]);
 
-    useEffect(() => {
-        if (!id) return;
-
-        const interval = setInterval(async () => {
-            try {
-                const sectionData = await getSectionData(id);
-                if (sectionData?.testimonial_content) {
-                    const currentDataString = JSON.stringify(content);
-                    const newDataString = JSON.stringify(sectionData.testimonial_content);
-                    
-                    if (currentDataString !== newDataString) {
-                        setContent(sectionData.testimonial_content);
-                        setCachedData(sectionData.testimonial_content);
-                    }
-                }
-            } catch (error) {
-            }
-        }, 30000);
-
-        return () => clearInterval(interval);
-    }, [id, content]);
-
     const testimonials = content?.testimonials || [];
 
     useEffect(() => {
