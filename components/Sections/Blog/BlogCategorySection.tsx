@@ -146,42 +146,6 @@ export default function BlogCategorySection({ categorySlug }: BlogCategorySectio
     fetchData();
   }, [categorySlug]);
 
-  useEffect(() => {
-    if (!categorySlug) return;
-
-    const interval = setInterval(async () => {
-      try {
-        const [categoryData, postsData] = await Promise.all([
-          getCategoryBySlug(categorySlug),
-          getBlogsByCategory(categorySlug, 'published')
-        ]);
-
-        if (categoryData) {
-          const currentCategoryString = JSON.stringify(category);
-          const newCategoryString = JSON.stringify(categoryData);
-          
-          if (currentCategoryString !== newCategoryString) {
-            setCategory(categoryData);
-            setCachedCategory(categoryData, categorySlug);
-          }
-        }
-
-        if (postsData) {
-          const currentPostsString = JSON.stringify(posts);
-          const newPostsString = JSON.stringify(postsData);
-          
-          if (currentPostsString !== newPostsString) {
-            setPosts(postsData);
-            setCachedPosts(postsData, categorySlug);
-          }
-        }
-      } catch (error) {
-      }
-    }, 30000);
-
-    return () => clearInterval(interval);
-  }, [categorySlug, category, posts]);
-
   const handlePostClick = (slug: string) => {
     const href = language === 'id' ? `/id/blog/${slug}` : `/blog/${slug}`;
     window.scrollTo({ top: 0, behavior: 'instant' });
