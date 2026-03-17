@@ -242,51 +242,7 @@ export default function BlogDetailSection({ slug }: BlogDetailSectionProps) {
 
     fetchData();
   }, [slug]);
-
-  useEffect(() => {
-    if (!slug) return;
-
-    const interval = setInterval(async () => {
-      try {
-        const postData = await getBlogBySlug(slug);
-        if (postData) {
-          const currentDataString = JSON.stringify(post);
-          const newDataString = JSON.stringify(postData);
-          
-          if (currentDataString !== newDataString) {
-            setPost(postData);
-            setCachedPost(postData, slug);
-          }
-
-          const [recentData, categoriesData] = await Promise.all([
-            getRecentBlogs(5, postData._id),
-            getAllCategories(),
-          ]);
-
-          if (recentData) {
-            const currentRecentString = JSON.stringify(recentPosts);
-            const newRecentString = JSON.stringify(recentData);
-            
-            if (currentRecentString !== newRecentString) {
-              setRecentPosts(recentData);
-              setCachedRecent(recentData);
-            }
-          }
-
-          if (categoriesData) {
-            const currentCategoriesString = JSON.stringify(categories);
-            const newCategoriesString = JSON.stringify(categoriesData);
-            
-            if (currentCategoriesString !== newCategoriesString) {
-              setCategories(categoriesData);
-              setCachedCategories(categoriesData);
-            }
-          }
-        }
-      } catch (error) {
-      }
-    }, 30000);
-
+  
     return () => clearInterval(interval);
   }, [slug, post, recentPosts, categories]);
 
