@@ -87,28 +87,6 @@ export default function WhyItWorks({ id }: SectionProps) {
     }, [id]);
 
     useEffect(() => {
-        if (!id) return;
-
-        const interval = setInterval(async () => {
-            try {
-                const sectionData = await getSectionData(id);
-                if (sectionData?.why_it_works) {
-                    const currentDataString = JSON.stringify(content);
-                    const newDataString = JSON.stringify(sectionData.why_it_works);
-                    
-                    if (currentDataString !== newDataString) {
-                        setContent(sectionData.why_it_works);
-                        setCachedData(sectionData.why_it_works);
-                    }
-                }
-            } catch (error) {
-            }
-        }, 30000);
-
-        return () => clearInterval(interval);
-    }, [id, content]);
-
-    useEffect(() => {
         if (loading) return;
 
         const observerOptions = {
