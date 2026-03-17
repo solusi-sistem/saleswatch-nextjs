@@ -74,8 +74,8 @@ export async function getTermsConditionsData(): Promise<TermsConditionsSection |
 }
 
 export function listenToTermsConditionsChanges(
-//   callback: (data: TermsConditionsSection) => void
-// ) {
+  callback: (data: TermsConditionsSection) => void
+) {
 //   const subscription = client
 //     .listen<TermsConditionsSection>(TERMS_CONDITIONS_QUERY)
 //     .subscribe({
