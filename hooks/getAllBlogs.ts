@@ -105,7 +105,7 @@ export async function getAllBlogs(
 
     try {
         const result = await client.fetch<BlogItem[]>(query, {}, {
-            next: { revalidate: 3600 }
+            next: { revalidate: 86400 }
         });
         // console.log(`Fetched ${result?.length || 0} blog posts from Sanity`);
         return result || [];
@@ -122,7 +122,7 @@ export async function getBlogBySlug(slug: string): Promise<BlogItem | null> {
 
     try {
         const result = await client.fetch<BlogItem>(query, { slug }, {
-            next: { revalidate: 3600 }
+            next: { revalidate: 86400 }
         });
         // console.log("Blog post by slug:", result ? "Found" : "Not found");
         return result || null;
@@ -148,7 +148,7 @@ export async function getBlogsByCategory(
         const result = await client.fetch<BlogItem[]>(
             query,
             { status, categorySlug },
-            { next: { revalidate: 3600 } }
+            { next: { revalidate: 86400 } }
         );
         // console.log(`Fetched ${result?.length || 0} posts for category: ${categorySlug}`);
         return result || [];
@@ -178,7 +178,7 @@ export async function getAllCategories(): Promise<BlogCategory[] | null> {
 
     try {
         const result = await client.fetch<BlogCategory[]>(query, {}, {
-            next: { revalidate: 3600 }
+            next: { revalidate: 86400 }
         });
         // console.log(`Fetched ${result?.length || 0} blog categories`);
         return result || [];
@@ -208,7 +208,7 @@ export async function getCategoryBySlug(slug: string): Promise<BlogCategory | nu
 
     try {
         const result = await client.fetch<BlogCategory>(query, { slug }, {
-            next: { revalidate: 3600 }
+            next: { revalidate: 86400 }
         });
         return result || null;
     } catch (error) {
