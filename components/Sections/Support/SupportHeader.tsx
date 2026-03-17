@@ -118,28 +118,6 @@ export default function SupportHeader({ id }: SectionProps) {
         fetchData();
     }, [id]);
 
-    useEffect(() => {
-        if (!id) return;
-
-        const interval = setInterval(async () => {
-            try {
-                const res = await getSectionData(id);
-                if (res?.support_header_content) {
-                    const currentDataString = JSON.stringify(section?.support_header_content);
-                    const newDataString = JSON.stringify(res.support_header_content);
-
-                    if (currentDataString !== newDataString) {
-                        setSection(res);
-                        setCachedData(res.support_header_content);
-                    }
-                }
-            } catch (error) {
-            }
-        }, 30000);
-
-        return () => clearInterval(interval);
-    }, [id, section]);
-
     if (loading) {
         return <LoadingSpinner />;
     }
