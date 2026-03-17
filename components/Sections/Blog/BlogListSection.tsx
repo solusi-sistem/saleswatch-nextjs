@@ -163,44 +163,6 @@ export default function BlogListSection({ id }: BlogListSectionProps) {
     fetchData();
   }, [id]);
 
-  useEffect(() => {
-    if (!id) return;
-
-    const interval = setInterval(async () => {
-      try {
-        const data = await getSectionData(id);
-        if (data?.blog_list_section_content) {
-          const currentDataString = JSON.stringify(sectionData);
-          const newDataString = JSON.stringify(data.blog_list_section_content);
-          
-          if (currentDataString !== newDataString) {
-            setSectionData(data.blog_list_section_content);
-            setCachedSectionData(data.blog_list_section_content);
-            
-            const tampilkanSemua = data.blog_list_section_content.tampilkan_semua || false;
-            setShowAll(tampilkanSemua);
-
-            if (tampilkanSemua) {
-              const blogs = await getAllBlogs('published', undefined, 'dateDesc');
-              if (blogs) {
-                const currentBlogsString = JSON.stringify(allBlogs);
-                const newBlogsString = JSON.stringify(blogs);
-                
-                if (currentBlogsString !== newBlogsString) {
-                  setAllBlogs(blogs);
-                  setCachedAllBlogs(blogs);
-                }
-              }
-            }
-          }
-        }
-      } catch (error) {
-      }
-    }, 30000);
-
-    return () => clearInterval(interval);
-  }, [id, sectionData, allBlogs]);
-
   if (isLoading) {
     return <LoadingSpinner />;
   }
