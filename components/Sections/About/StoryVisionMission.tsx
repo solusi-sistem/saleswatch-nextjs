@@ -108,28 +108,6 @@ export default function StoryVisionMission({ id }: SectionProps) {
   }, [id]);
 
   useEffect(() => {
-    if (!id) return;
-
-    const interval = setInterval(async () => {
-      try {
-        const sectionData = await getSectionData(id);
-        if (sectionData?.story_vision_mission) {
-          const currentDataString = JSON.stringify(content);
-          const newDataString = JSON.stringify(sectionData.story_vision_mission);
-          
-          if (currentDataString !== newDataString) {
-            setContent(sectionData.story_vision_mission);
-            setCachedData(sectionData.story_vision_mission);
-          }
-        }
-      } catch (error) {
-      }
-    }, 30000);
-
-    return () => clearInterval(interval);
-  }, [id, content]);
-
-  useEffect(() => {
     if (loading) return;
 
     const observerOptions = {
