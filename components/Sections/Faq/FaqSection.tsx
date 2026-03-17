@@ -94,28 +94,6 @@ export default function FaqSection({ id }: SectionProps) {
         fetchContent();
     }, [id]);
 
-    useEffect(() => {
-        if (!id) return;
-
-        const interval = setInterval(async () => {
-            try {
-                const sectionData = await getSectionData(id);
-                if (sectionData?.faq_section_content) {
-                    const currentDataString = JSON.stringify(content);
-                    const newDataString = JSON.stringify(sectionData.faq_section_content);
-                    
-                    if (currentDataString !== newDataString) {
-                        setContent(sectionData.faq_section_content);
-                        setCachedData(sectionData.faq_section_content);
-                    }
-                }
-            } catch (error) {
-            }
-        }, 30000);
-
-        return () => clearInterval(interval);
-    }, [id, content]);
-
     const toggleFAQ = (id: string) => {
         setOpenFAQs((prev) => ({
             ...prev,

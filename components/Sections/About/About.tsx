@@ -88,28 +88,6 @@ const About = ({ id }: SectionProps) => {
   }, [id]);
 
   useEffect(() => {
-    if (!id) return;
-
-    const interval = setInterval(async () => {
-      try {
-        const sectionData = await getSectionData(id);
-        if (sectionData?.about_content) {
-          const currentDataString = JSON.stringify(content);
-          const newDataString = JSON.stringify(sectionData.about_content);
-
-          if (currentDataString !== newDataString) {
-            setContent(sectionData.about_content);
-            setCachedData(sectionData.about_content);
-          }
-        }
-      } catch (error) {
-      }
-    }, 30000);
-
-    return () => clearInterval(interval);
-  }, [id, content]);
-
-  useEffect(() => {
     if (loading) return;
 
     const observerOptions = {

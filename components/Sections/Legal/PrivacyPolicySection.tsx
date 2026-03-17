@@ -219,28 +219,6 @@ export default function PrivacyPolicySection({ id }: SectionProps) {
     fetchData();
   }, [id]);
 
-  useEffect(() => {
-    if (!id) return;
-
-    const interval = setInterval(async () => {
-      try {
-        const data = await getSectionData(id);
-        if (data) {
-          const currentDataString = JSON.stringify(sectionData);
-          const newDataString = JSON.stringify(data);
-          
-          if (currentDataString !== newDataString) {
-            setSectionData(data);
-            setCachedData(data);
-          }
-        }
-      } catch (error) {
-      }
-    }, 30000);
-
-    return () => clearInterval(interval);
-  }, [id, sectionData]);
-
   const toggleSection = (sectionId: string) => {
     const newExpanded = new Set(expandedSections);
     if (newExpanded.has(sectionId)) {
