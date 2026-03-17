@@ -4,8 +4,8 @@ const previewsEnabled = process.env.ENABLE_PREVIEWS === 'true';
 
 if (isPreview && !previewsEnabled) {
   console.log("Previews are disabled. Skipping build.");
-  process.exit(1); // 1 = SKIP in Vercel's world
+  process.exit(0); // 0 = SKIP in Vercel's world
 } else {
   console.log("Proceeding with build...");
-  process.exit(0); // 0 = PROCEED
+  process.exit(1); // 1 = PROCEED
 }
