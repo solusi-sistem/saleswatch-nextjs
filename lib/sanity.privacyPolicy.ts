@@ -78,8 +78,8 @@ export async function getPrivacyPolicyData(): Promise<PrivacyPolicySection | nul
 }
 
 export function listenToPrivacyPolicyChanges(
-//   callback: (data: PrivacyPolicySection) => void
-// ) {
+  callback: (data: PrivacyPolicySection) => void
+) {
 //   const subscription = client
 //     .listen<PrivacyPolicySection>(PRIVACY_POLICY_QUERY)
 //     .subscribe({
