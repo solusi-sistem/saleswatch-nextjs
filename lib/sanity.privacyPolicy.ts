@@ -80,18 +80,20 @@ export async function getPrivacyPolicyData(): Promise<PrivacyPolicySection | nul
 export function listenToPrivacyPolicyChanges(
   callback: (data: PrivacyPolicySection) => void
 ) {
-  const subscription = client
-    .listen<PrivacyPolicySection>(PRIVACY_POLICY_QUERY)
-    .subscribe({
-      next: (update) => {
-        if (update.result) {
-          callback(update.result);
-        }
-      },
-      error: (err) => {
-        console.error('Privacy Policy subscription error:', err);
-      },
-    });
-
-  return () => subscription.unsubscribe();
+//   const subscription = client
+//     .listen<PrivacyPolicySection>(PRIVACY_POLICY_QUERY)
+//     .subscribe({
+//       next: (update) => {
+//         if (update.result) {
+//           callback(update.result);
+//         }
+//       },
+//       error: (err) => {
+//         console.error('Privacy Policy subscription error:', err);
+//       },
+//     });
+//
+//   return () => subscription.unsubscribe();
+  console.log("listener disabled.");
+  return () => {}; 
 }

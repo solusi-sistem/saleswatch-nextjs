@@ -85,17 +85,19 @@ export async function getSupportData(): Promise<SupportSection | null> {
 export function listenToSupportChanges(
   callback: (data: SupportSection) => void
 ) {
-  const subscription = client
-    .listen<SupportSection>(SUPPORT_QUERY)
-    .subscribe({
-      next: (update) => {
-        if (update.result) {
-          callback(update.result);
-        }
-      },
-      error: (err) => {
-      },
-    });
-
-  return () => subscription.unsubscribe();
+//   const subscription = client
+//     .listen<SupportSection>(SUPPORT_QUERY)
+//     .subscribe({
+//       next: (update) => {
+//         if (update.result) {
+//           callback(update.result);
+//         }
+//       },
+//       error: (err) => {
+//       },
+//     });
+//
+//   return () => subscription.unsubscribe();
+  console.log("listener disabled.");
+  return () => {}; 
 }
