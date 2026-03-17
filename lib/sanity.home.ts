@@ -39,8 +39,8 @@ export async function getStoryVisionMissionData(): Promise<StoryVisionMissionSec
 }
 
 export function listenToStoryVisionMissionChanges(
-//   callback: (data: StoryVisionMissionSection) => void
-// ) {
+  callback: (data: StoryVisionMissionSection) => void
+) {
 //   const subscription = client
 //     .listen<StoryVisionMissionSection>(STORY_VISION_MISSION_QUERY)
 //     .subscribe({
@@ -100,8 +100,8 @@ export async function getRequestDemoData(): Promise<RequestDemoSection | null> {
 }
 
 export function listenToRequestDemoChanges(
-//   callback: (data: RequestDemoSection) => void
-// ) {
+  callback: (data: RequestDemoSection) => void
+) {
 //   const subscription = client
 //     .listen<RequestDemoSection>(REQUEST_DEMO_QUERY)
 //     .subscribe({
@@ -163,8 +163,8 @@ export async function getFaqData(): Promise<FaqSection | null> {
 }
 
 export function listenToFaqChanges(
-//   callback: (data: FaqSection) => void
-// ) {
+  callback: (data: FaqSection) => void
+) {
 //   const subscription = client
 //     .listen<FaqSection>(FAQ_QUERY)
 //     .subscribe({
@@ -225,8 +225,8 @@ export async function getTestimonialData(): Promise<TestimonialSection | null> {
 }
 
 export function listenToTestimonialChanges(
-//   callback: (data: TestimonialSection) => void
-// ) {
+  callback: (data: TestimonialSection) => void
+) {
 //   const subscription = client
 //     .listen<TestimonialSection>(TESTIMONIAL_QUERY)
 //     .subscribe({
@@ -294,8 +294,8 @@ export async function getWhyItWorksData(): Promise<WhyItWorksSection | null> {
 }
 
 export function listenToWhyItWorksChanges(
-//   callback: (data: WhyItWorksSection) => void
-// ) {
+  callback: (data: WhyItWorksSection) => void
+) {
 //   const subscription = client
 //     .listen<WhyItWorksSection>(WHY_IT_WORKS_QUERY)
 //     .subscribe({
