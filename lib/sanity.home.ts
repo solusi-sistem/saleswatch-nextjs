@@ -39,22 +39,24 @@ export async function getStoryVisionMissionData(): Promise<StoryVisionMissionSec
 }
 
 export function listenToStoryVisionMissionChanges(
-  callback: (data: StoryVisionMissionSection) => void
-) {
-  const subscription = client
-    .listen<StoryVisionMissionSection>(STORY_VISION_MISSION_QUERY)
-    .subscribe({
-      next: (update) => {
-        if (update.result) {
-          callback(update.result);
-        }
-      },
-      error: (err) => {
-        console.error('Story Vision Mission subscription error:', err);
-      },
-    });
-
-  return () => subscription.unsubscribe();
+//   callback: (data: StoryVisionMissionSection) => void
+// ) {
+//   const subscription = client
+//     .listen<StoryVisionMissionSection>(STORY_VISION_MISSION_QUERY)
+//     .subscribe({
+//       next: (update) => {
+//         if (update.result) {
+//           callback(update.result);
+//         }
+//       },
+//       error: (err) => {
+//         console.error('Story Vision Mission subscription error:', err);
+//       },
+//     });
+//
+//   return () => subscription.unsubscribe();
+  console.log("listener disabled.");
+  return () => {}; 
 }
 
 // ==========================================
@@ -98,22 +100,24 @@ export async function getRequestDemoData(): Promise<RequestDemoSection | null> {
 }
 
 export function listenToRequestDemoChanges(
-  callback: (data: RequestDemoSection) => void
-) {
-  const subscription = client
-    .listen<RequestDemoSection>(REQUEST_DEMO_QUERY)
-    .subscribe({
-      next: (update) => {
-        if (update.result) {
-          callback(update.result);
-        }
-      },
-      error: (err) => {
-        console.error('Request Demo subscription error:', err);
-      },
-    });
-
-  return () => subscription.unsubscribe();
+//   callback: (data: RequestDemoSection) => void
+// ) {
+//   const subscription = client
+//     .listen<RequestDemoSection>(REQUEST_DEMO_QUERY)
+//     .subscribe({
+//       next: (update) => {
+//         if (update.result) {
+//           callback(update.result);
+//         }
+//       },
+//       error: (err) => {
+//         console.error('Request Demo subscription error:', err);
+//       },
+//     });
+//
+//   return () => subscription.unsubscribe();
+  console.log("listener disabled.");
+  return () => {}; 
 }
 
 // ==========================================
@@ -159,22 +163,24 @@ export async function getFaqData(): Promise<FaqSection | null> {
 }
 
 export function listenToFaqChanges(
-  callback: (data: FaqSection) => void
-) {
-  const subscription = client
-    .listen<FaqSection>(FAQ_QUERY)
-    .subscribe({
-      next: (update) => {
-        if (update.result) {
-          callback(update.result);
-        }
-      },
-      error: (err) => {
-        console.error('FAQ subscription error:', err);
-      },
-    });
-
-  return () => subscription.unsubscribe();
+//   callback: (data: FaqSection) => void
+// ) {
+//   const subscription = client
+//     .listen<FaqSection>(FAQ_QUERY)
+//     .subscribe({
+//       next: (update) => {
+//         if (update.result) {
+//           callback(update.result);
+//         }
+//       },
+//       error: (err) => {
+//         console.error('FAQ subscription error:', err);
+//       },
+//     });
+//
+//   return () => subscription.unsubscribe();
+  console.log("listener disabled.");
+  return () => {}; 
 }
 
 // ==========================================
@@ -219,22 +225,24 @@ export async function getTestimonialData(): Promise<TestimonialSection | null> {
 }
 
 export function listenToTestimonialChanges(
-  callback: (data: TestimonialSection) => void
-) {
-  const subscription = client
-    .listen<TestimonialSection>(TESTIMONIAL_QUERY)
-    .subscribe({
-      next: (update) => {
-        if (update.result) {
-          callback(update.result);
-        }
-      },
-      error: (err) => {
-        console.error('Testimonial subscription error:', err);
-      },
-    });
-
-  return () => subscription.unsubscribe();
+//   callback: (data: TestimonialSection) => void
+// ) {
+//   const subscription = client
+//     .listen<TestimonialSection>(TESTIMONIAL_QUERY)
+//     .subscribe({
+//       next: (update) => {
+//         if (update.result) {
+//           callback(update.result);
+//         }
+//       },
+//       error: (err) => {
+//         console.error('Testimonial subscription error:', err);
+//       },
+//     });
+//
+//   return () => subscription.unsubscribe();
+  console.log("listener disabled.");
+  return () => {}; 
 }
 
 // ==========================================
@@ -286,20 +294,22 @@ export async function getWhyItWorksData(): Promise<WhyItWorksSection | null> {
 }
 
 export function listenToWhyItWorksChanges(
-  callback: (data: WhyItWorksSection) => void
-) {
-  const subscription = client
-    .listen<WhyItWorksSection>(WHY_IT_WORKS_QUERY)
-    .subscribe({
-      next: (update) => {
-        if (update.result) {
-          callback(update.result);
-        }
-      },
-      error: (err) => {
-        console.error('Why It Works subscription error:', err);
-      },
-    });
-
-  return () => subscription.unsubscribe();
+//   callback: (data: WhyItWorksSection) => void
+// ) {
+//   const subscription = client
+//     .listen<WhyItWorksSection>(WHY_IT_WORKS_QUERY)
+//     .subscribe({
+//       next: (update) => {
+//         if (update.result) {
+//           callback(update.result);
+//         }
+//       },
+//       error: (err) => {
+//         console.error('Why It Works subscription error:', err);
+//       },
+//     });
+//
+//   return () => subscription.unsubscribe();
+  console.log("listener disabled.");
+  return () => {}; 
 }
