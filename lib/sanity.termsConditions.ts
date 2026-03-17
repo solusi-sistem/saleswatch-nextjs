@@ -74,20 +74,22 @@ export async function getTermsConditionsData(): Promise<TermsConditionsSection |
 }
 
 export function listenToTermsConditionsChanges(
-  callback: (data: TermsConditionsSection) => void
-) {
-  const subscription = client
-    .listen<TermsConditionsSection>(TERMS_CONDITIONS_QUERY)
-    .subscribe({
-      next: (update) => {
-        if (update.result) {
-          callback(update.result);
-        }
-      },
-      error: (err) => {
-        console.error('Terms and Conditions subscription error:', err);
-      },
-    });
-
-  return () => subscription.unsubscribe();
+//   callback: (data: TermsConditionsSection) => void
+// ) {
+//   const subscription = client
+//     .listen<TermsConditionsSection>(TERMS_CONDITIONS_QUERY)
+//     .subscribe({
+//       next: (update) => {
+//         if (update.result) {
+//           callback(update.result);
+//         }
+//       },
+//       error: (err) => {
+//         console.error('Terms and Conditions subscription error:', err);
+//       },
+//     });
+//
+//   return () => subscription.unsubscribe();
+  console.log("listener disabled.");
+  return () => {}; 
 }
