@@ -240,12 +240,6 @@ export default function BlogDetailSection({ slug }: BlogDetailSectionProps) {
       }
     };
 
-    fetchData();
-  }, [slug]);
-  
-    return () => clearInterval(interval);
-  }, [slug, post, recentPosts, categories]);
-
   if (isLoading) {
     return <LoadingSpinner />;
   }
