@@ -7,7 +7,7 @@ export const client = createClient({
   dataset: process.env.NEXT_PUBLIC_SANITY_DATASET!,
   apiVersion: process.env.NEXT_PUBLIC_SANITY_API_VERSION!,
   useCdn: true,
-  token: process.env.SANITY_API_TOKEN,
+  // token: process.env.SANITY_API_TOKEN,
 });
 
 const builder = imageUrlBuilder(client);
@@ -104,15 +104,15 @@ export async function getLayoutData(): Promise<LayoutData | null> {
   }
 }
 
-export function listenToLayoutChanges(callback: (data: LayoutData) => void) {
-  const subscription = client.listen<LayoutData>(LAYOUT_QUERY).subscribe({
-    next: (update) => {
-      if (update.result) {
-        callback(update.result);
-      }
-    },
-    error: (err) => {},
-  });
-
-  return () => subscription.unsubscribe();
-}
+// export function listenToLayoutChanges(callback: (data: LayoutData) => void) {
+//   const subscription = client.listen<LayoutData>(LAYOUT_QUERY).subscribe({
+//     next: (update) => {
+//       if (update.result) {
+//         callback(update.result);
+//       }
+//     },
+//     error: (err) => {},
+//   });
+//
+//   return () => subscription.unsubscribe();
+// }
