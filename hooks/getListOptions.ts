@@ -1,4 +1,5 @@
-import { client } from '@/lib/sanity';
+// import { client } from '@/lib/sanity';
+import { proxyFetch } from '@/lib/sanityFetcher';
 import { groq } from 'next-sanity';
 import { IndustryOption, CompanySizeOption } from '@/types/list/ListOptions';
 
@@ -16,7 +17,7 @@ export async function getIndustryOptions(): Promise<IndustryOption[]> {
   }`;
 
   try {
-    const result = await client.fetch(query, {}, { next: { revalidate: 86400 } });
+    const result = await proxyFetch<IndustryOption[]>(query, {});
     return result || [];
   } catch (error) {
     return [];
@@ -37,7 +38,7 @@ export async function getCompanySizeOptions(): Promise<CompanySizeOption[]> {
   }`;
 
   try {
-    const result = await client.fetch(query, {}, { next: { revalidate: 86400 } });
+    const result = await proxyFetch<CompanySizeOption[]>(query, {});
     return result || [];
   } catch (error) {
     return [];

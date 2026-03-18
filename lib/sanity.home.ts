@@ -1,4 +1,5 @@
-import { client } from './sanity.realtime';
+// import { client } from './sanity.realtime';
+import { proxyFetch } from '@/lib/sanityFetcher';
 import type { 
   StoryVisionMissionSection, 
   RequestDemoSection, 
@@ -30,7 +31,8 @@ const STORY_VISION_MISSION_QUERY = `
 
 export async function getStoryVisionMissionData(): Promise<StoryVisionMissionSection | null> {
   try {
-    const data = await client.fetch<StoryVisionMissionSection>(STORY_VISION_MISSION_QUERY);
+    // const data = await client.fetch<StoryVisionMissionSection>(STORY_VISION_MISSION_QUERY);
+    const data = await proxyFetch<StoryVisionMissionSection>(STORY_VISION_MISSION_QUERY);
     return data;
   } catch (error) {
     console.error('Error fetching Story Vision Mission data:', error);
@@ -91,7 +93,8 @@ const REQUEST_DEMO_QUERY = `
 
 export async function getRequestDemoData(): Promise<RequestDemoSection | null> {
   try {
-    const data = await client.fetch<RequestDemoSection>(REQUEST_DEMO_QUERY);
+    // const data = await client.fetch<RequestDemoSection>(REQUEST_DEMO_QUERY);
+    const data = await proxyFetch<RequestDemoSection>(REQUEST_DEMO_QUERY);
     return data;
   } catch (error) {
     console.error('Error fetching Request Demo data:', error);
@@ -154,7 +157,8 @@ const FAQ_QUERY = `
 
 export async function getFaqData(): Promise<FaqSection | null> {
   try {
-    const data = await client.fetch<FaqSection>(FAQ_QUERY);
+    // const data = await client.fetch<FaqSection>(FAQ_QUERY);
+    const data = await proxyFetch<FaqSection>(FAQ_QUERY);
     return data;
   } catch (error) {
     console.error('Error fetching FAQ data:', error);
@@ -216,7 +220,8 @@ const TESTIMONIAL_QUERY = `
 
 export async function getTestimonialData(): Promise<TestimonialSection | null> {
   try {
-    const data = await client.fetch<TestimonialSection>(TESTIMONIAL_QUERY);
+    // const data = await client.fetch<TestimonialSection>(TESTIMONIAL_QUERY);
+    const data = await proxyFetch<TestimonialSection>(TESTIMONIAL_QUERY);
     return data;
   } catch (error) {
     console.error('Error fetching Testimonial data:', error);
@@ -285,7 +290,8 @@ const WHY_IT_WORKS_QUERY = `
 
 export async function getWhyItWorksData(): Promise<WhyItWorksSection | null> {
   try {
-    const data = await client.fetch<WhyItWorksSection>(WHY_IT_WORKS_QUERY);
+    // const data = await client.fetch<WhyItWorksSection>(WHY_IT_WORKS_QUERY);
+    const data = await proxyFetch<WhyItWorksSection>(WHY_IT_WORKS_QUERY);
     return data;
   } catch (error) {
     console.error('Error fetching Why It Works data:', error);

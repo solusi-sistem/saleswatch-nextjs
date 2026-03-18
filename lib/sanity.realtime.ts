@@ -1,5 +1,6 @@
 import { createClient } from 'next-sanity';
 import imageUrlBuilder from '@sanity/image-url';
+import { proxyFetch } from '@/lib/sanityFetcher';
 import type { LayoutData } from '@/types';
 
 export const client = createClient({
@@ -97,7 +98,8 @@ const LAYOUT_QUERY = `
 
 export async function getLayoutData(): Promise<LayoutData | null> {
   try {
-    const data = await client.fetch<LayoutData>(LAYOUT_QUERY);
+    // const data = await client.fetch<LayoutData>(LAYOUT_QUERY);
+    const data = await proxyFetch<LayoutData>(LAYOUT_QUERY);
     return data;
   } catch (error) {
     return null;
