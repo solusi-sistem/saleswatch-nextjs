@@ -65,7 +65,8 @@ export async function getTermsConditionsData(): Promise<TermsConditionsSection |
     
     if (!data?.terms_and_conditions_content?.items || data.terms_and_conditions_content.items.length === 0) {
       console.log('Trying alternative query...');
-      data = await client.fetch<TermsConditionsSection>(TERMS_CONDITIONS_QUERY_SIMPLE);
+      // data = await client.fetch<TermsConditionsSection>(TERMS_CONDITIONS_QUERY_SIMPLE);
+      data = await proxyFetch<TermsConditionsSection>(TERMS_CONDITIONS_QUERY_SIMPLE);
     }
     
     return data;
