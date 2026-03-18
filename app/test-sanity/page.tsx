@@ -13,7 +13,7 @@ export default function TestSanity() {
     async function test() {
       try {
         console.log('Testing Sanity connection...');
-        const result = await getLayoutData();
+        const result: any = await getLayoutData(); // fixing client.fetch being used in get functions
         setData(result);
 
         // Debug Header Logo
