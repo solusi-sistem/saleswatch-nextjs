@@ -1,4 +1,5 @@
-import { client } from '@/lib/sanity';
+// import { client } from '@/lib/sanity';
+import { proxyFetch } from '@/lib/sanityFetcher';
 import { Section } from '@/types/section';
 import { groq } from 'next-sanity';
 
@@ -560,7 +561,8 @@ export async function getSectionData(sectionId: string): Promise<Section | null>
     }`;
 
     try {
-        const result = await client.fetch(query, { sectionId }, { next: { revalidate: 86400 } });
+        const result = await proxyFetch<Section>(query, { sectionId });
+        // const result = await client.fetch(query, { sectionId }, { next: { revalidate: 86400 } });
         // console.log('Section data for ID ' + sectionId, result);
         return result || null;
     } catch (error) {
