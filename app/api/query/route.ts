@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import { client } from '@/lib/sanity';
 
+export const revalidate = 86400;
+
 export async function POST(request: Request) {
   try {
     const { query, params } = await request.json();
