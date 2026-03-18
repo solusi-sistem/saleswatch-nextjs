@@ -75,7 +75,8 @@ export async function getSupportData(): Promise<SupportSection | null> {
     let data = await proxyFetch<SupportSection>(SUPPORT_QUERY);
     
     if (!data?.support_content?.items || data.support_content.items.length === 0) {
-      data = await client.fetch<SupportSection>(SUPPORT_QUERY_SIMPLE);
+      // data = await client.fetch<SupportSection>(SUPPORT_QUERY_SIMPLE);
+      data = await proxyFetch<SupportSection>(SUPPORT_QUERY_SIMPLE);
     }
     
     return data;
