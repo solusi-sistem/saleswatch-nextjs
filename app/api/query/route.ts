@@ -1,18 +1,12 @@
 import { NextResponse } from 'next/server';
 import { client } from '@/lib/sanity';
 
-export const revalidate = 86400;
-
 export async function POST(request: Request) {
   try {
     const { query, params } = await request.json();
     
     // execute fetch on server
-    const data = await client.fetch(query, params || {}, {
-      next: { 
-        revalidate: 86400 // 24 hours caching on Vercel
-      }
-    });
+    const data = await client.fetch(query, params || {});
     
     // return data to browser
     return NextResponse.json(data);
