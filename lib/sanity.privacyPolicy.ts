@@ -1,4 +1,5 @@
-import { client } from './sanity.realtime';
+// import { client } from './sanity.realtime';
+import { proxyFetch } from '@/lib/sanityFetcher';
 import type { PrivacyPolicySection } from '@/types/privacyPolicy';
 
 // Updated query with multiple fallback field names
@@ -62,8 +63,9 @@ const PRIVACY_POLICY_QUERY_SIMPLE = `
 export async function getPrivacyPolicyData(): Promise<PrivacyPolicySection | null> {
   try {
     // Try the main query first
-    let data = await client.fetch<PrivacyPolicySection>(PRIVACY_POLICY_QUERY);
-    
+    // let data = await client.fetch<PrivacyPolicySection>(PRIVACY_POLICY_QUERY);
+    let data = await proxyFetch<PrivacyPolicySection>(PRIVACY_POLICY_QUERY);
+   
     // If privacy_policy_content is null or empty, try the simple query
     if (!data?.privacy_policy_content?.items || data.privacy_policy_content.items.length === 0) {
       console.log('Trying alternative query...');
