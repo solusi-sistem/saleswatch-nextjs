@@ -25,7 +25,7 @@ export async function GET() {
         }
       }`,
       {},
-      { next: { revalidate: 86400 } }
+      { next: { revalidate: 86400 * 365} }
     );
 
     if (!settings) {
