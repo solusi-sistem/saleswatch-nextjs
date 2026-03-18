@@ -1,4 +1,5 @@
-import { client } from './sanity.realtime';
+// import { client } from './sanity.realtime';
+import { proxyFetch } from '@/lib/sanityFetcher';
 import type { SupportSection } from '@/types/support';
 
 const SUPPORT_QUERY = `
@@ -70,7 +71,8 @@ const SUPPORT_QUERY_SIMPLE = `
 
 export async function getSupportData(): Promise<SupportSection | null> {
   try {
-    let data = await client.fetch<SupportSection>(SUPPORT_QUERY);
+    // let data = await client.fetch<SupportSection>(SUPPORT_QUERY);
+    let data = await proxyFetch<SupportSection>(SUPPORT_QUERY);
     
     if (!data?.support_content?.items || data.support_content.items.length === 0) {
       data = await client.fetch<SupportSection>(SUPPORT_QUERY_SIMPLE);
