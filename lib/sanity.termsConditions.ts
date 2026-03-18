@@ -1,4 +1,5 @@
-import { client } from './sanity.realtime';
+// import { client } from './sanity.realtime';
+import { proxyFetch } from '@/lib/sanityFetcher';
 import type { TermsConditionsSection } from '@/types/termsConditions';
 
 const TERMS_CONDITIONS_QUERY = `
@@ -59,7 +60,8 @@ const TERMS_CONDITIONS_QUERY_SIMPLE = `
 
 export async function getTermsConditionsData(): Promise<TermsConditionsSection | null> {
   try {
-    let data = await client.fetch<TermsConditionsSection>(TERMS_CONDITIONS_QUERY);
+    // let data = await client.fetch<TermsConditionsSection>(TERMS_CONDITIONS_QUERY);
+    let data = await proxyFetch<TermsConditionsSection>(TERMS_CONDITIONS_QUERY);
     
     if (!data?.terms_and_conditions_content?.items || data.terms_and_conditions_content.items.length === 0) {
       console.log('Trying alternative query...');
