@@ -69,7 +69,8 @@ export async function getPrivacyPolicyData(): Promise<PrivacyPolicySection | nul
     // If privacy_policy_content is null or empty, try the simple query
     if (!data?.privacy_policy_content?.items || data.privacy_policy_content.items.length === 0) {
       console.log('Trying alternative query...');
-      data = await client.fetch<PrivacyPolicySection>(PRIVACY_POLICY_QUERY_SIMPLE);
+      // data = await client.fetch<PrivacyPolicySection>(PRIVACY_POLICY_QUERY_SIMPLE);
+     data = await proxyFetch<PrivacyPolicySection>(PRIVACY_POLICY_QUERY_SIMPLE);
     }
     
     return data;
