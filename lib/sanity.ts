@@ -1,4 +1,5 @@
 import { createClient } from "next-sanity";
+import { proxyFetch } from '@/lib/sanityFetcher';
 import imageUrlBuilder from "@sanity/image-url";
 
 export const client = createClient({
@@ -19,7 +20,8 @@ export async function getLayoutData() {
   try {
     // console.log('🔍 Fetching layout data from Sanity...');
 
-    const data = await client.fetch(`
+    // const data = await client.fetch(`
+    const data = await proxyFetch(`
       *[_type == "layout"][0] {
         _id,
         name_layout,
