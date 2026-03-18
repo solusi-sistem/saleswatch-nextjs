@@ -1,6 +1,9 @@
 import { client } from "@/lib/sanity";
+import { proxyFetch } from "@/lib/sanityFetcher";
 import { BlogItem, BlogCategory } from "@/types/list/Blog";
 import { groq } from "next-sanity";
+
+const isBrowser = typeof window !== 'undefined';
 
 // Query fragment untuk blog dengan kategori
 const blogFieldsQuery = `
@@ -104,11 +107,11 @@ export async function getAllBlogs(
     }`;
 
     try {
-        const result = await client.fetch<BlogItem[]>(query, {}, {
-            next: { revalidate: 86400 }
-        });
-        // console.log(`Fetched ${result?.length || 0} blog posts from Sanity`);
-        return result || [];
+        // use proxy if in browser, use client if on server
+        if (isBrowser) {
+            return await proxyFetch<BlogItem[]>(query, {});
+        }
+        return await client.fetch<BlogItem[]>(query, {}, { next: { revalidate: 86400 } });
     } catch (error) {
         console.error("Error fetching all blogs:", error);
         return null;
@@ -121,11 +124,8 @@ export async function getBlogBySlug(slug: string): Promise<BlogItem | null> {
     }`;
 
     try {
-        const result = await client.fetch<BlogItem>(query, { slug }, {
-            next: { revalidate: 86400 }
-        });
-        // console.log("Blog post by slug:", result ? "Found" : "Not found");
-        return result || null;
+        if (isBrowser) return await proxyFetch<BlogItem>(query, { slug });
+        return await client.fetch<BlogItem>(query, { slug }, { next: { revalidate: 86400 } });
     } catch (error) {
         console.error("Error fetching blog by slug:", error);
         return null;
@@ -145,13 +145,8 @@ export async function getBlogsByCategory(
     }`;
 
     try {
-        const result = await client.fetch<BlogItem[]>(
-            query,
-            { status, categorySlug },
-            { next: { revalidate: 86400 } }
-        );
-        // console.log(`Fetched ${result?.length || 0} posts for category: ${categorySlug}`);
-        return result || [];
+        if (isBrowser) return await proxyFetch<BlogItem[]>(query, { status, categorySlug });
+        return await client.fetch<BlogItem[]>(query, { status, categorySlug }, { next: { revalidate: 86400 } });
     } catch (error) {
         console.error("Error fetching blogs by category:", error);
         return null;
@@ -177,11 +172,8 @@ export async function getAllCategories(): Promise<BlogCategory[] | null> {
     }`;
 
     try {
-        const result = await client.fetch<BlogCategory[]>(query, {}, {
-            next: { revalidate: 86400 }
-        });
-        // console.log(`Fetched ${result?.length || 0} blog categories`);
-        return result || [];
+        if (isBrowser) return await proxyFetch<BlogCategory[]>(query, {});
+        return await client.fetch<BlogCategory[]>(query, {}, { next: { revalidate: 86400 } });
     } catch (error) {
         console.error("Error fetching blog categories:", error);
         return null;
@@ -207,10 +199,8 @@ export async function getCategoryBySlug(slug: string): Promise<BlogCategory | nu
     }`;
 
     try {
-        const result = await client.fetch<BlogCategory>(query, { slug }, {
-            next: { revalidate: 86400 }
-        });
-        return result || null;
+        if (isBrowser) return await proxyFetch<BlogCategory>(query, { slug });
+        return await client.fetch<BlogCategory>(query, { slug }, { next: { revalidate: 86400 } });
     } catch (error) {
         console.error("Error fetching category by slug:", error);
         return null;
@@ -242,28 +232,17 @@ export async function getBlogsWithPagination(
     }`;
 
     try {
-        const params = categorySlug
-            ? { status, categorySlug, offset, limit: offset + postsPerPage }
-            : { status, offset, limit: offset + postsPerPage };
+        const params = categorySlug ? { status, categorySlug, offset, limit: offset + postsPerPage } : { status, offset, limit: offset + postsPerPage };
 
-        const totalPosts = await client.fetch<number>(countQuery, params, {
-            next: { revalidate: 86400 }
-        });
+        if (isBrowser) {
+            const totalPosts = await proxyFetch<number>(countQuery, params) || 0;
+            const posts = await proxyFetch<BlogItem[]>(postsQuery, params) || [];
+            return { posts, currentPage: page, totalPages: Math.ceil(totalPosts / postsPerPage), totalPosts };
+        }
 
-        const posts = await client.fetch<BlogItem[]>(postsQuery, params, {
-            next: { revalidate: 86400 }
-        });
-
-        const totalPages = Math.ceil(totalPosts / postsPerPage);
-
-        // console.log(`Fetched page ${page} of ${totalPages} (${posts.length} posts)`);
-
-        return {
-            posts: posts || [],
-            currentPage: page,
-            totalPages,
-            totalPosts
-        };
+        const totalPosts = await client.fetch<number>(countQuery, params, { next: { revalidate: 86400 } });
+        const posts = await client.fetch<BlogItem[]>(postsQuery, params, { next: { revalidate: 86400 } });
+        return { posts: posts || [], currentPage: page, totalPages: Math.ceil(totalPosts / postsPerPage), totalPosts };
     } catch (error) {
         console.error("Error fetching blogs with pagination:", error);
         return null;
@@ -290,15 +269,9 @@ export async function getRelatedBlogs(
     }`;
 
     try {
-        const params = categorySlug
-            ? { currentBlogId, categorySlug, limit }
-            : { currentBlogId, limit };
-
-        const result = await client.fetch<BlogItem[]>(query, params, {
-            next: { revalidate: 86400 }
-        });
-        console.log(`Fetched ${result?.length || 0} related blog posts`);
-        return result || [];
+        const params = categorySlug ? { currentBlogId, categorySlug, limit } : { currentBlogId, limit };
+        if (isBrowser) return await proxyFetch<BlogItem[]>(query, params);
+        return await client.fetch<BlogItem[]>(query, params, { next: { revalidate: 86400 } });
     } catch (error) {
         console.error("Error fetching related blogs:", error);
         return null;
@@ -320,13 +293,8 @@ export async function getRecentBlogs(
     }`;
 
     try {
-        const result = await client.fetch<BlogItem[]>(
-            query,
-            { limit },
-            { next: { revalidate: 86400 } }
-        );
-        console.log(`Fetched ${result?.length || 0} recent blog posts`);
-        return result || [];
+        if (isBrowser) return await proxyFetch<BlogItem[]>(query, { limit });
+        return await client.fetch<BlogItem[]>(query, { limit }, { next: { revalidate: 86400 } });
     } catch (error) {
         console.error("Error fetching recent blogs:", error);
         return null;
