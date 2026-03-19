@@ -14,13 +14,17 @@ export function middleware(request: NextRequest) {
     pathname.startsWith('/_next') || 
     pathname.startsWith('/api') || 
     pathname.includes('.') || 
+    request.headers.get('x-middleware-rewrite') || 
+    request.headers.get('user-agent')?.toLowerCase().includes('bot') ||
     pathname === '/favicon.ico'
   ) {
     return NextResponse.next();
   }
 
   // 3. Handle NEW visitors at the root (no cookies yet)
-  if (pathname === '/' && !locale) {
+  const referer = request.headers.get('referer') || '';
+  
+  if (pathname === '/' && !locale && !referer.includes('/api/geo')) {
     return NextResponse.redirect(new URL('/api/geo', request.url));
   }
 
