@@ -15,7 +15,7 @@ export function middleware(request: NextRequest) {
     pathname.startsWith('/api') || 
     pathname.includes('.') || 
     request.headers.get('x-middleware-rewrite') || 
-    request.headers.get('user-agent')?.includes('bot') ||
+    request.headers.get('user-agent')?.toLowerCase().includes('bot') ||
     pathname === '/favicon.ico'
   ) {
     return NextResponse.next();
