@@ -9,7 +9,7 @@ export const serverClient = createClient({
 });
 
 // to do:
-const MASTER_PAGE_QUERY = `
+export const MASTER_PAGE_QUERY = `
 {
   "layout": *[_type == "layout"][0] {
     _id,
@@ -204,12 +204,12 @@ const MASTER_PAGE_QUERY = `
   },
 
   "storyVisionMission": *[_type == "section" && type_section == "storyVisionMission" && published_at == true][0] {
-    _id, name_section, type_section,
+    _id, name_section, type_section, published_at,
     story_vision_mission { items[] { icon_type, title_en, title_id, description_en, description_id } }
   },
 
   "requestDemo": *[_type == "section" && type_section == "requestDemo" && published_at == true][0] {
-    _id, name_section, type_section,
+    _id, name_section, type_section, published_at,
     request_demo_content {
         badge_text_en, badge_text_id,
         title_lines { text_en, text_id },
@@ -219,7 +219,7 @@ const MASTER_PAGE_QUERY = `
   },
 
   "faq": *[_type == "section" && type_section == "faq" && published_at == true][0] {
-    _id, name_section, type_section,
+    _id, name_section, type_section, published_at,
     faq_content {
         badge_text_en, badge_text_id, title_en, title_id, description_en, description_id,
         faq_items[] { question_en, question_id, answer_en, answer_id },
@@ -228,7 +228,7 @@ const MASTER_PAGE_QUERY = `
   },
 
   "testimonials": *[_type == "section" && type_section == "testimonial" && published_at == true][0] {
-    _id, name_section, type_section,
+    _id, name_section, type_section, published_at,
     testimonial_content {
         testimonials[] {
             title_en, title_id, quote_en, quote_id, company_en, company_id,
@@ -239,7 +239,7 @@ const MASTER_PAGE_QUERY = `
   },
 
   "whyItWorks": *[_type == "section" && type_section == "whyItWorks" && published_at == true][0] {
-    _id, name_section, type_section,
+    _id, name_section, type_section, published_at,
     why_it_works {
         section_title_en, section_title_id,
         features[] {
@@ -253,7 +253,7 @@ const MASTER_PAGE_QUERY = `
   },
 
   "supportData": *[_type == "section" && type_section == "supportSection" && published_at == true][0] {
-    _id, name_section, type_section,
+    _id, name_section, type_section, published_at,
     "support_content": coalesce(support_content, support, content) {
       "items": coalesce(items, supportItems, list)[]-> {
         _id, _type, key, title, icon { asset-> { _id, url } },
@@ -264,7 +264,7 @@ const MASTER_PAGE_QUERY = `
   },
 
   "termsData": *[_type == "section" && type_section == "termsAndConditionsSection" && published_at == true][0] {
-    _id, name_section, type_section,
+    _id, name_section, type_section, published_at,
     "terms_and_conditions_content": coalesce(terms_and_conditions_content, terms_conditions_content, termsAndConditions, content) {
       "items": coalesce(items, termsAndConditionsItems, list)[]-> {
         _id, _type, title, icon_type { asset-> { _id, url } },
@@ -274,7 +274,7 @@ const MASTER_PAGE_QUERY = `
   },
 
   "privacyData": *[_type == "section" && type_section == "privacyPolicySection" && published_at == true][0] {
-    _id, name_section, type_section,
+    _id, name_section, type_section, published_at,
     "privacy_policy_content": coalesce(privacy_policy_content, privacy_policy, privacyPolicy, content) {
       "items": coalesce(items, privacyPolicyItems, list)[]-> {
         _id, _type, title, icon_type { asset-> { _id, url } },
@@ -284,6 +284,7 @@ const MASTER_PAGE_QUERY = `
   }
 }
 `;
+
 export async function masterServerFetch<T>(query: string, params: any = {}): Promise<T | null> {
   try {
     const data = await serverClient.fetch<T>(query, params, {
