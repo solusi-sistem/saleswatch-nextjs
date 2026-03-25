@@ -8,7 +8,16 @@ export const serverClient = createClient({
   token: process.env.SANITY_API_TOKEN, 
 });
 
+// sources:
+// lib/sanity.realtime.ts
+// hooks/getPageData.ts
+// hooks/getSectionData.ts
+// lib/sanity.support.ts
+// lib/sanity.privacyPolicy.ts
+// lib/sanity.termsConditions.ts
+// lib/sanity.home.ts
 // to do:
+// hooks/getAllBlogs.ts
 const MASTER_PAGE_QUERY = `
 {
   "layout": *[_type == "layout"][0] {
@@ -141,7 +150,7 @@ const MASTER_PAGE_QUERY = `
       },
       request_demo_content {
         badge_text_en, badge_text_id,
-        title_lines { text_en, text_id },
+        title_lines[] { text_en, text_id },
         cta_button { text_en, text_id },
         background_image { asset->{ _id, url } }
       },
@@ -195,9 +204,10 @@ const MASTER_PAGE_QUERY = `
         post_per_page, tampilkan_semua,
         list_blogs[]->{
           _id, title { en, id }, slug { current, _type }, excerpt { en, id }, date,
-          category->{ _id, name { en, id }, status },
+          category->{ _id, name { en, id }, slug { current, _type }, description { en, id }, status },
           author, image { asset->{ _id, url }, alt { en, id } }, content { en, id },
-          status
+          tags, seo { metaTitle { en, id }, metaDescription { en, id }, keywords { en, id } },
+          featured, status
         }
       }
     }
@@ -212,7 +222,7 @@ const MASTER_PAGE_QUERY = `
     _id, name_section, type_section, published_at,
     request_demo_content {
         badge_text_en, badge_text_id,
-        title_lines { text_en, text_id },
+        title_lines[] { text_en, text_id },
         cta_button { text_en, text_id },
         background_image { asset->{ _id, url } }
     }
