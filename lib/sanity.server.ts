@@ -56,84 +56,207 @@ const MASTER_PAGE_QUERY = `
     seo_keyword { seo_keyword_en, seo_keyword_id },
     seo_icon,
     section_list[]-> {
-      ...
+      _id,
+      _type,
+      name_section,
+      type_section,
+      published_at,
+      hero_content {
+        title_lines { text_en, text_id },
+        description_lines { text_en, text_id },
+        speech_bubble {
+          text_lines_en, text_lines_id,
+          character_image { asset->{ _id, url } }
+        },
+        cta_button { text_en, text_id },
+        slider_images[] { asset->{ _id, url } },
+        statistics[] { number, label_en, label_id },
+        background_video { asset->{ _id, url } }
+      },
+      hero_umum_content { title_en, title_id, description_en, description_id },
+      support_header_content {
+        title { en, id },
+        description { en, id },
+        buttons[] {
+          button_type, icon_type,
+          button_text { en, id },
+          link_url,
+          file_pdf {
+            file_pdf_en { asset->{ _id, url } },
+            file_pdf_id { asset->{ _id, url } }
+          },
+          open_in_new_tab
+        }
+      },
+      story_vision_mission {
+        items[] { icon_type, title_en, title_id, description_en, description_id }
+      },
+      why_it_works {
+        section_title_en, section_title_id,
+        features[] {
+          title_en, title_id, description_en, description_id,
+          image { asset->{ _id, url } },
+          image_position,
+          checklist_items[] { text_en, text_id },
+          cta_button { text_en, text_id, link }
+        }
+      },
+      features_content {
+        logo_text,
+        logo_features { asset->{ _id, url } },
+        logo_teks_features,
+        suite_text,
+        mobile_features[] {
+          section_title_en, section_title_id, type_features,
+          mobile_icon { asset->{ _id, url } },
+          features_list[]->{
+            _id, title { en, id }, description { en, id },
+            icon { asset->{ _id, url }, alt{ en, id } },
+            status
+          }
+        }
+      },
+      testimonial_content {
+        testimonials[] {
+          title_en, title_id, quote_en, quote_id, company_en, company_id,
+          client_name, client_role_en, client_role_id,
+          company_logo { asset->{ _id, url } }
+        }
+      },
+      about_content {
+        title_en, title_id, description_en, description_id,
+        about_items[] { question_en, question_id, answer_en, answer_id },
+        side_image { asset->{ _id, url } }
+      },
+      blog_content {
+        badge_text_en, badge_text_id, title_en, title_id,
+        list_blog[]->{
+          _id, title { en, id }, slug { current, _type }, excerpt { en, id },
+          date, category { en, id }, author,
+          image { asset->{ _id, url }, alt { en, id } },
+          content { en, id },
+          seo { metaTitle { en, id }, metaDescription { en, id }, keywords { en, id } },
+          featured, status
+        }
+      },
+      request_demo_content {
+        badge_text_en, badge_text_id,
+        title_lines { text_en, text_id },
+        cta_button { text_en, text_id },
+        background_image { asset->{ _id, url } }
+      },
+      pricing_content {
+        table_headers { no_column { en, id }, feature_column { en, id } },
+        feature_rows[] { _key, feature_name { en, id }, feature_type },
+        pricing_plans[]->{
+          _id, order, plan_name, is_popular, price { en, id },
+          setup_fee { en, id }, main_features { en, id }, flex_user { en, id },
+          cta_button { text_en, text_id, link },
+          styling { background_color, border_color }, status
+        } | order(order asc),
+        footer_note { en, id }
+      },
+      support_section_content {
+        support_plans[]->{
+          _id, key, title { en, id }, icon,
+          support_items[] { _key, title_en, title_id, content_en, content_id }
+        },
+        bottom_cta {
+          show_cta, cta_title { en, id }, cta_description { en, id },
+          cta_button { button_text { en, id }, button_link }
+        },
+        empty_state { title { en, id }, description { en, id } }
+      },
+      privacy_policy_section_content {
+        privacy_policy[]->{
+          _id, title { en, id },
+          icon_type { asset->{ _id, url } },
+          content_en, content_id, published_at
+        }
+      },
+      terms_and_conditions_section_content {
+        terms_and_conditions[]->{
+          _id, title { en, id },
+          icon_type { asset->{ _id, url } },
+          content_en, content_id, published_at
+        }
+      },
+      faq_section_content {
+        title_en, title_id, description_en, description_id,
+        category_tabs[] {
+          category_key, category_label { en, id },
+          list_faqs[]->{ _id, question { en, id }, answer { en, id } }
+        },
+        footer_note { en, id }
+      },
+      blog_list_section_content {
+        title_section { en, id },
+        desc_section { en, id },
+        post_per_page, tampilkan_semua,
+        list_blogs[]->{
+          _id, title { en, id }, slug { current, _type }, excerpt { en, id }, date,
+          category->{ _id, name { en, id }, status },
+          author, image { asset->{ _id, url }, alt { en, id } }, content { en, id },
+          status
+        }
+      }
     }
   },
 
-  "story": *[_type == "section" && type_section == "storyVisionMission" && published_at == true][0] {
-    _id,
-    name_section,
-    type_section,
-    story_vision_mission {
-      items[] { icon_type, title_en, title_id, description_en, description_id }
-    }
+  "storyVisionMission": *[_type == "section" && type_section == "storyVisionMission" && published_at == true][0] {
+    _id, name_section, type_section,
+    story_vision_mission { items[] { icon_type, title_en, title_id, description_en, description_id } }
   },
 
   "requestDemo": *[_type == "section" && type_section == "requestDemo" && published_at == true][0] {
-    _id,
-    name_section,
-    type_section,
+    _id, name_section, type_section,
     request_demo_content {
-      badge_text_en,
-      badge_text_id,
-      title_lines[] { text_en, text_id },
-      cta_button { text_en, text_id },
-      background_image { asset-> { _id, url } }
+        badge_text_en, badge_text_id,
+        title_lines { text_en, text_id },
+        cta_button { text_en, text_id },
+        background_image { asset->{ _id, url } }
     }
   },
 
   "faq": *[_type == "section" && type_section == "faq" && published_at == true][0] {
-    _id,
-    name_section,
-    type_section,
+    _id, name_section, type_section,
     faq_content {
-      badge_text_en,
-      badge_text_id,
-      title_en,
-      title_id,
-      description_en,
-      description_id,
-      faq_items[] { question_en, question_id, answer_en, answer_id },
-      side_image { asset-> { _id, url } }
+        badge_text_en, badge_text_id, title_en, title_id, description_en, description_id,
+        faq_items[] { question_en, question_id, answer_en, answer_id },
+        side_image { asset->{ _id, url } }
     }
   },
 
   "testimonials": *[_type == "section" && type_section == "testimonial" && published_at == true][0] {
-    _id,
-    name_section,
-    type_section,
+    _id, name_section, type_section,
     testimonial_content {
-      testimonials[] {
-        title_en, title_id, quote_en, quote_id, company_en, company_id, 
-        client_name, client_role_en, client_role_id, 
-        company_logo { asset-> { _id, url } }
-      }
+        testimonials[] {
+            title_en, title_id, quote_en, quote_id, company_en, company_id,
+            client_name, client_role_en, client_role_id,
+            company_logo { asset->{ _id, url } }
+        }
     }
   },
 
   "whyItWorks": *[_type == "section" && type_section == "whyItWorks" && published_at == true][0] {
-    _id,
-    name_section,
-    type_section,
+    _id, name_section, type_section,
     why_it_works {
-      section_title_en,
-      section_title_id,
-      features[] {
-        title_en, title_id, description_en, description_id,
-        image { asset-> { _id, url } },
-        image_position,
-        checklist_items[] { text_en, text_id },
-        cta_button { text_en, text_id, link }
-      }
+        section_title_en, section_title_id,
+        features[] {
+            title_en, title_id, description_en, description_id,
+            image { asset->{ _id, url } },
+            image_position,
+            checklist_items[] { text_en, text_id },
+            cta_button { text_en, text_id, link }
+        }
     }
   },
 
   "supportData": *[_type == "section" && type_section == "supportSection" && published_at == true][0] {
-    _id,
+    _id, name_section, type_section,
     "support_content": coalesce(support_content, support, content) {
       "items": coalesce(items, supportItems, list)[]-> {
-        _id, _type, key, title, 
-        icon { asset-> { _id, url } },
+        _id, _type, key, title, icon { asset-> { _id, url } },
         support_items[] { _key, title_en, title_id, content_en, content_id },
         status
       }
@@ -141,7 +264,7 @@ const MASTER_PAGE_QUERY = `
   },
 
   "termsData": *[_type == "section" && type_section == "termsAndConditionsSection" && published_at == true][0] {
-    _id,
+    _id, name_section, type_section,
     "terms_and_conditions_content": coalesce(terms_and_conditions_content, terms_conditions_content, termsAndConditions, content) {
       "items": coalesce(items, termsAndConditionsItems, list)[]-> {
         _id, _type, title, icon_type { asset-> { _id, url } },
@@ -151,7 +274,7 @@ const MASTER_PAGE_QUERY = `
   },
 
   "privacyData": *[_type == "section" && type_section == "privacyPolicySection" && published_at == true][0] {
-    _id,
+    _id, name_section, type_section,
     "privacy_policy_content": coalesce(privacy_policy_content, privacy_policy, privacyPolicy, content) {
       "items": coalesce(items, privacyPolicyItems, list)[]-> {
         _id, _type, title, icon_type { asset-> { _id, url } },
@@ -161,7 +284,6 @@ const MASTER_PAGE_QUERY = `
   }
 }
 `;
-
 export async function masterServerFetch<T>(query: string, params: any = {}): Promise<T | null> {
   try {
     const data = await serverClient.fetch<T>(query, params, {
