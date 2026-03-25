@@ -9,7 +9,7 @@ export const serverClient = createClient({
 });
 
 // to do:
-export const MASTER_PAGE_QUERY = `
+const MASTER_PAGE_QUERY = `
 {
   "layout": *[_type == "layout"][0] {
     _id,
