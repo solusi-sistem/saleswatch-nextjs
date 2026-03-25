@@ -1,92 +1,24 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
 import CustomButton from "@/components/button/button";
-import { SectionProps, FeaturesContent } from "@/types/section";
-import { getSectionData } from "@/hooks/getSectionData";
-import LoadingSpinner from "@/components/loading/LoadingSpinner";
+import { SectionProps } from "@/types/section";
 import type { LangKey } from "@/types";
 
-const CACHE_KEY = "features_cache";
-const CACHE_DURATION = 5 * 60 * 1000;
-
-interface CachedData {
-  data: FeaturesContent;
-  timestamp: number;
-}
-
-export default function Features({ id }: SectionProps) {
+export default function Features({ data }: SectionProps) {
   const pathname = usePathname();
   const currentLang: LangKey = pathname.startsWith("/id") ? "id" : "";
 
-  const [content, setContent] = useState<FeaturesContent | null>(null);
-  const [loading, setLoading] = useState(true);
+  const content = data?.features_content;
 
   const webFeaturesRef = useRef<HTMLDivElement>(null);
   const mobileFeaturesRef = useRef<HTMLDivElement>(null);
   const suiteModulesRef = useRef<HTMLDivElement>(null);
 
-  const getCachedData = (): FeaturesContent | null => {
-    try {
-      const cached = localStorage.getItem(CACHE_KEY);
-      if (!cached) return null;
-
-      const parsedCache: CachedData = JSON.parse(cached);
-      const now = Date.now();
-
-      if (now - parsedCache.timestamp < CACHE_DURATION) {
-        return parsedCache.data;
-      } else {
-        localStorage.removeItem(CACHE_KEY);
-        return null;
-      }
-    } catch (error) {
-      localStorage.removeItem(CACHE_KEY);
-      return null;
-    }
-  };
-
-  const setCachedData = (data: FeaturesContent) => {
-    try {
-      const cacheData: CachedData = {
-        data,
-        timestamp: Date.now(),
-      };
-      localStorage.setItem(CACHE_KEY, JSON.stringify(cacheData));
-    } catch (error) {}
-  };
-
   useEffect(() => {
-    async function fetchContent() {
-      if (!id) return;
-
-      const cachedContent = getCachedData();
-      if (cachedContent) {
-        setContent(cachedContent);
-        setLoading(false);
-      }
-
-      try {
-        const sectionData = await getSectionData(id);
-        if (sectionData?.features_content) {
-          setContent(sectionData.features_content);
-          setCachedData(sectionData.features_content);
-        }
-      } catch (error) {
-        if (!content && cachedContent) {
-          setContent(cachedContent);
-        }
-      } finally {
-        setLoading(false);
-      }
-    }
-    fetchContent();
-  }, [id]);
-
-  useEffect(() => {
-    if (loading) return;
+    if (!content) return;
 
     const observerOptions = {
       threshold: 0.1,
@@ -113,7 +45,7 @@ export default function Features({ id }: SectionProps) {
     return () => {
       observer.disconnect();
     };
-  }, [loading]);
+  }, [content]);
 
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
@@ -129,10 +61,6 @@ export default function Features({ id }: SectionProps) {
       });
     }
   };
-
-  if (loading) {
-    return <LoadingSpinner />;
-  }
 
   if (
     !content ||

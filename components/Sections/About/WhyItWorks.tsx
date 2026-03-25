@@ -1,93 +1,24 @@
 'use client';
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { usePathname } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
 import CustomButton from '@/components/button/button';
 import type { LangKey } from '@/types';
-import { SectionProps, WhyItWorksContent } from '@/types/section';
-import { getSectionData } from '@/hooks/getSectionData';
-import LoadingSpinner from '@/components/loading/LoadingSpinner';
+import { SectionProps } from '@/types/section';
 
-const CACHE_KEY = 'why_it_works_cache';
-const CACHE_DURATION = 5 * 60 * 1000;
-
-interface CachedData {
-  data: WhyItWorksContent;
-  timestamp: number;
-}
-
-export default function WhyItWorks({ id }: SectionProps) {
+export default function WhyItWorks({ data }: SectionProps) {
     const pathname = usePathname();
     const currentLang: LangKey = pathname.startsWith('/id') ? 'id' : '';
 
-    const [content, setContent] = useState<WhyItWorksContent | null>(null);
-    const [loading, setLoading] = useState(true);
+    const content = data?.why_it_works;
 
     const titleRef = useRef<HTMLHeadingElement>(null);
     const featureRefs = useRef<(HTMLDivElement | null)[]>([]);
 
-    const getCachedData = (): WhyItWorksContent | null => {
-        try {
-            const cached = localStorage.getItem(CACHE_KEY);
-            if (!cached) return null;
-
-            const parsedCache: CachedData = JSON.parse(cached);
-            const now = Date.now();
-
-            if (now - parsedCache.timestamp < CACHE_DURATION) {
-                return parsedCache.data;
-            } else {
-                localStorage.removeItem(CACHE_KEY);
-                return null;
-            }
-        } catch (error) {
-            localStorage.removeItem(CACHE_KEY);
-            return null;
-        }
-    };
-
-    const setCachedData = (data: WhyItWorksContent) => {
-        try {
-            const cacheData: CachedData = {
-                data,
-                timestamp: Date.now(),
-            };
-            localStorage.setItem(CACHE_KEY, JSON.stringify(cacheData));
-        } catch (error) {
-        }
-    };
-
     useEffect(() => {
-        async function fetchContent() {
-            if (!id) return;
-
-            const cachedContent = getCachedData();
-            if (cachedContent) {
-                setContent(cachedContent);
-                setLoading(false);
-            }
-
-            try {
-                const sectionData = await getSectionData(id);
-                if (sectionData?.why_it_works) {
-                    setContent(sectionData.why_it_works);
-                    setCachedData(sectionData.why_it_works);
-                }
-            } catch (error) {
-                if (!content && cachedContent) {
-                    setContent(cachedContent);
-                }
-            } finally {
-                setLoading(false);
-            }
-        }
-        fetchContent();
-    }, [id]);
-
-    useEffect(() => {
-        if (loading) return;
+        if (!content) return;
 
         const observerOptions = {
             threshold: 0.1,
@@ -112,11 +43,7 @@ export default function WhyItWorks({ id }: SectionProps) {
         return () => {
             observer.disconnect();
         };
-    }, [loading]);
-
-    if (loading) {
-        return <LoadingSpinner />;
-    }
+    }, [content]);
 
     if (!content) {
         return null;

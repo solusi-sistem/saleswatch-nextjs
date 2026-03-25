@@ -10,6 +10,7 @@ import { PrivacyPolicyProvider } from '@/contexts/PrivacyPolicyContext';
 import { TermsConditionsProvider } from '@/contexts/TermsConditionsContext';
 import { SupportProvider } from '@/contexts/SupportContext';
 import { ListOptionsProvider } from '@/contexts/ListOptionsContext';
+import { getLayoutData } from '@/lib/sanity';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -23,16 +24,18 @@ export const metadata: Metadata = {
   description: 'Sales Watch - Your Ultimate One-Stop Solution for Sales Insights and Efficiency',
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const layoutData = await getLayoutData();
+
   return (
     <html lang="en" className={inter.variable}>
       <head>{/* <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" /> */}</head>
       <body className={`${inter.className} antialiased`}>
-        <LayoutProvider>
+        <LayoutProvider initialData={layoutData}>
           <HomeProvider>
             <PrivacyPolicyProvider>
               <TermsConditionsProvider>

@@ -1,30 +1,13 @@
 'use client';
 
-import { getSectionData } from "@/hooks/getSectionData";
-import { Section, SectionProps } from "@/types/section";
+import { SectionProps } from "@/types/section";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
 
-export default function HeroUmum({ id }: SectionProps) {
+export default function HeroUmum({ data }: SectionProps) {
     const pathname = usePathname();
     const lang = pathname.startsWith('/id') ? 'id' : 'en';
 
-    const [section, setSection] = useState<Section | null>(null);
-
-    /* =========================================
-    FETCH SANITY DATA
-    ========================================= */
-
-    useEffect(() => {
-        async function fetchData() {
-            if (!id) return;
-            const res = await getSectionData(id);
-            setSection(res);
-        }
-        fetchData();
-    }, [id]);
-
-    const header = section?.hero_umum_content;
+    const header = data?.hero_umum_content;
 
     return (
         <header className="relative w-full bg-[#061551] pt-12 pb-16 px-6 md:px-14 lg:px-18">

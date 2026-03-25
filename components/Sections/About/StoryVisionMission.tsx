@@ -1,19 +1,9 @@
 'use client';
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { usePathname } from 'next/navigation';
 import type { LangKey } from '@/types';
-import { SectionProps, StoryVisionMissionContent } from '@/types/section';
-import { getSectionData } from '@/hooks/getSectionData';
-import LoadingSpinner from '@/components/loading/LoadingSpinner';
-
-const CACHE_KEY = 'story_vision_mission_cache';
-const CACHE_DURATION = 5 * 60 * 1000;
-
-interface CachedData {
-  data: StoryVisionMissionContent;
-  timestamp: number;
-}
+import { SectionProps } from '@/types/section';
 
 const iconComponents = {
   cross: (
@@ -38,77 +28,15 @@ const iconComponents = {
   ),
 };
 
-export default function StoryVisionMission({ id }: SectionProps) {
+export default function StoryVisionMission({ data }: SectionProps) {
   const pathname = usePathname();
   const currentLang: LangKey = pathname.startsWith('/id') ? 'id' : '';
 
-  const [content, setContent] = useState<StoryVisionMissionContent | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  const card1Ref = useRef<HTMLDivElement>(null);
-  const card2Ref = useRef<HTMLDivElement>(null);
-  const card3Ref = useRef<HTMLDivElement>(null);
-
-  const getCachedData = (): StoryVisionMissionContent | null => {
-    try {
-      const cached = localStorage.getItem(CACHE_KEY);
-      if (!cached) return null;
-
-      const parsedCache: CachedData = JSON.parse(cached);
-      const now = Date.now();
-
-      if (now - parsedCache.timestamp < CACHE_DURATION) {
-        return parsedCache.data;
-      } else {
-        localStorage.removeItem(CACHE_KEY);
-        return null;
-      }
-    } catch (error) {
-      localStorage.removeItem(CACHE_KEY);
-      return null;
-    }
-  };
-
-  const setCachedData = (data: StoryVisionMissionContent) => {
-    try {
-      const cacheData: CachedData = {
-        data,
-        timestamp: Date.now(),
-      };
-      localStorage.setItem(CACHE_KEY, JSON.stringify(cacheData));
-    } catch (error) {
-    }
-  };
+  const content = data?.story_vision_mission;
+  const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
 
   useEffect(() => {
-    async function fetchContent() {
-      if (!id) return;
-
-      const cachedContent = getCachedData();
-      if (cachedContent) {
-        setContent(cachedContent);
-        setLoading(false);
-      }
-
-      try {
-        const sectionData = await getSectionData(id);
-        if (sectionData?.story_vision_mission) {
-          setContent(sectionData.story_vision_mission);
-          setCachedData(sectionData.story_vision_mission);
-        }
-      } catch (error) {
-        if (!content && cachedContent) {
-          setContent(cachedContent);
-        }
-      } finally {
-        setLoading(false);
-      }
-    }
-    fetchContent();
-  }, [id]);
-
-  useEffect(() => {
-    if (loading) return;
+    if (!content?.items || content.items.length === 0) return;
 
     const observerOptions = {
       threshold: 0.1,
@@ -125,25 +53,20 @@ export default function StoryVisionMission({ id }: SectionProps) {
 
     const observer = new IntersectionObserver(observerCallback, observerOptions);
 
-    if (card1Ref.current) observer.observe(card1Ref.current);
-    if (card2Ref.current) observer.observe(card2Ref.current);
-    if (card3Ref.current) observer.observe(card3Ref.current);
+    cardRefs.current.forEach(ref => {
+      if (ref) observer.observe(ref);
+    });
 
     return () => {
       observer.disconnect();
     };
-  }, [loading]);
-
-  if (loading) {
-    return <LoadingSpinner />;
-  }
+  }, [content]);
 
   if (!content?.items || content.items.length === 0) {
     return null;
   }
 
   const items = content.items;
-  const cardRefs = [card1Ref, card2Ref, card3Ref];
 
   return (
     <section className="bg-[#DFE1E4] py-16 md:py-24 px-4" style={{ scrollMarginTop: '100px' }}>
@@ -156,7 +79,7 @@ export default function StoryVisionMission({ id }: SectionProps) {
             return (
               <div
                 key={index}
-                ref={cardRefs[index]}
+                ref={(el) => { cardRefs.current[index] = el; }}
                 className="flex flex-col items-center space-y-4 opacity-0"
                 style={{
                   animationDelay: `${index * 0.2}s`,

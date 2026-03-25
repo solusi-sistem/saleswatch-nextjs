@@ -3,96 +3,23 @@
 import { useState, useEffect } from "react";
 import { usePathname } from 'next/navigation';
 import type { LangKey } from '@/types';
-import { SectionProps, FaqSectionContent } from '@/types/section';
-import { getSectionData } from '@/hooks/getSectionData';
+import { SectionProps } from '@/types/section';
 import { PortableText } from "next-sanity";
 import { portableTextComponents } from "@/lib/PortableText";
-import LoadingSpinner from '@/components/loading/LoadingSpinner';
 
-const CACHE_KEY = 'faq_section_cache';
-const CACHE_DURATION = 5 * 60 * 1000;
-
-interface CachedData {
-  data: FaqSectionContent;
-  timestamp: number;
-}
-
-export default function FaqSection({ id }: SectionProps) {
+export default function FaqSection({ id, data }: SectionProps) {
     const pathname = usePathname();
     const currentLang: LangKey = pathname.startsWith('/id') ? 'id' : '';
 
-    const [content, setContent] = useState<FaqSectionContent | null>(null);
-    const [loading, setLoading] = useState(true);
+    const content = data?.faq_section_content;
     const [activeTab, setActiveTab] = useState<string>("");
     const [openFAQs, setOpenFAQs] = useState<Record<string, boolean>>({});
 
-    const getCachedData = (): FaqSectionContent | null => {
-        try {
-            const cached = localStorage.getItem(CACHE_KEY);
-            if (!cached) return null;
-
-            const parsedCache: CachedData = JSON.parse(cached);
-            const now = Date.now();
-
-            if (now - parsedCache.timestamp < CACHE_DURATION) {
-                return parsedCache.data;
-            } else {
-                localStorage.removeItem(CACHE_KEY);
-                return null;
-            }
-        } catch (error) {
-            localStorage.removeItem(CACHE_KEY);
-            return null;
-        }
-    };
-
-    const setCachedData = (data: FaqSectionContent) => {
-        try {
-            const cacheData: CachedData = {
-                data,
-                timestamp: Date.now(),
-            };
-            localStorage.setItem(CACHE_KEY, JSON.stringify(cacheData));
-        } catch (error) {
-        }
-    };
-
     useEffect(() => {
-        async function fetchContent() {
-            if (!id) return;
-
-            const cachedContent = getCachedData();
-            if (cachedContent) {
-                setContent(cachedContent);
-                setLoading(false);
-                if (cachedContent.category_tabs && cachedContent.category_tabs.length > 0) {
-                    setActiveTab(cachedContent.category_tabs[0].category_key);
-                }
-            }
-
-            try {
-                const sectionData = await getSectionData(id);
-                if (sectionData?.faq_section_content) {
-                    setContent(sectionData.faq_section_content);
-                    setCachedData(sectionData.faq_section_content);
-                    if (sectionData.faq_section_content.category_tabs &&
-                        sectionData.faq_section_content.category_tabs.length > 0) {
-                        setActiveTab(sectionData.faq_section_content.category_tabs[0].category_key);
-                    }
-                }
-            } catch (error) {
-                if (!content && cachedContent) {
-                    setContent(cachedContent);
-                    if (cachedContent.category_tabs && cachedContent.category_tabs.length > 0) {
-                        setActiveTab(cachedContent.category_tabs[0].category_key);
-                    }
-                }
-            } finally {
-                setLoading(false);
-            }
+        if (content?.category_tabs && content.category_tabs.length > 0 && !activeTab) {
+            setActiveTab(content.category_tabs[0].category_key);
         }
-        fetchContent();
-    }, [id]);
+    }, [content, activeTab]);
 
     const toggleFAQ = (id: string) => {
         setOpenFAQs((prev) => ({
@@ -100,10 +27,6 @@ export default function FaqSection({ id }: SectionProps) {
             [id]: !prev[id],
         }));
     };
-
-    if (loading) {
-        return <LoadingSpinner />;
-    }
 
     if (!content?.category_tabs || content.category_tabs.length === 0) {
         return null;

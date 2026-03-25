@@ -1,102 +1,28 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
-import { getSectionData } from '@/hooks/getSectionData';
-import { Section } from '@/types/section';
+import { SectionProps } from '@/types/section';
 import { BlogItem } from '@/types/list/Blog';
 import { usePathname } from 'next/navigation';
-import LoadingSpinner from '@/components/loading/LoadingSpinner';
-
-const CACHE_KEY = 'blog_section_cache';
-const CACHE_DURATION = 5 * 60 * 1000;
-
-interface CachedData {
-  data: Section;
-  timestamp: number;
-}
-
-interface BlogProps {
-    id?: string;
-}
 
 type BlogLocale = 'en' | 'id';
 
-export default function Blog({ id }: BlogProps) {
+export default function Blog({ id, data }: SectionProps) {
     const pathname = usePathname();
     const locale: BlogLocale = pathname.startsWith('/id') ? 'id' : 'en';
-
-    const [sectionData, setSectionData] = useState<Section | null>(null);
-    const [loading, setLoading] = useState(true);
 
     const headerRef = useRef<HTMLDivElement>(null);
     const card1Ref = useRef<HTMLElement>(null);
     const card2Ref = useRef<HTMLElement>(null);
     const card3Ref = useRef<HTMLElement>(null);
 
-    const getCachedData = (): Section | null => {
-        try {
-            const cached = localStorage.getItem(CACHE_KEY);
-            if (!cached) return null;
-
-            const parsedCache: CachedData = JSON.parse(cached);
-            const now = Date.now();
-
-            if (now - parsedCache.timestamp < CACHE_DURATION) {
-                return parsedCache.data;
-            } else {
-                localStorage.removeItem(CACHE_KEY);
-                return null;
-            }
-        } catch (error) {
-            localStorage.removeItem(CACHE_KEY);
-            return null;
-        }
-    };
-
-    const setCachedData = (data: Section) => {
-        try {
-            const cacheData: CachedData = {
-                data,
-                timestamp: Date.now(),
-            };
-            localStorage.setItem(CACHE_KEY, JSON.stringify(cacheData));
-        } catch (error) {
-        }
-    };
+    const blog_content = data?.blog_content;
 
     useEffect(() => {
-        const fetchSectionData = async () => {
-            if (!id) return;
-
-            const cachedContent = getCachedData();
-            if (cachedContent) {
-                setSectionData(cachedContent);
-                setLoading(false);
-            }
-
-            try {
-                const data = await getSectionData(id);
-                if (data) {
-                    setSectionData(data);
-                    setCachedData(data);
-                }
-            } catch (error) {
-                if (!sectionData && cachedContent) {
-                    setSectionData(cachedContent);
-                }
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchSectionData();
-    }, [id]);
-
-    useEffect(() => {
-        if (loading || !sectionData?.blog_content) return;
+        if (!blog_content) return;
 
         const observerOptions = {
             threshold: 0.1,
@@ -121,17 +47,11 @@ export default function Blog({ id }: BlogProps) {
         return () => {
             observer.disconnect();
         };
-    }, [loading, sectionData]);
+    }, [blog_content]);
 
-    if (loading) {
-        return <LoadingSpinner />;
-    }
-
-    if (!sectionData?.blog_content) {
+    if (!blog_content) {
         return null;
     }
-
-    const { blog_content } = sectionData;
 
     if (!blog_content.list_blog || !Array.isArray(blog_content.list_blog)) {
         return null;

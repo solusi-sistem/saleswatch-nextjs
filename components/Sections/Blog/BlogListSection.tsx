@@ -1,33 +1,11 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
-import { getSectionData } from '@/hooks/getSectionData';
-import { BlogListSectionContent } from '@/types/section';
+import { useRouter, usePathname } from 'next/navigation';
 import { BlogItem } from '@/types/list/Blog';
-import { usePathname } from 'next/navigation';
-import { getAllBlogs } from '@/hooks/getAllBlogs';
-import LoadingSpinner from '@/components/loading/LoadingSpinner';
-
-const CACHE_KEY_SECTION = 'blog_list_section_cache';
-const CACHE_KEY_ALL_BLOGS = 'blog_list_all_blogs_cache';
-const CACHE_DURATION = 5 * 60 * 1000;
-
-interface CachedSectionData {
-  data: BlogListSectionContent;
-  timestamp: number;
-}
-
-interface CachedBlogsData {
-  data: BlogItem[];
-  timestamp: number;
-}
-
-interface BlogListSectionProps {
-  id: string;
-}
+import { SectionProps } from '@/types/section';
 
 type BlogLocale = 'en' | 'id';
 
@@ -35,137 +13,16 @@ const isValidLanguage = (lang: string): lang is BlogLocale => {
   return lang === 'en' || lang === 'id';
 };
 
-export default function BlogListSection({ id }: BlogListSectionProps) {
+export default function BlogListSection({ id, data }: SectionProps) {
   const pathname = usePathname();
   const router = useRouter();
   const languageString = pathname.startsWith('/id') ? 'id' : 'en';
   const language: BlogLocale = isValidLanguage(languageString) ? languageString : 'en';
 
-  const [sectionData, setSectionData] = useState<BlogListSectionContent | null>(null);
-  const [allBlogs, setAllBlogs] = useState<BlogItem[]>([]);
+  const sectionData = data?.blog_list_section_content;
   const [currentPage, setCurrentPage] = useState(1);
-  const [isLoading, setIsLoading] = useState(true);
-  const [showAll, setShowAll] = useState(false);
-
-  const getCachedSectionData = (): BlogListSectionContent | null => {
-    try {
-      const cached = localStorage.getItem(CACHE_KEY_SECTION);
-      if (!cached) return null;
-
-      const parsedCache: CachedSectionData = JSON.parse(cached);
-      const now = Date.now();
-
-      if (now - parsedCache.timestamp < CACHE_DURATION) {
-        return parsedCache.data;
-      } else {
-        localStorage.removeItem(CACHE_KEY_SECTION);
-        return null;
-      }
-    } catch (error) {
-      localStorage.removeItem(CACHE_KEY_SECTION);
-      return null;
-    }
-  };
-
-  const setCachedSectionData = (data: BlogListSectionContent) => {
-    try {
-      const cacheData: CachedSectionData = {
-        data,
-        timestamp: Date.now(),
-      };
-      localStorage.setItem(CACHE_KEY_SECTION, JSON.stringify(cacheData));
-    } catch (error) {
-    }
-  };
-
-  const getCachedAllBlogs = (): BlogItem[] | null => {
-    try {
-      const cached = localStorage.getItem(CACHE_KEY_ALL_BLOGS);
-      if (!cached) return null;
-
-      const parsedCache: CachedBlogsData = JSON.parse(cached);
-      const now = Date.now();
-
-      if (now - parsedCache.timestamp < CACHE_DURATION) {
-        return parsedCache.data;
-      } else {
-        localStorage.removeItem(CACHE_KEY_ALL_BLOGS);
-        return null;
-      }
-    } catch (error) {
-      localStorage.removeItem(CACHE_KEY_ALL_BLOGS);
-      return null;
-    }
-  };
-
-  const setCachedAllBlogs = (data: BlogItem[]) => {
-    try {
-      const cacheData: CachedBlogsData = {
-        data,
-        timestamp: Date.now(),
-      };
-      localStorage.setItem(CACHE_KEY_ALL_BLOGS, JSON.stringify(cacheData));
-    } catch (error) {
-    }
-  };
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const cachedSection = getCachedSectionData();
-        const cachedBlogs = getCachedAllBlogs();
-
-        if (cachedSection) {
-          setSectionData(cachedSection);
-          const tampilkanSemua = cachedSection.tampilkan_semua || false;
-          setShowAll(tampilkanSemua);
-
-          if (tampilkanSemua && cachedBlogs) {
-            setAllBlogs(cachedBlogs);
-          }
-          setIsLoading(false);
-        }
-
-        const data = await getSectionData(id);
-        if (data?.blog_list_section_content) {
-          setSectionData(data.blog_list_section_content);
-          setCachedSectionData(data.blog_list_section_content);
-          
-          const tampilkanSemua = data.blog_list_section_content.tampilkan_semua || false;
-          setShowAll(tampilkanSemua);
-
-          if (tampilkanSemua) {
-            const blogs = await getAllBlogs('published', undefined, 'dateDesc');
-            if (blogs) {
-              setAllBlogs(blogs);
-              setCachedAllBlogs(blogs);
-            }
-          }
-        }
-      } catch (error) {
-        const cachedSection = getCachedSectionData();
-        const cachedBlogs = getCachedAllBlogs();
-        
-        if (!sectionData && cachedSection) {
-          setSectionData(cachedSection);
-          const tampilkanSemua = cachedSection.tampilkan_semua || false;
-          setShowAll(tampilkanSemua);
-
-          if (tampilkanSemua && cachedBlogs) {
-            setAllBlogs(cachedBlogs);
-          }
-        }
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchData();
-  }, [id]);
-
-  if (isLoading) {
-    return <LoadingSpinner />;
-  }
+  
+  const showAll = sectionData?.tampilkan_semua || false;
 
   if (!sectionData || (!showAll && !sectionData.list_blogs?.length)) {
     return (
@@ -175,7 +32,7 @@ export default function BlogListSection({ id }: BlogListSectionProps) {
     );
   }
 
-  const blogs = showAll ? allBlogs : sectionData.list_blogs?.filter((blog) => blog.status === 'published') || [];
+  const blogs = sectionData.list_blogs?.filter((blog: BlogItem) => blog.status === 'published') || [];
 
   const POSTS_PER_PAGE = sectionData?.post_per_page || 6;
   const totalPages = Math.ceil(blogs.length / POSTS_PER_PAGE);
@@ -232,7 +89,7 @@ export default function BlogListSection({ id }: BlogListSectionProps) {
         <section className="py-0 px-6 md:px-12 md:pb-15 md:pt-0">
           <div className="container mx-auto">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-6 md:mb-8">
-              {currentPosts.map((post: BlogItem, index) => {
+              {currentPosts.map((post: BlogItem, index: number) => {
                 const slug = post.slug?.current || '';
                 
                 const categoryName = post.category?.name

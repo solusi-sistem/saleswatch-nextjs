@@ -1,23 +1,13 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { usePathname } from 'next/navigation';
 import { ChevronDown, ChevronUp } from 'lucide-react';
 import Image from 'next/image';
 
-import { getSectionData } from '@/hooks/getSectionData';
-import LoadingSpinner from '@/components/loading/LoadingSpinner';
-import type { Section, SectionProps, PrivacyPolicyItem } from '@/types/section';
+import type { SectionProps, PrivacyPolicyItem } from '@/types/section';
 import type { LangKey } from '@/types';
 import type { TermsConditionsBlock } from '@/types/termsConditions';
-
-const CACHE_KEY = 'terms_conditions_cache';
-const CACHE_DURATION = 5 * 60 * 1000;
-
-interface CachedData {
-  data: Section;
-  timestamp: number;
-}
 
 function PortableTextRenderer({ blocks }: { blocks: TermsConditionsBlock[] }) {
   return (
@@ -134,82 +124,18 @@ function PortableTextRenderer({ blocks }: { blocks: TermsConditionsBlock[] }) {
 /* ===============================
    MAIN COMPONENT
 ================================ */
-export default function TermsConditionsSection({ id }: SectionProps) {
+export default function TermsConditionsSection({ data }: SectionProps) {
   const pathname = usePathname();
   const currentLang: LangKey = pathname.startsWith('/id') ? 'id' : '';
 
-  const [sectionData, setSectionData] = useState<Section | null>(null);
-  const [loading, setLoading] = useState(true);
+  const sectionData = data;
   const [expanded, setExpanded] = useState<Set<string>>(new Set());
-
-  const getCachedData = (): Section | null => {
-    try {
-      const cached = localStorage.getItem(CACHE_KEY);
-      if (!cached) return null;
-
-      const parsedCache: CachedData = JSON.parse(cached);
-      const now = Date.now();
-
-      if (now - parsedCache.timestamp < CACHE_DURATION) {
-        return parsedCache.data;
-      } else {
-        localStorage.removeItem(CACHE_KEY);
-        return null;
-      }
-    } catch (error) {
-      localStorage.removeItem(CACHE_KEY);
-      return null;
-    }
-  };
-
-  const setCachedData = (data: Section) => {
-    try {
-      const cacheData: CachedData = {
-        data,
-        timestamp: Date.now(),
-      };
-      localStorage.setItem(CACHE_KEY, JSON.stringify(cacheData));
-    } catch (error) {
-    }
-  };
-
-  useEffect(() => {
-    async function fetchData() {
-      if (!id) return;
-
-      const cachedContent = getCachedData();
-      if (cachedContent) {
-        setSectionData(cachedContent);
-        setLoading(false);
-      }
-
-      try {
-        const data = await getSectionData(id);
-        if (data) {
-          setSectionData(data);
-          setCachedData(data);
-        }
-      } catch (error) {
-        if (!sectionData && cachedContent) {
-          setSectionData(cachedContent);
-        }
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    fetchData();
-  }, [id]);
 
   const toggle = (itemId: string) => {
     const s = new Set(expanded);
     s.has(itemId) ? s.delete(itemId) : s.add(itemId);
     setExpanded(s);
   };
-
-  if (loading) {
-    return <LoadingSpinner />;
-  }
 
   const items: PrivacyPolicyItem[] =
     sectionData?.terms_and_conditions_section_content?.terms_and_conditions ?? [];
@@ -225,7 +151,7 @@ export default function TermsConditionsSection({ id }: SectionProps) {
   }
 
   return (
-    <div className="min-h-screen bg-[#f2f7ff]" id={id}>
+    <div className="min-h-screen bg-[#f2f7ff]">
       <div className="max-w-5xl mx-auto px-4 py-12 sm:px-6 lg:px-8">
         <div className="space-y-4">
           {publishedItems.map((item) => {

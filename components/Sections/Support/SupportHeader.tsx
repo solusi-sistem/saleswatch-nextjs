@@ -1,6 +1,5 @@
 'use client';
 
-import { useEffect, useState } from 'react';
 import { usePathname } from 'next/navigation';
 import {
     Download,
@@ -10,17 +9,7 @@ import {
     ExternalLink,
 } from 'lucide-react';
 
-import { getSectionData } from '@/hooks/getSectionData';
-import type { Section, SectionProps, SupportHeaderContent } from '@/types/section';
-import LoadingSpinner from '@/components/loading/LoadingSpinner';
-
-const CACHE_KEY = 'support_header_cache';
-const CACHE_DURATION = 5 * 60 * 1000;
-
-interface CachedData {
-    data: SupportHeaderContent;
-    timestamp: number;
-}
+import type { SectionProps } from '@/types/section';
 
 function getIcon(iconType?: string) {
     switch (iconType) {
@@ -39,90 +28,11 @@ function getIcon(iconType?: string) {
     }
 }
 
-export default function SupportHeader({ id }: SectionProps) {
+export default function SupportHeader({ data }: SectionProps) {
     const pathname = usePathname();
     const lang = pathname.startsWith('/id') ? 'id' : 'en';
 
-    const [section, setSection] = useState<Section | null>(null);
-    const [loading, setLoading] = useState(true);
-    const [isLoadingFromAPI, setIsLoadingFromAPI] = useState(false);
-
-    const getCachedData = (): SupportHeaderContent | null => {
-        try {
-            const cached = localStorage.getItem(CACHE_KEY);
-            if (!cached) return null;
-
-            const parsedCache: CachedData = JSON.parse(cached);
-            const now = Date.now();
-
-            if (now - parsedCache.timestamp < CACHE_DURATION) {
-                return parsedCache.data;
-            } else {
-                localStorage.removeItem(CACHE_KEY);
-                return null;
-            }
-        } catch (error) {
-            localStorage.removeItem(CACHE_KEY);
-            return null;
-        }
-    };
-
-    const setCachedData = (data: SupportHeaderContent) => {
-        try {
-            const cacheData: CachedData = {
-                data,
-                timestamp: Date.now(),
-            };
-            localStorage.setItem(CACHE_KEY, JSON.stringify(cacheData));
-        } catch (error) {
-        }
-    };
-
-    useEffect(() => {
-        async function fetchData() {
-            if (!id) return;
-
-            const cachedContent = getCachedData();
-            if (cachedContent) {
-                setSection({
-                    _id: id,
-                    _type: 'section',
-                    type_section: 'support_header',
-                    support_header_content: cachedContent
-                });
-                setLoading(false);
-            } else {
-                setIsLoadingFromAPI(true);
-            }
-
-            try {
-                const res = await getSectionData(id);
-                if (res?.support_header_content) {
-                    setSection(res);
-                    setCachedData(res.support_header_content);
-                }
-            } catch (error) {
-                if (!section && cachedContent) {
-                    setSection({
-                        _id: id,
-                        _type: 'section',
-                        type_section: 'support_header',
-                        support_header_content: cachedContent
-                    });
-                }
-            } finally {
-                setLoading(false);
-                setIsLoadingFromAPI(false);
-            }
-        }
-        fetchData();
-    }, [id]);
-
-    if (loading) {
-        return <LoadingSpinner />;
-    }
-
-    const header = section?.support_header_content;
+    const header = data?.support_header_content;
 
     /* =========================================
        NO DATA STATE
