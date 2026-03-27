@@ -1,21 +1,11 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { usePathname } from 'next/navigation';
-import { getSectionData } from '@/hooks/getSectionData';
-import { PricingContent } from '@/types/section';
+import { SectionProps } from '@/types/section';
 import ScheduleDemoModal from '@/components/modals/ScheduleDemoModal';
-import LoadingSpinner from '@/components/loading/LoadingSpinner';
 
 type BlogLocale = 'en' | 'id';
-
-const CACHE_KEY = 'pricing_section_cache';
-const CACHE_DURATION = 5 * 60 * 1000;
-
-interface CachedData {
-  data: PricingContent;
-  timestamp: number;
-}
 
 const isValidLanguage = (lang: string): lang is BlogLocale => {
   return lang === 'en' || lang === 'id';
@@ -30,80 +20,13 @@ const CheckIcon = () => (
   </svg>
 );
 
-interface PricingSectionProps {
-  id?: string;
-}
-
-export default function PricingSection({ id }: PricingSectionProps) {
+export default function PricingSection({ data }: SectionProps) {
   const pathname = usePathname();
   const languageString = pathname.startsWith('/id') ? 'id' : 'en';
   const currentLang: BlogLocale = isValidLanguage(languageString) ? languageString : 'en';
 
-  const [content, setContent] = useState<PricingContent | null>(null);
-  const [loading, setLoading] = useState(true);
+  const content = data?.pricing_content;
   const [isModalOpen, setIsModalOpen] = useState(false);
-
-  const getCachedData = (): PricingContent | null => {
-    try {
-      const cached = localStorage.getItem(CACHE_KEY);
-      if (!cached) return null;
-
-      const parsedCache: CachedData = JSON.parse(cached);
-      const now = Date.now();
-
-      if (now - parsedCache.timestamp < CACHE_DURATION) {
-        return parsedCache.data;
-      } else {
-        localStorage.removeItem(CACHE_KEY);
-        return null;
-      }
-    } catch (error) {
-      localStorage.removeItem(CACHE_KEY);
-      return null;
-    }
-  };
-
-  const setCachedData = (data: PricingContent) => {
-    try {
-      const cacheData: CachedData = {
-        data,
-        timestamp: Date.now(),
-      };
-      localStorage.setItem(CACHE_KEY, JSON.stringify(cacheData));
-    } catch (error) {
-    }
-  };
-
-  useEffect(() => {
-    async function fetchContent() {
-      if (!id) return;
-
-      const cachedContent = getCachedData();
-      if (cachedContent) {
-        setContent(cachedContent);
-        setLoading(false);
-      }
-
-      try {
-        const sectionData = await getSectionData(id);
-        if (sectionData?.pricing_content) {
-          setContent(sectionData.pricing_content);
-          setCachedData(sectionData.pricing_content);
-        }
-      } catch (error) {
-        if (!content && cachedContent) {
-          setContent(cachedContent);
-        }
-      } finally {
-        setLoading(false);
-      }
-    }
-    fetchContent();
-  }, [id]);
-
-  if (loading) {
-    return <LoadingSpinner />;
-  }
 
   if (!content || !content.pricing_plans || content.pricing_plans.length === 0) {
     return null;

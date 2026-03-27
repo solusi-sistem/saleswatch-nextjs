@@ -1,160 +1,35 @@
 'use client';
 
-import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
-import { getBlogsByCategory, getCategoryBySlug } from '@/hooks/getAllBlogs';
 import { BlogItem, BlogCategory } from '@/types/list/Blog';
-import LoadingSpinner from '@/components/loading/LoadingSpinner';
-
-const CACHE_KEY_CATEGORY = 'blog_category_cache';
-const CACHE_KEY_POSTS = 'blog_category_posts_cache';
-const CACHE_DURATION = 5 * 60 * 1000;
-
-interface CachedCategoryData {
-  data: BlogCategory;
-  slug: string;
-  timestamp: number;
-}
-
-interface CachedPostsData {
-  data: BlogItem[];
-  slug: string;
-  timestamp: number;
-}
 
 interface BlogCategorySectionProps {
   categorySlug: string;
+  initialCategory: BlogCategory;
+  initialPosts: BlogItem[];
 }
 
 type BlogLocale = 'en' | 'id';
 
-export default function BlogCategorySection({ categorySlug }: BlogCategorySectionProps) {
+export default function BlogCategorySection({ 
+  categorySlug, 
+  initialCategory, 
+  initialPosts 
+}: BlogCategorySectionProps) {
   const pathname = usePathname();
   const router = useRouter();
   const language: BlogLocale = pathname.startsWith('/id') ? 'id' : 'en';
 
-  const [category, setCategory] = useState<BlogCategory | null>(null);
-  const [posts, setPosts] = useState<BlogItem[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-
-  const getCachedCategory = (slug: string): BlogCategory | null => {
-    try {
-      const cached = localStorage.getItem(`${CACHE_KEY_CATEGORY}_${slug}`);
-      if (!cached) return null;
-
-      const parsedCache: CachedCategoryData = JSON.parse(cached);
-      const now = Date.now();
-
-      if (now - parsedCache.timestamp < CACHE_DURATION && parsedCache.slug === slug) {
-        return parsedCache.data;
-      } else {
-        localStorage.removeItem(`${CACHE_KEY_CATEGORY}_${slug}`);
-        return null;
-      }
-    } catch (error) {
-      localStorage.removeItem(`${CACHE_KEY_CATEGORY}_${slug}`);
-      return null;
-    }
-  };
-
-  const setCachedCategory = (data: BlogCategory, slug: string) => {
-    try {
-      const cacheData: CachedCategoryData = {
-        data,
-        slug,
-        timestamp: Date.now(),
-      };
-      localStorage.setItem(`${CACHE_KEY_CATEGORY}_${slug}`, JSON.stringify(cacheData));
-    } catch (error) {
-    }
-  };
-
-  const getCachedPosts = (slug: string): BlogItem[] | null => {
-    try {
-      const cached = localStorage.getItem(`${CACHE_KEY_POSTS}_${slug}`);
-      if (!cached) return null;
-
-      const parsedCache: CachedPostsData = JSON.parse(cached);
-      const now = Date.now();
-
-      if (now - parsedCache.timestamp < CACHE_DURATION && parsedCache.slug === slug) {
-        return parsedCache.data;
-      } else {
-        localStorage.removeItem(`${CACHE_KEY_POSTS}_${slug}`);
-        return null;
-      }
-    } catch (error) {
-      localStorage.removeItem(`${CACHE_KEY_POSTS}_${slug}`);
-      return null;
-    }
-  };
-
-  const setCachedPosts = (data: BlogItem[], slug: string) => {
-    try {
-      const cacheData: CachedPostsData = {
-        data,
-        slug,
-        timestamp: Date.now(),
-      };
-      localStorage.setItem(`${CACHE_KEY_POSTS}_${slug}`, JSON.stringify(cacheData));
-    } catch (error) {
-    }
-  };
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const cachedCategory = getCachedCategory(categorySlug);
-        const cachedPosts = getCachedPosts(categorySlug);
-
-        if (cachedCategory) {
-          setCategory(cachedCategory);
-          setIsLoading(false);
-        }
-
-        if (cachedPosts) {
-          setPosts(cachedPosts);
-        }
-
-        const [categoryData, postsData] = await Promise.all([
-          getCategoryBySlug(categorySlug),
-          getBlogsByCategory(categorySlug, 'published')
-        ]);
-
-        if (categoryData) {
-          setCategory(categoryData);
-          setCachedCategory(categoryData, categorySlug);
-        }
-        
-        if (postsData) {
-          setPosts(postsData);
-          setCachedPosts(postsData, categorySlug);
-        }
-      } catch (error) {
-        const cachedCategory = getCachedCategory(categorySlug);
-        const cachedPosts = getCachedPosts(categorySlug);
-
-        if (!category && cachedCategory) setCategory(cachedCategory);
-        if (posts.length === 0 && cachedPosts) setPosts(cachedPosts);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchData();
-  }, [categorySlug]);
+  const category = initialCategory;
+  const posts = initialPosts;
 
   const handlePostClick = (slug: string) => {
     const href = language === 'id' ? `/id/blog/${slug}` : `/blog/${slug}`;
     window.scrollTo({ top: 0, behavior: 'instant' });
     router.push(href);
   };
-
-  if (isLoading) {
-    return <LoadingSpinner />;
-  }
 
   if (!category) {
     return (

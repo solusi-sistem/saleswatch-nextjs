@@ -6,16 +6,13 @@ import Image from 'next/image';
 import CustomButton from '@/components/button/button';
 import ScheduleDemoModal from '@/components/modals/ScheduleDemoModal';
 import type { LangKey } from '@/types';
-import { SectionProps, RequestDemoContent } from '@/types/section';
-import { getSectionData } from '@/hooks/getSectionData';
-import LoadingSpinner from '@/components/loading/LoadingSpinner';
+import { SectionProps } from '@/types/section';
 
-export default function RequestDemoSection({ id }: SectionProps) {
+export default function RequestDemoSection({ data }: SectionProps) {
   const pathname = usePathname();
   const currentLang: LangKey = pathname.startsWith('/id') ? 'id' : '';
 
-  const [content, setContent] = useState<RequestDemoContent | null>(null);
-  const [loading, setLoading] = useState(true);
+  const content = data?.request_demo_content;
   const [isVisible, setIsVisible] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [animationStates, setAnimationStates] = useState({
@@ -28,24 +25,6 @@ export default function RequestDemoSection({ id }: SectionProps) {
   const badgeRef = useRef<HTMLHeadingElement>(null);
   const titleContainerRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    async function fetchContent() {
-      if (!id) return;
-
-      try {
-        setLoading(true);
-        const sectionData = await getSectionData(id);
-        if (sectionData?.request_demo_content) {
-          setContent(sectionData.request_demo_content);
-        }
-      } catch (error) {
-      } finally {
-        setLoading(false);
-      }
-    }
-    fetchContent();
-  }, [id]);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -70,7 +49,7 @@ export default function RequestDemoSection({ id }: SectionProps) {
   }, []);
 
   useEffect(() => {
-    if (loading || !content) return;
+    if (!content) return;
 
     const observerOptions = {
       threshold: 0.1,
@@ -102,11 +81,7 @@ export default function RequestDemoSection({ id }: SectionProps) {
     return () => {
       observer.disconnect();
     };
-  }, [loading, content]);
-
-  if (loading) {
-    return <LoadingSpinner />;
-  }
+  }, [content]);
 
   if (!content) {
     return null;

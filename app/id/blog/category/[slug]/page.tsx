@@ -1,5 +1,5 @@
 import { notFound } from 'next/navigation';
-import { getCategoryBySlug, getAllCategories } from '@/hooks/getAllBlogs';
+import { getCategoryBySlug, getBlogsByCategory } from '@/hooks/getAllBlogs';
 import Header from '@/components/layouts/Header';
 import Footer from '@/components/layouts/Footer';
 import BlogCategorySection from '@/components/Sections/Blog/BlogCategorySection';
@@ -60,10 +60,16 @@ export default async function CategoryPageID({ params }: { params: Promise<{ slu
   const category = await getCategoryBySlug(slug);
   if (!category) return notFound();
 
+  const posts = await getBlogsByCategory(slug, 'published');
+
   return (
     <div className="min-h-screen bg-[#f2f7ff]">
       <Header />
-      <BlogCategorySection categorySlug={slug} />
+      <BlogCategorySection 
+        categorySlug={slug} 
+        initialCategory={category}
+        initialPosts={posts || []}
+      />
       <Footer />
     </div>
   );

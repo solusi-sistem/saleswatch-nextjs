@@ -1,21 +1,10 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { usePathname } from 'next/navigation';
 import { ChevronDown, ChevronUp } from 'lucide-react';
 import Image from 'next/image';
-import { getSectionData } from '@/hooks/getSectionData';
-import LoadingSpinner from '@/components/loading/LoadingSpinner';
-import type { Section } from '@/types/section';
 import type { SectionProps } from '@/types/section';
-
-const CACHE_KEY = 'privacy_policy_cache';
-const CACHE_DURATION = 5 * 60 * 1000;
-
-interface CachedData {
-  data: Section;
-  timestamp: number;
-}
 
 interface PrivacyPolicyBlock {
   _key?: string;
@@ -152,72 +141,12 @@ function PortableTextRenderer({ blocks }: { blocks: PrivacyPolicyBlock[] }) {
   );
 }
 
-export default function PrivacyPolicySection({ id }: SectionProps) {
+export default function PrivacyPolicySection({ data }: SectionProps) {
   const pathname = usePathname();
   const currentLang: LangKey = pathname.startsWith('/id') ? 'id' : '';
   
-  const [sectionData, setSectionData] = useState<Section | null>(null);
-  const [loading, setLoading] = useState(true);
+  const sectionData = data;
   const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set());
-
-  const getCachedData = (): Section | null => {
-    try {
-      const cached = localStorage.getItem(CACHE_KEY);
-      if (!cached) return null;
-
-      const parsedCache: CachedData = JSON.parse(cached);
-      const now = Date.now();
-
-      if (now - parsedCache.timestamp < CACHE_DURATION) {
-        return parsedCache.data;
-      } else {
-        localStorage.removeItem(CACHE_KEY);
-        return null;
-      }
-    } catch (error) {
-      localStorage.removeItem(CACHE_KEY);
-      return null;
-    }
-  };
-
-  const setCachedData = (data: Section) => {
-    try {
-      const cacheData: CachedData = {
-        data,
-        timestamp: Date.now(),
-      };
-      localStorage.setItem(CACHE_KEY, JSON.stringify(cacheData));
-    } catch (error) {
-    }
-  };
-
-  useEffect(() => {
-    async function fetchData() {
-      if (!id) return;
-
-      const cachedContent = getCachedData();
-      if (cachedContent) {
-        setSectionData(cachedContent);
-        setLoading(false);
-      }
-
-      try {
-        const data = await getSectionData(id);
-        if (data) {
-          setSectionData(data);
-          setCachedData(data);
-        }
-      } catch (error) {
-        if (!sectionData && cachedContent) {
-          setSectionData(cachedContent);
-        }
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    fetchData();
-  }, [id]);
 
   const toggleSection = (sectionId: string) => {
     const newExpanded = new Set(expandedSections);
@@ -228,10 +157,6 @@ export default function PrivacyPolicySection({ id }: SectionProps) {
     }
     setExpandedSections(newExpanded);
   };
-
-  if (loading) {
-    return <LoadingSpinner />;
-  }
 
   if (!sectionData?.privacy_policy_section_content?.privacy_policy) {
     return (

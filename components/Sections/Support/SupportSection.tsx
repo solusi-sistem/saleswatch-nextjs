@@ -5,12 +5,10 @@ import { usePathname } from 'next/navigation';
 import { ChevronDown, ChevronRight, Book } from 'lucide-react';
 import Image from 'next/image';
 
-import { getSectionData } from '@/hooks/getSectionData';
 import ScheduleDemoModal from '@/components/modals/ScheduleDemoModal';
-import type { Section, SectionProps, SupportPlan } from '@/types/section';
+import type { SectionProps, SupportPlan } from '@/types/section';
 import type { SupportBlock } from '@/types/support';
 import { LangKey } from '@/types';
-import LoadingSpinner from '@/components/loading/LoadingSpinner';
 
 function PortableTextRenderer({ blocks }: { blocks: SupportBlock[] }) {
   if (!blocks) return null;
@@ -102,12 +100,10 @@ function PortableTextRenderer({ blocks }: { blocks: SupportBlock[] }) {
   );
 }
 
-export default function SupportSection({ id }: SectionProps) {
+export default function SupportSection({ data }: SectionProps) {
   const pathname = usePathname();
   const currentLang = (pathname.startsWith('/id') ? 'id' : 'en') as LangKey;
 
-  const [section, setSection] = useState<Section | null>(null);
-  const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
@@ -117,27 +113,17 @@ export default function SupportSection({ id }: SectionProps) {
 
   const contentRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    async function fetchData() {
-      if (!id) return;
-      const res = await getSectionData(id);
-      setSection(res);
-      setLoading(false);
-    }
-    fetchData();
-  }, [id]);
-
   const supportPlans: SupportPlan[] = useMemo(
-    () => section?.support_section_content?.support_plans || [],
-    [section]
+    () => data?.support_section_content?.support_plans || [],
+    [data]
   );
 
   const currentCategory = supportPlans.find(
     (item) => item.key === selectedCategory
   );
 
-  const bottomCTA = section?.support_section_content?.bottom_cta;
-  const emptyState = section?.support_section_content?.empty_state;
+  const bottomCTA = data?.support_section_content?.bottom_cta;
+  const emptyState = data?.support_section_content?.empty_state;
 
   const ctaTitle = currentLang === 'id'
     ? (bottomCTA?.cta_title?.id || bottomCTA?.cta_title?.en)
@@ -215,10 +201,6 @@ export default function SupportSection({ id }: SectionProps) {
       setIsModalOpen(true);
     }
   };
-
-  if (loading) {
-    return <LoadingSpinner />;
-  }
 
   if (!supportPlans.length) {
     return (

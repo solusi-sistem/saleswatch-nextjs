@@ -4,85 +4,16 @@ import { useEffect, useState, useRef } from 'react';
 import { usePathname } from 'next/navigation';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import type { LangKey } from '@/types';
-import { SectionProps, TestimonialContent } from '@/types/section';
-import { getSectionData } from '@/hooks/getSectionData';
-import LoadingSpinner from '@/components/loading/LoadingSpinner';
+import { SectionProps } from '@/types/section';
 
-const CACHE_KEY = 'testimonial_cache';
-const CACHE_DURATION = 5 * 60 * 1000;
-
-interface CachedData {
-  data: TestimonialContent;
-  timestamp: number;
-}
-
-export default function Testimonial({ id }: SectionProps) {
+export default function Testimonial({ data }: SectionProps) {
     const pathname = usePathname();
     const currentLang: LangKey = pathname.startsWith('/id') ? 'id' : '';
 
-    const [content, setContent] = useState<TestimonialContent | null>(null);
-    const [loading, setLoading] = useState(true);
+    const content = data?.testimonial_content;
     const [currentIndex, setCurrentIndex] = useState(0);
     const leftSideRef = useRef<HTMLDivElement>(null);
     const rightSideRef = useRef<HTMLDivElement>(null);
-
-    const getCachedData = (): TestimonialContent | null => {
-        try {
-            const cached = localStorage.getItem(CACHE_KEY);
-            if (!cached) return null;
-
-            const parsedCache: CachedData = JSON.parse(cached);
-            const now = Date.now();
-
-            if (now - parsedCache.timestamp < CACHE_DURATION) {
-                return parsedCache.data;
-            } else {
-                localStorage.removeItem(CACHE_KEY);
-                return null;
-            }
-        } catch (error) {
-            localStorage.removeItem(CACHE_KEY);
-            return null;
-        }
-    };
-
-    const setCachedData = (data: TestimonialContent) => {
-        try {
-            const cacheData: CachedData = {
-                data,
-                timestamp: Date.now(),
-            };
-            localStorage.setItem(CACHE_KEY, JSON.stringify(cacheData));
-        } catch (error) {
-        }
-    };
-
-    useEffect(() => {
-        async function fetchContent() {
-            if (!id) return;
-
-            const cachedContent = getCachedData();
-            if (cachedContent) {
-                setContent(cachedContent);
-                setLoading(false);
-            }
-
-            try {
-                const sectionData = await getSectionData(id);
-                if (sectionData?.testimonial_content) {
-                    setContent(sectionData.testimonial_content);
-                    setCachedData(sectionData.testimonial_content);
-                }
-            } catch (error) {
-                if (!content && cachedContent) {
-                    setContent(cachedContent);
-                }
-            } finally {
-                setLoading(false);
-            }
-        }
-        fetchContent();
-    }, [id]);
 
     const testimonials = content?.testimonials || [];
 
@@ -97,7 +28,7 @@ export default function Testimonial({ id }: SectionProps) {
     }, [testimonials.length]);
 
     useEffect(() => {
-        if (loading) return;
+        if (testimonials.length === 0) return;
 
         const observerOptions = {
             threshold: 0.15,
@@ -120,7 +51,7 @@ export default function Testimonial({ id }: SectionProps) {
         return () => {
             observer.disconnect();
         };
-    }, [loading, currentIndex]);
+    }, [testimonials.length, currentIndex]);
 
     const prevSlide = () => {
         setCurrentIndex((prev) => (prev === 0 ? testimonials.length - 1 : prev - 1));
@@ -129,10 +60,6 @@ export default function Testimonial({ id }: SectionProps) {
     const nextSlide = () => {
         setCurrentIndex((prev) => (prev + 1) % testimonials.length);
     };
-
-    if (loading) {
-        return <LoadingSpinner />;
-    }
 
     if (!content || testimonials.length === 0) {
         return null;

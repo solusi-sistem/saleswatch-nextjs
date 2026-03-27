@@ -2,6 +2,7 @@ import { client } from "@/lib/sanity";
 import { proxyFetch } from "@/lib/sanityFetcher";
 import { BlogItem, BlogCategory } from "@/types/list/Blog";
 import { groq } from "next-sanity";
+import { cache } from "react";
 
 const isBrowser = typeof window !== 'undefined';
 
@@ -72,7 +73,7 @@ const blogFieldsQuery = `
     status
 `;
 
-export async function getAllBlogs(
+export const getAllBlogs = cache(async function(
     status?: 'published' | 'draft' | 'archived',
     featured?: boolean,
     sortBy: 'dateDesc' | 'dateAsc' | 'titleAsc' = 'dateDesc'
@@ -116,9 +117,9 @@ export async function getAllBlogs(
         console.error("Error fetching all blogs:", error);
         return null;
     }
-}
+});
 
-export async function getBlogBySlug(slug: string): Promise<BlogItem | null> {
+export const getBlogBySlug = cache(async function(slug: string): Promise<BlogItem | null> {
     const query = groq`*[_type == "list_blog" && slug.current == $slug][0] {
         ${blogFieldsQuery}
     }`;
@@ -130,9 +131,9 @@ export async function getBlogBySlug(slug: string): Promise<BlogItem | null> {
         console.error("Error fetching blog by slug:", error);
         return null;
     }
-}
+});
 
-export async function getBlogsByCategory(
+export const getBlogsByCategory = cache(async function(
     categorySlug: string,
     status: 'published' | 'draft' | 'archived' = 'published'
 ): Promise<BlogItem[] | null> {
@@ -151,9 +152,9 @@ export async function getBlogsByCategory(
         console.error("Error fetching blogs by category:", error);
         return null;
     }
-}
+});
 
-export async function getAllCategories(): Promise<BlogCategory[] | null> {
+export const getAllCategories = cache(async function(): Promise<BlogCategory[] | null> {
     const query = groq`*[_type == "list_blog_category" && status == "active"] | order(name.en asc) {
         _id,
         name {
@@ -178,9 +179,9 @@ export async function getAllCategories(): Promise<BlogCategory[] | null> {
         console.error("Error fetching blog categories:", error);
         return null;
     }
-}
+});
 
-export async function getCategoryBySlug(slug: string): Promise<BlogCategory | null> {
+export const getCategoryBySlug = cache(async function(slug: string): Promise<BlogCategory | null> {
     const query = groq`*[_type == "list_blog_category" && slug.current == $slug][0] {
         _id,
         name {
@@ -205,9 +206,9 @@ export async function getCategoryBySlug(slug: string): Promise<BlogCategory | nu
         console.error("Error fetching category by slug:", error);
         return null;
     }
-}
+});
 
-export async function getBlogsWithPagination(
+export const getBlogsWithPagination = cache(async function(
     page: number = 1,
     postsPerPage: number = 6,
     status: 'published' | 'draft' | 'archived' = 'published',
@@ -247,12 +248,12 @@ export async function getBlogsWithPagination(
         console.error("Error fetching blogs with pagination:", error);
         return null;
     }
-}
+});
 
 /**
  * ✅ FIXED: Get related/similar blog posts based on same category
  */
-export async function getRelatedBlogs(
+export const getRelatedBlogs = cache(async function(
     currentBlogId: string,
     limit: number = 3,
     categorySlug?: string
@@ -276,9 +277,9 @@ export async function getRelatedBlogs(
         console.error("Error fetching related blogs:", error);
         return null;
     }
-}
+});
 
-export async function getRecentBlogs(
+export const getRecentBlogs = cache(async function(
     limit: number = 5,
     excludeId?: string
 ): Promise<BlogItem[] | null> {
@@ -299,7 +300,7 @@ export async function getRecentBlogs(
         console.error("Error fetching recent blogs:", error);
         return null;
     }
-}
+});
 
 /**
  * DEPRECATED: Use getAllCategories instead

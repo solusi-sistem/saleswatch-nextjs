@@ -30,7 +30,7 @@ export function renderSection(
     return null;
   }
 
-  const sectionProps = { id: section._id, key: index };
+  const sectionProps = { id: section._id, key: index, data: section };
 
   switch (section.type_section) {
     case "heroUtama":

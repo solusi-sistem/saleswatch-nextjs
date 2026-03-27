@@ -1,37 +1,16 @@
 'use client';
 
-import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { PortableText } from '@portabletext/react';
-import { getBlogBySlug, getRecentBlogs, getAllCategories } from '@/hooks/getAllBlogs';
 import { BlogItem, BlogCategory } from '@/types/list/Blog';
-import LoadingSpinner from '@/components/loading/LoadingSpinner';
-
-const CACHE_KEY_POST = 'blog_detail_post_cache';
-const CACHE_KEY_RECENT = 'blog_detail_recent_cache';
-const CACHE_KEY_CATEGORIES = 'blog_detail_categories_cache';
-const CACHE_DURATION = 5 * 60 * 1000;
-
-interface CachedPostData {
-  data: BlogItem;
-  slug: string;
-  timestamp: number;
-}
-
-interface CachedRecentData {
-  data: BlogItem[];
-  timestamp: number;
-}
-
-interface CachedCategoriesData {
-  data: BlogCategory[];
-  timestamp: number;
-}
 
 interface BlogDetailSectionProps {
   slug: string;
+  initialPost: BlogItem;
+  initialRecentPosts: BlogItem[];
+  initialCategories: BlogCategory[];
 }
 
 type BlogLocale = 'en' | 'id';
@@ -89,163 +68,19 @@ const customPortableTextComponents = {
   },
 };
 
-export default function BlogDetailSection({ slug }: BlogDetailSectionProps) {
+export default function BlogDetailSection({ 
+  slug, 
+  initialPost, 
+  initialRecentPosts, 
+  initialCategories 
+}: BlogDetailSectionProps) {
   const pathname = usePathname();
   const languageString = pathname.startsWith('/id') ? 'id' : 'en';
   const language: BlogLocale = isValidLanguage(languageString) ? languageString : 'en';
 
-  const [post, setPost] = useState<BlogItem | null>(null);
-  const [recentPosts, setRecentPosts] = useState<BlogItem[]>([]);
-  const [categories, setCategories] = useState<BlogCategory[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-
-  const getCachedPost = (postSlug: string): BlogItem | null => {
-    try {
-      const cached = localStorage.getItem(`${CACHE_KEY_POST}_${postSlug}`);
-      if (!cached) return null;
-
-      const parsedCache: CachedPostData = JSON.parse(cached);
-      const now = Date.now();
-
-      if (now - parsedCache.timestamp < CACHE_DURATION && parsedCache.slug === postSlug) {
-        return parsedCache.data;
-      } else {
-        localStorage.removeItem(`${CACHE_KEY_POST}_${postSlug}`);
-        return null;
-      }
-    } catch (error) {
-      localStorage.removeItem(`${CACHE_KEY_POST}_${postSlug}`);
-      return null;
-    }
-  };
-
-  const setCachedPost = (data: BlogItem, postSlug: string) => {
-    try {
-      const cacheData: CachedPostData = {
-        data,
-        slug: postSlug,
-        timestamp: Date.now(),
-      };
-      localStorage.setItem(`${CACHE_KEY_POST}_${postSlug}`, JSON.stringify(cacheData));
-    } catch (error) {
-    }
-  };
-
-  const getCachedRecent = (): BlogItem[] | null => {
-    try {
-      const cached = localStorage.getItem(CACHE_KEY_RECENT);
-      if (!cached) return null;
-
-      const parsedCache: CachedRecentData = JSON.parse(cached);
-      const now = Date.now();
-
-      if (now - parsedCache.timestamp < CACHE_DURATION) {
-        return parsedCache.data;
-      } else {
-        localStorage.removeItem(CACHE_KEY_RECENT);
-        return null;
-      }
-    } catch (error) {
-      localStorage.removeItem(CACHE_KEY_RECENT);
-      return null;
-    }
-  };
-
-  const setCachedRecent = (data: BlogItem[]) => {
-    try {
-      const cacheData: CachedRecentData = {
-        data,
-        timestamp: Date.now(),
-      };
-      localStorage.setItem(CACHE_KEY_RECENT, JSON.stringify(cacheData));
-    } catch (error) {
-    }
-  };
-
-  const getCachedCategories = (): BlogCategory[] | null => {
-    try {
-      const cached = localStorage.getItem(CACHE_KEY_CATEGORIES);
-      if (!cached) return null;
-
-      const parsedCache: CachedCategoriesData = JSON.parse(cached);
-      const now = Date.now();
-
-      if (now - parsedCache.timestamp < CACHE_DURATION) {
-        return parsedCache.data;
-      } else {
-        localStorage.removeItem(CACHE_KEY_CATEGORIES);
-        return null;
-      }
-    } catch (error) {
-      localStorage.removeItem(CACHE_KEY_CATEGORIES);
-      return null;
-    }
-  };
-
-  const setCachedCategories = (data: BlogCategory[]) => {
-    try {
-      const cacheData: CachedCategoriesData = {
-        data,
-        timestamp: Date.now(),
-      };
-      localStorage.setItem(CACHE_KEY_CATEGORIES, JSON.stringify(cacheData));
-    } catch (error) {
-    }
-  };
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const cachedPost = getCachedPost(slug);
-        const cachedRecent = getCachedRecent();
-        const cachedCategories = getCachedCategories();
-
-        if (cachedPost) {
-          setPost(cachedPost);
-          setIsLoading(false);
-        }
-
-        if (cachedRecent) setRecentPosts(cachedRecent);
-        if (cachedCategories) setCategories(cachedCategories);
-
-        const postData = await getBlogBySlug(slug);
-        if (postData) {
-          setPost(postData);
-          setCachedPost(postData, slug);
-
-          const [recentData, categoriesData] = await Promise.all([
-            getRecentBlogs(5, postData._id),
-            getAllCategories(),
-          ]);
-
-          if (recentData) {
-            setRecentPosts(recentData);
-            setCachedRecent(recentData);
-          }
-          if (categoriesData) {
-            setCategories(categoriesData);
-            setCachedCategories(categoriesData);
-          }
-        }
-      } catch (error) {
-        const cachedPost = getCachedPost(slug);
-        const cachedRecent = getCachedRecent();
-        const cachedCategories = getCachedCategories();
-
-        if (!post && cachedPost) setPost(cachedPost);
-        if (recentPosts.length === 0 && cachedRecent) setRecentPosts(cachedRecent);
-        if (categories.length === 0 && cachedCategories) setCategories(cachedCategories);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchData();
-  }, [slug]);
-
-  if (isLoading) {
-    return <LoadingSpinner />;
-  }
+  const post = initialPost;
+  const recentPosts = initialRecentPosts;
+  const categories = initialCategories;
 
   if (!post) {
     return (
@@ -339,21 +174,6 @@ export default function BlogDetailSection({ slug }: BlogDetailSectionProps) {
                   />
                 )}
               </div>
-
-              {/* Tags */}
-              {/* {post.tags && post.tags.length > 0 && (
-                <div className="flex flex-wrap gap-2 pt-6 border-t">
-                  <span className="font-semibold">Tags:</span>
-                  {post.tags.map((tag, index) => (
-                    <span
-                      key={index}
-                      className="bg-white rounded-md shadow-sm px-3 py-1 text-sm hover:bg-gray-200 transition cursor-pointer"
-                    >
-                      {tag}
-                    </span>
-                  ))}
-                </div>
-              )} */}
             </div>
 
             {/* Sidebar */}

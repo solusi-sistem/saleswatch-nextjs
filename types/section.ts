@@ -24,6 +24,7 @@ export interface SanityFile {
 
 export interface SectionProps {
     id?: string;
+    data?: Section;
 }
 
 // ==========================================

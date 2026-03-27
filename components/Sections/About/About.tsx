@@ -3,24 +3,13 @@
 import { useState, useEffect, useRef } from 'react';
 import { usePathname } from 'next/navigation';
 import type { LangKey } from '@/types';
-import { SectionProps, AboutContent } from '@/types/section';
-import { getSectionData } from '@/hooks/getSectionData';
-import LoadingSpinner from '@/components/loading/LoadingSpinner';
+import { SectionProps } from '@/types/section';
 
-const CACHE_KEY = 'faq_cache';
-const CACHE_DURATION = 5 * 60 * 1000;
-
-interface CachedData {
-  data: AboutContent;
-  timestamp: number;
-}
-
-const About = ({ id }: SectionProps) => {
+const About = ({ data }: SectionProps) => {
   const pathname = usePathname();
   const currentLang: LangKey = pathname.startsWith('/id') ? 'id' : '';
 
-  const [content, setContent] = useState<AboutContent | null>(null);
-  const [loading, setLoading] = useState(true);
+  const content = data?.about_content;
   const [openId, setOpenId] = useState<number | null>(null);
 
   const badgeRef = useRef<HTMLDivElement>(null);
@@ -29,66 +18,8 @@ const About = ({ id }: SectionProps) => {
   const accordionRef = useRef<HTMLDivElement>(null);
   const imageRef = useRef<HTMLDivElement>(null);
 
-  const getCachedData = (): AboutContent | null => {
-    try {
-      const cached = localStorage.getItem(CACHE_KEY);
-      if (!cached) return null;
-
-      const parsedCache: CachedData = JSON.parse(cached);
-      const now = Date.now();
-
-      if (now - parsedCache.timestamp < CACHE_DURATION) {
-        return parsedCache.data;
-      } else {
-        localStorage.removeItem(CACHE_KEY);
-        return null;
-      }
-    } catch (error) {
-      localStorage.removeItem(CACHE_KEY);
-      return null;
-    }
-  };
-
-  const setCachedData = (data: AboutContent) => {
-    try {
-      const cacheData: CachedData = {
-        data,
-        timestamp: Date.now(),
-      };
-      localStorage.setItem(CACHE_KEY, JSON.stringify(cacheData));
-    } catch (error) {
-    }
-  };
-
   useEffect(() => {
-    async function fetchContent() {
-      if (!id) return;
-
-      const cachedContent = getCachedData();
-      if (cachedContent) {
-        setContent(cachedContent);
-        setLoading(false);
-      }
-
-      try {
-        const sectionData = await getSectionData(id);
-        if (sectionData?.about_content) {
-          setContent(sectionData.about_content);
-          setCachedData(sectionData.about_content);
-        }
-      } catch (error) {
-        if (!content && cachedContent) {
-          setContent(cachedContent);
-        }
-      } finally {
-        setLoading(false);
-      }
-    }
-    fetchContent();
-  }, [id]);
-
-  useEffect(() => {
-    if (loading) return;
+    if (!content) return;
 
     const observerOptions = {
       threshold: 0.1,
@@ -126,15 +57,11 @@ const About = ({ id }: SectionProps) => {
     return () => {
       observer.disconnect();
     };
-  }, [loading]);
+  }, [content]);
 
   const toggleItem = (id: number) => {
     setOpenId(openId === id ? null : id);
   };
-
-  if (loading) {
-    return <LoadingSpinner />;
-  }
 
   if (!content) {
     return null;

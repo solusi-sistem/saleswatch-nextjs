@@ -25,8 +25,26 @@ const TERMS_CONDITIONS_QUERY = `
           }
         },
         published_at,
-        content_en,
-        content_id
+        content_en[] {
+          ...,
+          _type == "image" => {
+            ...,
+            asset-> {
+              _id,
+              url
+            }
+          }
+        },
+        content_id[] {
+          ...,
+          _type == "image" => {
+            ...,
+            asset-> {
+              _id,
+              url
+            }
+          }
+        }
       }
     }
   }
@@ -51,8 +69,26 @@ const TERMS_CONDITIONS_QUERY_SIMPLE = `
           }
         },
         published_at,
-        content_en,
-        content_id
+        content_en[] {
+          ...,
+          _type == "image" => {
+            ...,
+            asset-> {
+              _id,
+              url
+            }
+          }
+        },
+        content_id[] {
+          ...,
+          _type == "image" => {
+            ...,
+            asset-> {
+              _id,
+              url
+            }
+          }
+        }
       }
     }
   }
