@@ -29,7 +29,8 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const layoutData = await getLayoutData();
+  const data = await getLayoutData();
+  const layoutData = data?.layout || data; // fallback for safety during transition
 
   return (
     <html lang="en" className={inter.variable}>
