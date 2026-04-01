@@ -45,6 +45,11 @@ export default async function RootLayout({
             function gtag(){dataLayer.push(arguments);}
             gtag('js', new Date());
             gtag('config', 'AW-17672457172');
+
+            window.triggerConversion = function() {
+              gtag('event', 'conversion', {'send_to': 'AW-17672457172/tpBUCLiZlLQbENSX8epB'});
+              console.log('Conversion sent!');
+            };
           `}
         </Script>
       </head>
