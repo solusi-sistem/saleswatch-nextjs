@@ -34,7 +34,16 @@ export default async function RootLayout({
 
   return (
     <html lang="en" className={inter.variable}>
-      <head>{/* <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" /> */}</head>
+      <head>{/* <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" /> */}
+        <script async src="https://www.googletagmanager.com/gtag/js?id=AW-17672457172"></script>
+        <script>
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          
+          gtag('config', 'AW-17672457172');
+        </script>
+      </head>
       <body className={`${inter.className} antialiased`}>
         <LayoutProvider initialData={layoutData}>
           <HomeProvider>
