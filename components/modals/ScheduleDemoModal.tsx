@@ -168,6 +168,9 @@ export default function ScheduleDemoModal({
 
       if (response.ok) {
         console.log("✅ Email sent successfully to", data.sentTo, "recipients");
+        if (typeof window !== 'undefined' && window.triggerConversion) {
+          window.triggerConversion();
+        }
         showToast(t.successMessage, "success");
 
         setFormData({
