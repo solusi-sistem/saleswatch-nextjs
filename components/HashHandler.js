@@ -1,28 +1,54 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import { usePathname } from 'next/navigation';
+import ScheduleDemoModal from './modals/ScheduleDemoModal';
 
-export default function HashHandler({ openModal }) {
+export default function HashHandler() {
+  const [isOpen, setIsOpen] = useState(false);
+  const pathname = usePathname();
+
   useEffect(() => {
-    // 1. Logic to check the hash
     const checkHash = () => {
+      // Triggers if URL ends in #request-demo
       if (window.location.hash === '#request-demo') {
-        openModal(true);
+        setIsOpen(true);
       }
     };
 
-    // 2. Check immediately on page load
-    const timeoutId = setTimeout(checkHash, 500);
+    // Check on initial load
+    checkHash();
 
-    // 3. Listen for changes if the user clicks a link while already on the page
+    // Listen for hash changes
     window.addEventListener('hashchange', checkHash);
+    return () => window.removeEventListener('hashchange', checkHash);
+  }, []);
 
-    // Cleanup
-    return () => {
-      clearTimeout(timeoutId);
-      window.removeEventListener('hashchange', checkHash);
-    };
-  }, [openModal]);
+  const handleClose = () => {
+    setIsOpen(false);
+    // Remove the hash from the URL so it doesn't stay there after closing
+    if (window.location.hash === '#request-demo') {
+      window.history.replaceState(null, "", window.location.pathname);
+    }
+  };
 
-  return null;
+  // Determine button text based on language
+  const isIndo = pathname.startsWith('/id');
+  const buttonText = isIndo ? "Jadwalkan Demo" : "Schedule Demo";
+
+  return (
+    <>
+      <button 
+        onClick={() => setIsOpen(true)}
+        className="bg-[#061551] text-white px-8 py-3 rounded-full font-bold hover:bg-opacity-90 transition-all shadow-lg"
+      >
+        {buttonText}
+      </button>
+
+      <ScheduleDemoModal 
+        isOpen={isOpen} 
+        onClose={handleClose} 
+      />
+    </>
+  );
 }
