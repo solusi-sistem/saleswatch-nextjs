@@ -1,5 +1,6 @@
 import Header from '@/components/layouts/Header';
 import Footer from '@/components/layouts/Footer';
+import HashHandler from '@/components/HashHandler';
 
 import { getPageData } from '@/hooks/getPageData';
 import { Metadata } from 'next';
@@ -174,6 +175,7 @@ export default async function EnglishPage({ params }: PageProps) {
   return (
     <div lang="en">
       <Header />
+      <HashHandler />
       {publishedSections.length > 0 ? (
         publishedSections.map((section, index) =>
           renderSection(section, index)
