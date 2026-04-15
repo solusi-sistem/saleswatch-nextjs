@@ -1,5 +1,8 @@
 import { NextResponse } from "next/server";
+import { getRequestContext } from '@cloudflare/next-on-pages';
 import nodemailer from "nodemailer";
+
+export const runtime = 'edge';
 
 export async function POST(request) {
   try {
@@ -36,12 +39,14 @@ export async function POST(request) {
       );
     }
 
-    // Fetch settings dari Sanity
-    const smtpHost = process.env.MAIL_HOST;
-    const smtpPort = parseInt(process.env.MAIL_PORT || "587", 10);
-    const smtpUser = process.env.MAIL_USERNAME;
-    const smtpPass = process.env.MAIL_PASSWORD;
-    const mailTo = process.env.MAIL_TO_ADDRESS;
+    // Fetch settings
+    const { env } = getRequestContext();
+
+    const smtpHost = env.MAIL_HOST;
+    const smtpPort = parseInt(env.MAIL_PORT || "587", 10);
+    const smtpUser = env.MAIL_USERNAME;
+    const smtpPass = env.MAIL_PASSWORD;
+    const mailTo = env.MAIL_TO_ADDRESS;
 
     console.log("🔍 Loading email config from ENV...");
 
