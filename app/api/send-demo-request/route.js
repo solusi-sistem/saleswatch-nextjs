@@ -1,5 +1,4 @@
 import { NextResponse } from "next/server";
-import { getRequestContext } from '@cloudflare/next-on-pages';
 import nodemailer from "nodemailer";
 
 export const runtime = 'edge';
