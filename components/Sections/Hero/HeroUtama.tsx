@@ -9,6 +9,7 @@ import { usePathname } from "next/navigation";
 import { LangKey } from "@/types";
 import { getSectionData } from "@/hooks/getSectionData";
 import LoadingSpinner from "@/components/loading/LoadingSpinner";
+import { urlFor } from '@/lib/sanity.realtime';
 
 const CACHE_KEY = "hero_utama_cache";
 const CACHE_DURATION = 5 * 60 * 1000;
@@ -153,9 +154,9 @@ export default function HeroUtama({ id, data }: SectionProps) {
       : content.speech_bubble.text_lines_en
     : "";
 
-  const images = content.slider_images?.map((img) => img.asset.url) || [];
-  const videoUrl = content.background_video?.asset.url;
-  const characterImage = content.speech_bubble?.character_image?.asset.url;
+  const images = content.slider_images?.map((img) => urlFor(img).auto('format').url()) || [];
+  const videoUrl = content.background_video?.asset?.url?.replace('cdn.sanity.io', 'img.saleswatch.id');
+  const characterImage = content.speech_bubble?.character_image?.asset ? urlFor(content.speech_bubble.character_image).auto('format').url() : null;
   const statistics = content.statistics || [];
 
   return (
