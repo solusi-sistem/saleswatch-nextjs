@@ -19,6 +19,9 @@ const builder = imageUrlBuilder({
 });
 
 export function urlFor(source: any) {
+  if (typeof source === 'string' && source.includes('cdn.sanity.io')) {
+    return source.replace('cdn.sanity.io', 'img.saleswatch.id');
+  }
   return builder.image(source);
 }
 
