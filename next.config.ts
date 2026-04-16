@@ -13,7 +13,7 @@ const nextConfig = {
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: 'img.saleswatch.id',
+        hostname: 'cdn.sanity.io',
         port: '',
         pathname: '/**',
       },

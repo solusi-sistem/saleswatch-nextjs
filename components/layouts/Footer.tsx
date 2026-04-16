@@ -182,7 +182,7 @@ export default function Footer() {
 
                     return (
                       <Link key={index} href={social.url} target="_blank" rel="noopener noreferrer" className="flex h-9 w-9 items-center justify-center rounded-full bg-white/10 hover:bg-[#6587A8] transition">
-                        {IconComponent ? <IconComponent size={18} /> : social.icon ? <Image src={urlFor(social.icon).width(18).height(18).auto('format').url()} alt={social.platform} width={18} height={18} /> : null}
+                        {IconComponent ? <IconComponent size={18} /> : social.icon ? <Image src={urlFor(social.icon).width(18).height(18).url()} alt={social.platform} width={18} height={18} /> : null}
                       </Link>
                     );
                   })}
