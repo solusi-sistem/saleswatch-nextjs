@@ -5,6 +5,7 @@ import { usePathname } from 'next/navigation';
 import { ChevronDown, ChevronUp } from 'lucide-react';
 import Image from 'next/image';
 import type { SectionProps } from '@/types/section';
+import { urlFor } from '@/lib/sanity.realtime';
 
 interface PrivacyPolicyBlock {
   _key?: string;
@@ -38,10 +39,10 @@ function PortableTextRenderer({ blocks }: { blocks: PrivacyPolicyBlock[] }) {
         if (block._type === 'image') {
           return (
             <div key={block._key || index} className="my-6">
-              {block.asset?.url && (
+              {block.asset && (
                 <div className="relative w-full h-64">
                   <Image
-                    src={block.asset.url}
+                    src={urlFor(block).url()}
                     alt={block.alt || 'Privacy Policy Image'}
                     fill
                     className="object-contain rounded-lg"
@@ -192,10 +193,10 @@ export default function PrivacyPolicySection({ data }: SectionProps) {
                     className="w-full px-6 py-5 flex items-center justify-between text-left hover:bg-gray-50 transition-colors"
                   >
                     <div className="flex items-center gap-4">
-                      {item.icon_type?.asset?.url && (
+                      {item.icon_type?.asset && (
                         <div className="w-12 h-12 bg-[#061551] rounded-lg flex items-center justify-center flex-shrink-0">
                           <Image
-                            src={item.icon_type.asset.url}
+                            src={urlFor(item.icon_type).url()}
                             alt={title}
                             width={24}
                             height={24}
