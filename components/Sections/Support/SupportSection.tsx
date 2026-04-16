@@ -4,7 +4,7 @@ import React, { useEffect, useMemo, useState, useRef } from 'react';
 import { usePathname } from 'next/navigation';
 import { ChevronDown, ChevronRight, Book } from 'lucide-react';
 import Image from 'next/image';
-
+import { urlFor } from '@/lib/sanity.realtime';
 import ScheduleDemoModal from '@/components/modals/ScheduleDemoModal';
 import type { SectionProps, SupportPlan } from '@/types/section';
 import type { SupportBlock } from '@/types/support';
@@ -19,10 +19,10 @@ function PortableTextRenderer({ blocks }: { blocks: SupportBlock[] }) {
         if (block._type === 'image') {
           return (
             <div key={block._key || index} className="my-4 md:my-6">
-              {block.asset?.url && (
+              {block.asset && (
                 <div className="relative w-full h-48 md:h-64">
                   <Image
-                    src={block.asset.url}
+                    src={urlFor(block).url()}
                     alt={block.alt || 'Support Image'}
                     fill
                     className="object-contain rounded-lg"
@@ -236,10 +236,10 @@ export default function SupportSection({ data }: SectionProps) {
                             ${isActive ? 'bg-[#061551]/5' : 'hover:bg-gray-50'}`}
                       >
                         <div className="flex items-center gap-2 md:gap-3">
-                          {item.icon?.asset?.url && (
+                          {item.icon?.asset && (
                             <div className={`p-1.5 md:p-2 rounded-lg ${isActive ? 'bg-[#061551]' : 'bg-gray-100'}`}>
                               <img
-                                src={item.icon.asset.url}
+                                src={urlFor(item.icon).url()}
                                 alt={title}
                                 className={`w-4 h-4 md:w-5 md:h-5 ${isActive ? 'brightness-0 invert' : ''}`}
                               />
