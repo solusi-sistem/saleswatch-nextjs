@@ -7,6 +7,7 @@ import { usePrivacyPolicy } from '@/contexts/PrivacyPolicyContext';
 import type { LangKey } from '@/types';
 import type { PrivacyPolicyBlock } from '@/types/privacyPolicy';
 import Image from 'next/image';
+import { urlFor } from '@/lib/sanity.realtime';
 
 // Portable Text Renderer Component
 function PortableTextRenderer({ blocks }: { blocks: PrivacyPolicyBlock[] }) {
@@ -16,9 +17,9 @@ function PortableTextRenderer({ blocks }: { blocks: PrivacyPolicyBlock[] }) {
         if (block._type === 'image') {
           return (
             <div key={block._key || index} className="my-6">
-              {block.asset?.url && (
+              {block.asset && (
                 <div className="relative w-full h-64">
-                  <Image src={block.asset.url} alt={block.alt || 'Privacy Policy Image'} fill className="object-contain rounded-lg" />
+                  <Image src={urlFor(block).url()} alt={block.alt || 'Privacy Policy Image'} fill className="object-contain rounded-lg" />
                 </div>
               )}
               {block.caption && <p className="text-sm text-gray-500 text-center mt-2 italic">{block.caption}</p>}
@@ -172,9 +173,9 @@ export default function PrivacyPolicySection() {
               >
                 <button onClick={() => toggleSection(item._id)} className="w-full px-6 py-5 flex items-center justify-between text-left hover:bg-gray-50 transition-colors">
                   <div className="flex items-center gap-4">
-                    {item.icon_type?.asset?.url && (
+                    {item.icon_type?.asset && (
                       <div className="w-12 h-12 bg-[#061551] rounded-lg flex items-center justify-center flex-shrink-0 overflow-hidden">
-                        <img src={item.icon_type.asset.url} alt={title} className="w-6 h-6 brightness-0 invert" />
+                        <img src={urlFor(item.icon_type).url()} alt={title} className="w-6 h-6 brightness-0 invert" />
                       </div>
                     )}
                     <h2 className="text-xl font-semibold text-gray-900">{title}</h2>

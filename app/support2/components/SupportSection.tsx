@@ -7,6 +7,7 @@ import { useSupport } from '@/contexts/SupportContext';
 import type { LangKey } from '@/types';
 import type { SupportBlock, SupportItem, SupportSubItem } from '@/types/support';
 import Image from 'next/image';
+import { urlFor } from '@/lib/sanity.realtime';
 
 // Portable Text Renderer Component
 function PortableTextRenderer({ blocks }: { blocks: SupportBlock[] }) {
@@ -16,10 +17,10 @@ function PortableTextRenderer({ blocks }: { blocks: SupportBlock[] }) {
         if (block._type === 'image') {
           return (
             <div key={block._key || index} className="my-6">
-              {block.asset?.url && (
+              {block.asset && (
                 <div className="relative w-full h-64">
                   <Image
-                    src={block.asset.url}
+                    src={urlFor(block).url()}
                     alt={block.alt || 'Support Image'}
                     fill
                     className="object-contain rounded-lg"
@@ -237,11 +238,11 @@ export default function SupportSection() {
                           ${isActive ? 'bg-[#061551]/5' : 'hover:bg-gray-50'}`}
                       >
                         <div className="flex items-center gap-3">
-                          {item.icon?.asset?.url && (
+                          {item.icon?.asset && (
                             <div className={`p-2 rounded-lg transition-colors ${isActive ? 'bg-[#061551] text-white' : 'bg-gray-100 text-gray-600'
                               }`}>
                               <img
-                                src={item.icon.asset.url}
+                                src={urlFor(item.icon).url()}
                                 alt={title}
                                 className={`w-5 h-5 ${isActive ? 'brightness-0 invert' : ''}`}
                               />

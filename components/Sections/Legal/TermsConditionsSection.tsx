@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { usePathname } from 'next/navigation';
 import { ChevronDown, ChevronUp } from 'lucide-react';
 import Image from 'next/image';
-
+import { urlFor } from '@/lib/sanity.realtime';
 import type { SectionProps, PrivacyPolicyItem } from '@/types/section';
 import type { LangKey } from '@/types';
 import type { TermsConditionsBlock } from '@/types/termsConditions';
@@ -16,10 +16,10 @@ function PortableTextRenderer({ blocks }: { blocks: TermsConditionsBlock[] }) {
         if (block._type === 'image') {
           return (
             <div key={block._key || index} className="my-6">
-              {block.asset?.url && (
+              {block.asset && (
                 <div className="relative w-full h-64">
                   <Image
-                    src={block.asset.url}
+                    src={urlFor(block).url()}
                     alt={block.alt || 'Terms and Conditions Image'}
                     fill
                     className="object-contain rounded-lg"
@@ -171,10 +171,10 @@ export default function TermsConditionsSection({ data }: SectionProps) {
                   className="w-full px-6 py-5 flex items-center justify-between text-left hover:bg-gray-50 transition-colors"
                 >
                   <div className="flex items-center gap-4">
-                    {item.icon_type?.asset?.url && (
+                    {item.icon_type?.asset && (
                       <div className="w-12 h-12 bg-[#061551] rounded-lg flex items-center justify-center flex-shrink-0">
                         <Image
-                          src={item.icon_type.asset.url}
+                          src={urlFor(item.icon_type).url()}
                           alt={title}
                           width={24}
                           height={24}
