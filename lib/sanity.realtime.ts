@@ -12,10 +12,9 @@ export const client = createClient({
 });
 
 const builder = imageUrlBuilder({
+  baseUrl: 'https://img.saleswatch.id',
   projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID!,
   dataset: process.env.NEXT_PUBLIC_SANITY_DATASET!,
-}).withConfig({
-  baseUrl: 'https://img.saleswatch.id'
 });
 
 export function urlFor(source: any) {
