@@ -68,7 +68,7 @@ export default function WhyItWorks({ data }: SectionProps) {
                     const buttonText = feature.cta_button
                         ? (currentLang === 'id' ? feature.cta_button.text_id : feature.cta_button.text_en)
                         : '';
-                    const imageUrl = feature.image?.asset?.url || '/img/placeholder.avif';
+                    const imageUrl = feature.image?.asset ? urlFor(feature.image).url() : '/img/placeholder.avif';
                     const isImageLeft = feature.image_position === 'left';
 
                     return (

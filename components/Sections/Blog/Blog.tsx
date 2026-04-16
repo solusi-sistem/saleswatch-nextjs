@@ -94,7 +94,7 @@ export default function Blog({ id, data }: SectionProps) {
                             ? (locale === 'id' ? (blog.category.name.id || blog.category.name.en) : (blog.category.name.en || blog.category.name.id)) || 'Uncategorized'
                             : 'Uncategorized';
                         
-                        const imageUrl = blog.image?.asset?.url || '/placeholder.jpg';
+                        const imageUrl = blog.image?.asset ? urlFor(blog.image).url() : '/placeholder.jpg';
                         
                         const imageAlt = blog.image?.alt 
                             ? (locale === 'id' ? (blog.image.alt.id || blog.image.alt.en) : (blog.image.alt.en || blog.image.alt.id)) || blogTitle

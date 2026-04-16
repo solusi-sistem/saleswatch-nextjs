@@ -69,7 +69,7 @@ const About = ({ data }: SectionProps) => {
 
   const title = currentLang === 'id' ? content.title_id : content.title_en;
   const description = currentLang === 'id' ? content.description_id : content.description_en;
-  const sideImage = content.side_image?.asset?.url || '';
+  const sideImage = content.side_image ? urlFor(content.side_image).url() : '';
   const faqItems = content.about_items || [];
 
   return (
