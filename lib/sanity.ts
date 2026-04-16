@@ -15,8 +15,14 @@ export const client = createClient({
 const builder = imageUrlBuilder(client);
 
 export function urlFor(source: any) {
-  const url = builder.image(source).auto('format').fit('max');
-  return url ? url.replace('cdn.sanity.io', 'img.saleswatch.id') : '';
+  const sanityUrl = builder.image(source).auto('format').fit('max').url();
+
+  // Check if the string exists, then swap the domain
+  if (sanityUrl) {
+    return sanityUrl.replace('cdn.sanity.io', 'img.saleswatch.id');
+  }
+
+  return '';
 }
 
 // ==========================================
