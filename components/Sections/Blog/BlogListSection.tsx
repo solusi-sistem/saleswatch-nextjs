@@ -6,6 +6,7 @@ import Image from 'next/image';
 import { useRouter, usePathname } from 'next/navigation';
 import { BlogItem } from '@/types/list/Blog';
 import { SectionProps } from '@/types/section';
+import { urlFor } from '@/lib/sanity.realtime';
 
 type BlogLocale = 'en' | 'id';
 
@@ -116,10 +117,10 @@ export default function BlogListSection({ id, data }: SectionProps) {
                     onClick={() => handlePostClick(slug)}
                   >
                     <article className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300 h-full animate__animated animate__fadeInUp">
-                      {post.image?.asset?.url && (
+                      {post.image?.asset && (
                         <div className="relative h-60 xl:h-92">
                           <Image
-                            src={post.image.asset.url}
+                            src={urlFor(post.image).url()}
                             alt={imageAlt}
                             fill
                             className="object-cover transition-transform duration-300 group-hover:scale-105"

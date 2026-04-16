@@ -1,5 +1,6 @@
 'use client';
 
+import { urlFor } from '@/lib/sanity.realtime';
 import { useEffect, useRef, useState } from 'react';
 import { usePathname } from 'next/navigation';
 import CustomButton from '@/components/button/button';
@@ -109,7 +110,7 @@ export default function RequestDemoSection() {
   const badgeText = currentLang === '' ? content.badge_text_en : content.badge_text_id;
   const buttonText = currentLang === '' ? content.cta_button.text_en : content.cta_button.text_id;
 
-  const backgroundImage = content.background_image?.asset?.url || '';
+  const backgroundImage = content.background_image?.asset ? urlFor(content.background_image).url() : '';
 
   return (
     <>

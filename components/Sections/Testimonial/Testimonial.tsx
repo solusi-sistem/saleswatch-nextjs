@@ -1,5 +1,6 @@
 "use client";
 
+import { urlFor } from '@/lib/sanity.realtime';
 import { useEffect, useState, useRef } from "react";
 import { usePathname } from "next/navigation";
 import { ChevronLeft, ChevronRight } from "lucide-react";
@@ -90,7 +91,7 @@ export default function Testimonial({ data }: SectionProps) {
                   ? item.client_role_id
                   : item.client_role_en;
               const logoUrl =
-                item.company_logo?.asset?.url || "/assets/images/logo1.webp";
+                item.company_logo?.asset ? urlFor(item.company_logo).url() : "/assets/images/logo1.webp";
 
               return (
                 <div key={index} className="w-full flex-shrink-0">

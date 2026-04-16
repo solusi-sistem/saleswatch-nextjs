@@ -4,6 +4,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
 import { BlogItem, BlogCategory } from '@/types/list/Blog';
+import { urlFor } from '@/lib/sanity.realtime';
 
 interface BlogCategorySectionProps {
   categorySlug: string;
@@ -131,10 +132,10 @@ export default function BlogCategorySection({
                   >
                     <article className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300 h-full animate__animated animate__fadeInUp">
                       {/* Image */}
-                      {post.image?.asset?.url && (
+                      {post.image?.asset && (
                         <div className="relative h-60 xl:h-92">
                           <Image 
-                            src={post.image.asset.url} 
+                            src={urlFor(post.image).url()} 
                             alt={imageAlt} 
                             fill 
                             className="object-cover transition-transform duration-300 group-hover:scale-105" 

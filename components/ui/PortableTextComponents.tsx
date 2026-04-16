@@ -1,6 +1,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { PortableTextComponents } from '@portabletext/react';
+import { urlFor } from '@/lib/sanity.realtime';
 
 /**
  * Custom components untuk render Portable Text dari Sanity
@@ -9,12 +10,12 @@ import { PortableTextComponents } from '@portabletext/react';
 export const portableTextComponents: PortableTextComponents = {
     types: {
         image: ({ value }: any) => {
-            if (!value?.asset?.url) return null;
+            if (!value?.asset) return null;
 
             return (
                 <div className="my-8">
                     <Image
-                        src={value.asset.url}
+                        src={urlFor(value).url()}
                         alt={value.alt || 'Blog image'}
                         width={800}
                         height={450}
@@ -116,11 +117,11 @@ export const portableTextComponents: PortableTextComponents = {
 export const minimalPortableTextComponents: PortableTextComponents = {
     types: {
         image: ({ value }: any) => {
-            if (!value?.asset?.url) return null;
+            if (!value?.asset) return null;
             return (
                 <div className="my-4">
                     <Image
-                        src={value.asset.url}
+                        src={urlFor(value).url()}
                         alt={value.alt || ''}
                         width={800}
                         height={450}

@@ -1,5 +1,6 @@
 "use client";
 
+import { urlFor } from '@/lib/sanity.realtime';
 import { useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
@@ -78,7 +79,7 @@ export default function Features({ data }: SectionProps) {
   );
 
   const logoText = content.logo_text || "";
-  const logoImage = content.logo_features?.asset?.url;
+  const logoImage = content.logo_features?.asset ? urlFor(content.logo_features).url() : undefined;
   const logoTeksFeatures = content.logo_teks_features || "";
   const suiteText = content.suite_text || "";
 
@@ -173,7 +174,7 @@ export default function Features({ data }: SectionProps) {
             currentLang === "id"
               ? feature.section_title_id || feature.section_title_en
               : feature.section_title_en || feature.section_title_id;
-          const mobileIcon = feature.mobile_icon?.asset?.url;
+          const mobileIcon = feature.mobile_icon?.asset ? urlFor(feature.mobile_icon).url() : undefined;
           const featuresList = feature.features_list || [];
 
           return (
@@ -208,7 +209,7 @@ export default function Features({ data }: SectionProps) {
                     currentLang === "id"
                       ? item.description?.id || item.description?.en
                       : item.description?.en || item.description?.id;
-                  const icon = item.icon?.asset?.url;
+                  const icon = item.icon?.asset ? urlFor(item.icon).url() : undefined;
 
                   return (
                     <div
@@ -245,7 +246,7 @@ export default function Features({ data }: SectionProps) {
             currentLang === "id"
               ? feature.section_title_id || feature.section_title_en
               : feature.section_title_en || feature.section_title_id;
-          const mobileIcon = feature.mobile_icon?.asset?.url;
+          const mobileIcon = feature.mobile_icon?.asset ? urlFor(feature.mobile_icon).url() : undefined;
           const featuresList = feature.features_list || [];
 
           return (
@@ -280,7 +281,7 @@ export default function Features({ data }: SectionProps) {
                     currentLang === "id"
                       ? item.description?.id || item.description?.en
                       : item.description?.en || item.description?.id;
-                  const icon = item.icon?.asset?.url;
+                  const icon = item.icon?.asset ? urlFor(item.icon).url() : undefined;
 
                   return (
                     <div

@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { PortableText } from '@portabletext/react';
 import { BlogItem, BlogCategory } from '@/types/list/Blog';
+import { urlFor } from '@/lib/sanity.realtime';
 
 interface BlogDetailSectionProps {
   slug: string;
@@ -22,11 +23,11 @@ const isValidLanguage = (lang: string): lang is BlogLocale => {
 const customPortableTextComponents = {
   types: {
     image: ({ value }: any) => {
-      if (!value?.asset?.url) return null;
+      if (!value?.asset) return null;
       return (
         <div className="my-6">
           <Image
-            src={value.asset.url}
+            src={urlFor(value).url()}
             alt={value.alt || 'Blog image'}
             width={800}
             height={450}
@@ -109,10 +110,10 @@ export default function BlogDetailSection({
             {/* Main Content */}
             <div className="lg:w-2/3">
               {/* Featured Image */}
-              {post.image?.asset?.url && (
+              {post.image?.asset && (
                 <div className="mb-8 rounded-lg overflow-hidden animate__animated animate__fadeInUp">
                   <Image
-                    src={post.image.asset.url}
+                    src={urlFor(post.image).url()}
                     alt={
                       post.image.alt
                         ? language === 'id'
@@ -222,10 +223,10 @@ export default function BlogDetailSection({
                         }
                         className="flex gap-3 hover:opacity-75 transition animate__animated animate__fadeInUp"
                       >
-                        {item.image?.asset?.url && (
+                        {item.image?.asset && (
                           <div className="w-16 h-16 rounded overflow-hidden flex-shrink-0">
                             <Image
-                              src={item.image.asset.url}
+                              src={urlFor(item.image).url()}
                               alt={
                                 item.image.alt
                                   ? language === 'id'
