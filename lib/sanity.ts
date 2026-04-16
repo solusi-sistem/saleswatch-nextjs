@@ -15,7 +15,7 @@ export const client = createClient({
 const builder = imageUrlBuilder(client);
 
 export function urlFor(source: any) {
-  return builder.image(source).auto('format').fit('max');
+  return builder.image(source).auto('format').fit('max').host('img.saleswatch.id');
 }
 
 // ==========================================
