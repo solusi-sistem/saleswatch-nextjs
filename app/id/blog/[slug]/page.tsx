@@ -7,6 +7,7 @@ import {
 import Header from "@/components/layouts/Header";
 import Footer from "@/components/layouts/Footer";
 import BlogDetailSection from "@/components/Sections/Blog/BlogDetailSection";
+import { urlFor } from '@/lib/sanity.realtime';
 
 // Generate static params for all published blogs
 import { client } from "@/lib/sanity";
@@ -55,7 +56,7 @@ export async function generateMetadata({
     openGraph: {
       title: metaTitle,
       description: metaDescription,
-      images: post.image?.asset?.url ? [post.image.asset.url] : [],
+      images: post.image?.asset ? [urlFor(post.image).url()] : [],
       type: "article",
       publishedTime: post.date,
       authors: [post.author],
@@ -64,7 +65,7 @@ export async function generateMetadata({
       card: "summary_large_image",
       title: metaTitle,
       description: metaDescription,
-      images: post.image?.asset?.url ? [post.image.asset.url] : [],
+      images: post.image?.asset ? [urlFor(post.image).url()] : [],
     },
   };
 }
