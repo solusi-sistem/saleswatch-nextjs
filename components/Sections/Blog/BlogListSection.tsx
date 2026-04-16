@@ -120,7 +120,7 @@ export default function BlogListSection({ id, data }: SectionProps) {
                       {post.image?.asset && (
                         <div className="relative h-60 xl:h-92">
                           <Image
-                            src={urlFor(post.image).auto('format').url()}
+                            src={urlFor(post.image).url()}
                             alt={imageAlt}
                             fill
                             className="object-cover transition-transform duration-300 group-hover:scale-105"
