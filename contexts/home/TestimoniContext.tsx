@@ -1,5 +1,6 @@
 'use client';
 
+import { urlFor } from '@/lib/sanity.realtime';
 import { useEffect, useState, useRef } from 'react';
 import { usePathname } from 'next/navigation';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
@@ -101,7 +102,7 @@ export default function TestimoniSection() {
   const quote = currentLang === '' ? currentTestimonial.quote_en : currentTestimonial.quote_id;
   const company = currentLang === '' ? currentTestimonial.company_en : currentTestimonial.company_id;
   const role = currentLang === '' ? currentTestimonial.client_role_en : currentTestimonial.client_role_id;
-  const logoUrl = currentTestimonial.company_logo?.asset?.url || '/assets/images/logo1.webp';
+  const logoUrl = currentTestimonial.company_logo?.asset ? urlFor(currentTestimonial.company_logo).url() : '/assets/images/logo1.webp';
 
   return (
     <section className="relative w-full bg-[#2D2D2F] py-16 md:py-24 overflow-hidden">
