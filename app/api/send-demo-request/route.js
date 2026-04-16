@@ -70,9 +70,11 @@ export async function POST(request) {
         pass: smtpPass,
       },
       tls: {
-        rejectUnauthorized: false, // Membantu jika ada issue dengan self-signed certs
+        //rejectUnauthorized: false, // Membantu jika ada issue dengan self-signed certs
+        //minVersion: 'TLSv1.2', 
+        //ciphers: 'HIGH:!aNULL:!STUPID',
       },
-      debug: false, // Ubah ke true jika perlu debug detail SMTP
+      debug: true, // Ubah ke true jika perlu debug detail SMTP
       logger: true,
     });
 
