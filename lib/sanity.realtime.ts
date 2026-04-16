@@ -11,17 +11,15 @@ export const client = createClient({
   // token: process.env.SANITY_API_TOKEN,
 });
 
-const builder = imageUrlBuilder(client);
+const builder = imageUrlBuilder({
+  projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID!,
+  dataset: process.env.NEXT_PUBLIC_SANITY_DATASET!,
+}).withConfig({
+  baseUrl: 'https://img.saleswatch.id'
+});
 
 export function urlFor(source: any) {
-  const sanityUrl = builder.image(source).auto('format').fit('max').url();
-
-  // Check if the string exists, then swap the domain
-  if (sanityUrl) {
-    return sanityUrl.replace('cdn.sanity.io', 'img.saleswatch.id');
-  }
-
-  return '';
+  return builder.image(source);
 }
 
 const LAYOUT_QUERY = `
