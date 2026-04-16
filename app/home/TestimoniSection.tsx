@@ -5,6 +5,7 @@ import { usePathname } from 'next/navigation';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useTestimonial } from '@/contexts/HomeContext';
 import type { LangKey } from '@/types';
+import { urlFor } from '@/lib/sanity.realtime';
 
 export default function TestimoniSection() {
   const pathname = usePathname();
@@ -96,7 +97,7 @@ export default function TestimoniSection() {
               const quote = currentLang === '' ? item.quote_en : item.quote_id;
               const company = currentLang === '' ? item.company_en : item.company_id;
               const role = currentLang === '' ? item.client_role_en : item.client_role_id;
-              const logoUrl = item.company_logo?.asset?.url || '';
+              const logoUrl = item.company_logo?.asset ? urlFor(item.company_logo).url() : '';
 
               return (
                 <div key={index} className="w-full flex-shrink-0">
