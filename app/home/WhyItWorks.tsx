@@ -1,5 +1,6 @@
 'use client';
 
+import { urlFor } from '@/lib/sanity.realtime';
 import React, { useEffect, useRef } from 'react';
 import { usePathname } from 'next/navigation';
 import Image from 'next/image';
@@ -90,7 +91,7 @@ export default function WhyItWorks() {
           const title = currentLang === '' ? feature.title_en : feature.title_id;
           const description = currentLang === '' ? feature.description_en : feature.description_id;
           const buttonText = currentLang === '' ? feature.cta_button.text_en : feature.cta_button.text_id;
-          const imageUrl = feature.image?.asset?.url || '';
+          const imageUrl = feature.image?.asset ? urlFor(feature.image).url() : '';
           const isImageLeft = feature.image_position === 'left';
 
           return (
