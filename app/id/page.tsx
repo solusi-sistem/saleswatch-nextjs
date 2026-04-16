@@ -42,7 +42,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     pageData?.seo_icon?.secure_url || pageData?.seo_icon?.url;
 
   const imageUrl =
-    rawUrl.replace('cdn.sanity.io', 'img.saleswatch.id');
+    rawUrl ? rawUrl.replace('cdn.sanity.io', 'img.saleswatch.id') : '';
 
   return {
     title,
