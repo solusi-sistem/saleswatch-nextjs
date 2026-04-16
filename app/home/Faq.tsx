@@ -1,5 +1,6 @@
 'use client';
 
+import { urlFor } from '@/lib/sanity.realtime';
 import { useState, useEffect, useRef } from 'react';
 import { usePathname } from 'next/navigation';
 import { useFaq } from '@/contexts/HomeContext';
@@ -93,7 +94,7 @@ const Faq = () => {
   const content = data.faq_content;
   const title = currentLang === '' ? content.title_en : content.title_id;
   const description = currentLang === '' ? content.description_en : content.description_id;
-  const sideImage = content.side_image?.asset?.url || '';
+  const sideImage = content.side_image?.asset ? urlFor(content.side_image).url() : '';
 
   return (
     <section className="py-24 px-6 md:px-10 bg-gray-50 overflow-hidden relative" style={{ scrollMarginTop: '300px' }}>
