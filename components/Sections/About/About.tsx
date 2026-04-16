@@ -1,5 +1,6 @@
 'use client';
 
+import { urlFor } from '@/lib/sanity.realtime';
 import { useState, useEffect, useRef } from 'react';
 import { usePathname } from 'next/navigation';
 import type { LangKey } from '@/types';
