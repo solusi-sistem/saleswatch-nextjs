@@ -7,6 +7,20 @@ import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useTestimonial } from '@/contexts/HomeContext';
 import type { LangKey } from '@/types';
 
+const POWERED_BY_LOGOS = [
+  { name: "GCP", icon: "https://cdn.jsdelivr.net/npm/simple-icons@v13/icons/googlecloud.svg" },
+  { name: "Cloudflare", icon: "https://cdn.jsdelivr.net/npm/simple-icons@v13/icons/cloudflare.svg" },
+  { name: "Sanity", icon: "https://cdn.jsdelivr.net/npm/simple-icons@v13/icons/sanity.svg" },
+];
+
+const FEATURED_BY_MEDIA = [
+  { name: "KOMPAS", className: "font-serif font-black text-xl md:text-2xl text-black/80 tracking-tight" },
+  { name: "AKURAT", className: "font-sans font-extrabold text-xl md:text-2xl text-black/80 tracking-tight" },
+];
+
+const DUPLICATED_POWERED_BY = Array(6).fill(POWERED_BY_LOGOS).flat();
+const DUPLICATED_FEATURED_BY = Array(10).fill(FEATURED_BY_MEDIA).flat();
+
 export default function TestimoniSection() {
   const pathname = usePathname();
   const currentLang: LangKey = pathname.startsWith('/id') ? 'id' : '';
@@ -130,12 +144,21 @@ export default function TestimoniSection() {
   return (
     <>
       <style dangerouslySetInnerHTML={{ __html: `
+        @keyframes marquee-left {
+          0% { transform: translate3d(0, 0, 0); }
+          100% { transform: translate3d(-50%, 0, 0); }
+        }
         @keyframes marquee-right {
-          0% { transform: translateX(-50%); }
-          100% { transform: translateX(0%); }
+          0% { transform: translate3d(-50%, 0, 0); }
+          100% { transform: translate3d(0, 0, 0); }
+        }
+        .animate-marquee-left {
+          animation: marquee-left 120s linear infinite;
+          will-change: transform;
         }
         .animate-marquee-right {
-          animation: marquee-right 25s linear infinite;
+          animation: marquee-right 120s linear infinite;
+          will-change: transform;
         }
       ` }} />
       <section className="relative w-full bg-[#2D2D2F] py-16 md:py-24 overflow-hidden">
@@ -212,80 +235,44 @@ export default function TestimoniSection() {
     </section>
 
     {/* Section baru setelah testimonial */}
-    <section className="w-full bg-[#DFE1E4] py-16 border-t border-black/[0.06] overflow-hidden">
-      <div className="w-full flex flex-col gap-12">
+    <section className="w-full bg-[#DFE1E4] py-12 md:py-20 border-t border-black/[0.06] overflow-hidden">
+      <div className="w-full flex flex-col gap-10 md:gap-14">
         
         {/* Didukung Oleh / Powered By */}
         <div 
           ref={poweredByRef}
-          className="flex flex-col gap-6 opacity-0"
+          className="flex flex-col gap-5 md:gap-6 opacity-0"
           style={{ animationDelay: '0.1s', animationFillMode: 'both' }}
         >
           <div className="mx-auto max-w-6xl w-full px-6">
-            <h4 className="text-xs font-bold tracking-[0.2em] text-black/40 uppercase text-center">
+            <h4 className="text-xs font-bold tracking-[0.25em] text-black/40 uppercase text-center">
               {currentLang === "id" ? "Didukung Oleh" : "Powered By"}
             </h4>
           </div>
           
-          <div className="relative w-full overflow-hidden py-2">
+          <div className="relative w-full overflow-hidden py-3">
             {/* Gradient Overlays */}
-            <div className="absolute left-0 top-0 bottom-0 w-24 bg-gradient-to-r from-[#DFE1E4] to-transparent z-10 pointer-events-none" />
-            <div className="absolute right-0 top-0 bottom-0 w-24 bg-gradient-to-l from-[#DFE1E4] to-transparent z-10 pointer-events-none" />
+            <div className="absolute left-0 top-0 bottom-0 w-12 sm:w-24 md:w-32 bg-gradient-to-r from-[#DFE1E4] to-transparent z-10 pointer-events-none" />
+            <div className="absolute right-0 top-0 bottom-0 w-12 sm:w-24 md:w-32 bg-gradient-to-l from-[#DFE1E4] to-transparent z-10 pointer-events-none" />
 
-            <div className="flex w-[200%] animate-marquee-right">
+            <div className="flex w-max animate-marquee-left">
               {/* Set 1 */}
-              <div className="flex justify-around items-center w-1/2 shrink-0 gap-8 px-4">
-                <div className="flex items-center gap-3 opacity-40 hover:opacity-90 hover:scale-105 transition-all duration-300 cursor-pointer">
-                  <img src="https://cdn.jsdelivr.net/npm/simple-icons@v13/icons/googlecloud.svg" alt="GCP" className="w-8 h-8 object-contain" />
-                  <span className="font-sans font-bold text-black/80 tracking-wide text-lg">GCP</span>
-                </div>
-                <div className="flex items-center gap-3 opacity-40 hover:opacity-90 hover:scale-105 transition-all duration-300 cursor-pointer">
-                  <img src="https://cdn.jsdelivr.net/npm/simple-icons@v13/icons/cloudflare.svg" alt="Cloudflare" className="w-8 h-8 object-contain" />
-                  <span className="font-sans font-bold text-black/80 tracking-wide text-lg">Cloudflare</span>
-                </div>
-                <div className="flex items-center gap-3 opacity-40 hover:opacity-90 hover:scale-105 transition-all duration-300 cursor-pointer">
-                  <img src="https://cdn.jsdelivr.net/npm/simple-icons@v13/icons/sanity.svg" alt="Sanity" className="w-8 h-8 object-contain" />
-                  <span className="font-sans font-bold text-black/80 tracking-wide text-lg">Sanity</span>
-                </div>
-                <div className="flex items-center gap-3 opacity-40 hover:opacity-90 hover:scale-105 transition-all duration-300 cursor-pointer">
-                  <img src="https://cdn.jsdelivr.net/npm/simple-icons@v13/icons/googlecloud.svg" alt="GCP" className="w-8 h-8 object-contain" />
-                  <span className="font-sans font-bold text-black/80 tracking-wide text-lg">GCP</span>
-                </div>
-                <div className="flex items-center gap-3 opacity-40 hover:opacity-90 hover:scale-105 transition-all duration-300 cursor-pointer">
-                  <img src="https://cdn.jsdelivr.net/npm/simple-icons@v13/icons/cloudflare.svg" alt="Cloudflare" className="w-8 h-8 object-contain" />
-                  <span className="font-sans font-bold text-black/80 tracking-wide text-lg">Cloudflare</span>
-                </div>
-                <div className="flex items-center gap-3 opacity-40 hover:opacity-90 hover:scale-105 transition-all duration-300 cursor-pointer">
-                  <img src="https://cdn.jsdelivr.net/npm/simple-icons@v13/icons/sanity.svg" alt="Sanity" className="w-8 h-8 object-contain" />
-                  <span className="font-sans font-bold text-black/80 tracking-wide text-lg">Sanity</span>
-                </div>
+              <div className="flex items-center gap-12 md:gap-20 px-6 md:px-10 shrink-0">
+                {DUPLICATED_POWERED_BY.map((logo, idx) => (
+                  <div key={`powered-1-${idx}`} className="flex items-center gap-3 opacity-50 shrink-0">
+                    <img src={logo.icon} alt={logo.name} className="w-6 h-6 md:w-8 md:h-8 object-contain" />
+                    <span className="font-sans font-bold text-black/80 tracking-wide text-base md:text-lg">{logo.name}</span>
+                  </div>
+                ))}
               </div>
               {/* Set 2 (Duplicate) */}
-              <div className="flex justify-around items-center w-1/2 shrink-0 gap-8 px-4">
-                <div className="flex items-center gap-3 opacity-40 hover:opacity-90 hover:scale-105 transition-all duration-300 cursor-pointer">
-                  <img src="https://cdn.jsdelivr.net/npm/simple-icons@v13/icons/googlecloud.svg" alt="GCP" className="w-8 h-8 object-contain" />
-                  <span className="font-sans font-bold text-black/80 tracking-wide text-lg">GCP</span>
-                </div>
-                <div className="flex items-center gap-3 opacity-40 hover:opacity-90 hover:scale-105 transition-all duration-300 cursor-pointer">
-                  <img src="https://cdn.jsdelivr.net/npm/simple-icons@v13/icons/cloudflare.svg" alt="Cloudflare" className="w-8 h-8 object-contain" />
-                  <span className="font-sans font-bold text-black/80 tracking-wide text-lg">Cloudflare</span>
-                </div>
-                <div className="flex items-center gap-3 opacity-40 hover:opacity-90 hover:scale-105 transition-all duration-300 cursor-pointer">
-                  <img src="https://cdn.jsdelivr.net/npm/simple-icons@v13/icons/sanity.svg" alt="Sanity" className="w-8 h-8 object-contain" />
-                  <span className="font-sans font-bold text-black/80 tracking-wide text-lg">Sanity</span>
-                </div>
-                <div className="flex items-center gap-3 opacity-40 hover:opacity-90 hover:scale-105 transition-all duration-300 cursor-pointer">
-                  <img src="https://cdn.jsdelivr.net/npm/simple-icons@v13/icons/googlecloud.svg" alt="GCP" className="w-8 h-8 object-contain" />
-                  <span className="font-sans font-bold text-black/80 tracking-wide text-lg">GCP</span>
-                </div>
-                <div className="flex items-center gap-3 opacity-40 hover:opacity-90 hover:scale-105 transition-all duration-300 cursor-pointer">
-                  <img src="https://cdn.jsdelivr.net/npm/simple-icons@v13/icons/cloudflare.svg" alt="Cloudflare" className="w-8 h-8 object-contain" />
-                  <span className="font-sans font-bold text-black/80 tracking-wide text-lg">Cloudflare</span>
-                </div>
-                <div className="flex items-center gap-3 opacity-40 hover:opacity-90 hover:scale-105 transition-all duration-300 cursor-pointer">
-                  <img src="https://cdn.jsdelivr.net/npm/simple-icons@v13/icons/sanity.svg" alt="Sanity" className="w-8 h-8 object-contain" />
-                  <span className="font-sans font-bold text-black/80 tracking-wide text-lg">Sanity</span>
-                </div>
+              <div className="flex items-center gap-12 md:gap-20 px-6 md:px-10 shrink-0">
+                {DUPLICATED_POWERED_BY.map((logo, idx) => (
+                  <div key={`powered-2-${idx}`} className="flex items-center gap-3 opacity-50 shrink-0">
+                    <img src={logo.icon} alt={logo.name} className="w-6 h-6 md:w-8 md:h-8 object-contain" />
+                    <span className="font-sans font-bold text-black/80 tracking-wide text-base md:text-lg">{logo.name}</span>
+                  </div>
+                ))}
               </div>
             </div>
           </div>
@@ -294,62 +281,36 @@ export default function TestimoniSection() {
         {/* Diliput Oleh / Featured By */}
         <div 
           ref={featuredByRef}
-          className="flex flex-col gap-6 opacity-0"
+          className="flex flex-col gap-5 md:gap-6 opacity-0"
           style={{ animationDelay: '0.1s', animationFillMode: 'both' }}
         >
           <div className="mx-auto max-w-6xl w-full px-6">
-            <h4 className="text-xs font-bold tracking-[0.2em] text-black/40 uppercase text-center">
+            <h4 className="text-xs font-bold tracking-[0.25em] text-black/40 uppercase text-center">
               {currentLang === "id" ? "Diliput Oleh" : "Featured By"}
             </h4>
           </div>
           
-          <div className="relative w-full overflow-hidden py-2">
+          <div className="relative w-full overflow-hidden py-3">
             {/* Gradient Overlays */}
-            <div className="absolute left-0 top-0 bottom-0 w-24 bg-gradient-to-r from-[#DFE1E4] to-transparent z-10 pointer-events-none" />
-            <div className="absolute right-0 top-0 bottom-0 w-24 bg-gradient-to-l from-[#DFE1E4] to-transparent z-10 pointer-events-none" />
+            <div className="absolute left-0 top-0 bottom-0 w-12 sm:w-24 md:w-32 bg-gradient-to-r from-[#DFE1E4] to-transparent z-10 pointer-events-none" />
+            <div className="absolute right-0 top-0 bottom-0 w-12 sm:w-24 md:w-32 bg-gradient-to-l from-[#DFE1E4] to-transparent z-10 pointer-events-none" />
 
-            <div className="flex w-[200%] animate-marquee-right">
+            <div className="flex w-max animate-marquee-right">
               {/* Set 1 */}
-              <div className="flex justify-around items-center w-1/2 shrink-0 gap-8 px-4">
-                <div className="flex items-center gap-2 opacity-40 hover:opacity-90 hover:scale-105 transition-all duration-300 cursor-pointer">
-                  <span className="font-serif font-black text-2xl text-black/80 tracking-tight">KOMPAS</span>
-                </div>
-                <div className="flex items-center gap-2 opacity-40 hover:opacity-90 hover:scale-105 transition-all duration-300 cursor-pointer">
-                  <span className="font-sans font-extrabold text-2xl text-black/80 tracking-tight">AKURAT</span>
-                </div>
-                <div className="flex items-center gap-2 opacity-40 hover:opacity-90 hover:scale-105 transition-all duration-300 cursor-pointer">
-                  <span className="font-serif font-black text-2xl text-black/80 tracking-tight">KOMPAS</span>
-                </div>
-                <div className="flex items-center gap-2 opacity-40 hover:opacity-90 hover:scale-105 transition-all duration-300 cursor-pointer">
-                  <span className="font-sans font-extrabold text-2xl text-black/80 tracking-tight">AKURAT</span>
-                </div>
-                <div className="flex items-center gap-2 opacity-40 hover:opacity-90 hover:scale-105 transition-all duration-300 cursor-pointer">
-                  <span className="font-serif font-black text-2xl text-black/80 tracking-tight">KOMPAS</span>
-                </div>
-                <div className="flex items-center gap-2 opacity-40 hover:opacity-90 hover:scale-105 transition-all duration-300 cursor-pointer">
-                  <span className="font-sans font-extrabold text-2xl text-black/80 tracking-tight">AKURAT</span>
-                </div>
+              <div className="flex items-center gap-12 md:gap-20 px-6 md:px-10 shrink-0">
+                {DUPLICATED_FEATURED_BY.map((media, idx) => (
+                  <div key={`featured-1-${idx}`} className="opacity-50 shrink-0">
+                    <span className={media.className}>{media.name}</span>
+                  </div>
+                ))}
               </div>
               {/* Set 2 (Duplicate) */}
-              <div className="flex justify-around items-center w-1/2 shrink-0 gap-8 px-4">
-                <div className="flex items-center gap-2 opacity-40 hover:opacity-90 hover:scale-105 transition-all duration-300 cursor-pointer">
-                  <span className="font-serif font-black text-2xl text-black/80 tracking-tight">KOMPAS</span>
-                </div>
-                <div className="flex items-center gap-2 opacity-40 hover:opacity-90 hover:scale-105 transition-all duration-300 cursor-pointer">
-                  <span className="font-sans font-extrabold text-2xl text-black/80 tracking-tight">AKURAT</span>
-                </div>
-                <div className="flex items-center gap-2 opacity-40 hover:opacity-90 hover:scale-105 transition-all duration-300 cursor-pointer">
-                  <span className="font-serif font-black text-2xl text-black/80 tracking-tight">KOMPAS</span>
-                </div>
-                <div className="flex items-center gap-2 opacity-40 hover:opacity-90 hover:scale-105 transition-all duration-300 cursor-pointer">
-                  <span className="font-sans font-extrabold text-2xl text-black/80 tracking-tight">AKURAT</span>
-                </div>
-                <div className="flex items-center gap-2 opacity-40 hover:opacity-90 hover:scale-105 transition-all duration-300 cursor-pointer">
-                  <span className="font-serif font-black text-2xl text-black/80 tracking-tight">KOMPAS</span>
-                </div>
-                <div className="flex items-center gap-2 opacity-40 hover:opacity-90 hover:scale-105 transition-all duration-300 cursor-pointer">
-                  <span className="font-sans font-extrabold text-2xl text-black/80 tracking-tight">AKURAT</span>
-                </div>
+              <div className="flex items-center gap-12 md:gap-20 px-6 md:px-10 shrink-0">
+                {DUPLICATED_FEATURED_BY.map((media, idx) => (
+                  <div key={`featured-2-${idx}`} className="opacity-50 shrink-0">
+                    <span className={media.className}>{media.name}</span>
+                  </div>
+                ))}
               </div>
             </div>
           </div>
