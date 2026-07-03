@@ -5,21 +5,21 @@ import { cache } from "react";
 import type { LayoutData } from "@/types";
 
 export const client = createClient({
-  projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID!,
-  dataset: process.env.NEXT_PUBLIC_SANITY_DATASET!,
-  apiVersion: process.env.NEXT_PUBLIC_SANITY_API_VERSION!,
-  useCdn: true,
-  // token: process.env.SANITY_API_TOKEN,
+	projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID!,
+	dataset: process.env.NEXT_PUBLIC_SANITY_DATASET!,
+	apiVersion: process.env.NEXT_PUBLIC_SANITY_API_VERSION!,
+	useCdn: true,
+	// token: process.env.SANITY_API_TOKEN,
 });
 
 const builder = imageUrlBuilder({
-  baseUrl: 'https://img.saleswatch.id',
-  projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID!,
-  dataset: process.env.NEXT_PUBLIC_SANITY_DATASET!,
+	baseUrl: "https://img.saleswatch.id",
+	projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID!,
+	dataset: process.env.NEXT_PUBLIC_SANITY_DATASET!,
 });
 
 export function urlFor(source: any) {
-  return builder.image(source);
+	return builder.image(source);
 }
 
 // ==========================================
@@ -306,30 +306,30 @@ export const MASTER_QUERY = `{
 // ==========================================
 
 export const getLayoutData = cache(async (slug?: string): Promise<any> => {
-  try {
-    // If slug is provided, we fetch the full master data (layout + page + sections)
-    // If not, we still fetch the master data but without a specific page slug (pageData will be null)
-    const params = { slug: slug || "" };
+	try {
+		// If slug is provided, we fetch the full master data (layout + page + sections)
+		// If not, we still fetch the master data but without a specific page slug (pageData will be null)
+		const params = { slug: slug || "" };
 
-    if (typeof window === "undefined") {
-      const data = await client.fetch(MASTER_QUERY, params, {
-        next: {
-          revalidate: 86400,
-          tags: ["layout", slug ? "page-data" : ""].filter(Boolean),
-        },
-      });
-      // If we only need the layout (compatible with old calls), we can return it or the full data.
-      // Most components expect the 'layout' property if they are updated,
-      // but to maintain compatibility we could check if they only want the layout object.
-      return data;
-    }
+		if (typeof window === "undefined") {
+			const data = await client.fetch(MASTER_QUERY, params, {
+				next: {
+					revalidate: 86400,
+					tags: ["layout", slug ? "page-data" : ""].filter(Boolean),
+				},
+			});
+			// If we only need the layout (compatible with old calls), we can return it or the full data.
+			// Most components expect the 'layout' property if they are updated,
+			// but to maintain compatibility we could check if they only want the layout object.
+			return data;
+		}
 
-    const data = await proxyFetch<any>(MASTER_QUERY, params);
-    return data;
-  } catch (error) {
-    console.error("Error fetching data:", error);
-    return null;
-  }
+		const data = await proxyFetch<any>(MASTER_QUERY, params);
+		return data;
+	} catch (error) {
+		console.error("Error fetching data:", error);
+		return null;
+	}
 });
 
 /**
@@ -338,7 +338,7 @@ export const getLayoutData = cache(async (slug?: string): Promise<any> => {
 export const getMasterData = getLayoutData;
 
 export function listenToLayoutChanges(callback: (data: LayoutData) => void) {
-  // Real-time listeners are disabled
-  console.log("Layout listener disabled.");
-  return () => {};
+	// Real-time listeners are disabled
+	console.log("Layout listener disabled.");
+	return () => {};
 }

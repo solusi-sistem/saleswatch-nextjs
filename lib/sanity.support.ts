@@ -1,6 +1,6 @@
 // import { client } from './sanity.realtime';
-import { proxyFetch } from '@/lib/sanityFetcher';
-import type { SupportSection } from '@/types/support';
+import { proxyFetch } from "@/lib/sanityFetcher";
+import type { SupportSection } from "@/types/support";
 
 const SUPPORT_QUERY = `
   *[_type == "section" && type_section == "supportSection" && published_at == true][0] {
@@ -70,37 +70,40 @@ const SUPPORT_QUERY_SIMPLE = `
 `;
 
 export async function getSupportData(): Promise<SupportSection | null> {
-  try {
-    // let data = await client.fetch<SupportSection>(SUPPORT_QUERY);
-    let data = await proxyFetch<SupportSection>(SUPPORT_QUERY);
-    
-    if (!data?.support_content?.items || data.support_content.items.length === 0) {
-      // data = await client.fetch<SupportSection>(SUPPORT_QUERY_SIMPLE);
-      data = await proxyFetch<SupportSection>(SUPPORT_QUERY_SIMPLE);
-    }
-    
-    return data;
-  } catch (error) {
-    return null;
-  }
+	try {
+		// let data = await client.fetch<SupportSection>(SUPPORT_QUERY);
+		let data = await proxyFetch<SupportSection>(SUPPORT_QUERY);
+
+		if (
+			!data?.support_content?.items ||
+			data.support_content.items.length === 0
+		) {
+			// data = await client.fetch<SupportSection>(SUPPORT_QUERY_SIMPLE);
+			data = await proxyFetch<SupportSection>(SUPPORT_QUERY_SIMPLE);
+		}
+
+		return data;
+	} catch (error) {
+		return null;
+	}
 }
 
 export function listenToSupportChanges(
-  callback: (data: SupportSection) => void
+	callback: (data: SupportSection) => void,
 ) {
-//   const subscription = client
-//     .listen<SupportSection>(SUPPORT_QUERY)
-//     .subscribe({
-//       next: (update) => {
-//         if (update.result) {
-//           callback(update.result);
-//         }
-//       },
-//       error: (err) => {
-//       },
-//     });
-//
-//   return () => subscription.unsubscribe();
-  console.log("listener disabled.");
-  return () => {}; 
+	//   const subscription = client
+	//     .listen<SupportSection>(SUPPORT_QUERY)
+	//     .subscribe({
+	//       next: (update) => {
+	//         if (update.result) {
+	//           callback(update.result);
+	//         }
+	//       },
+	//       error: (err) => {
+	//       },
+	//     });
+	//
+	//   return () => subscription.unsubscribe();
+	console.log("listener disabled.");
+	return () => {};
 }

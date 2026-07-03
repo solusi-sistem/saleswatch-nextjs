@@ -1,6 +1,6 @@
 // import { client } from './sanity.realtime';
-import { proxyFetch } from '@/lib/sanityFetcher';
-import type { TermsConditionsSection } from '@/types/termsConditions';
+import { proxyFetch } from "@/lib/sanityFetcher";
+import type { TermsConditionsSection } from "@/types/termsConditions";
 
 const TERMS_CONDITIONS_QUERY = `
   *[_type == "section" && type_section == "termsAndConditionsSection" && published_at == true][0] {
@@ -95,40 +95,45 @@ const TERMS_CONDITIONS_QUERY_SIMPLE = `
 `;
 
 export async function getTermsConditionsData(): Promise<TermsConditionsSection | null> {
-  try {
-    // let data = await client.fetch<TermsConditionsSection>(TERMS_CONDITIONS_QUERY);
-    let data = await proxyFetch<TermsConditionsSection>(TERMS_CONDITIONS_QUERY);
-    
-    if (!data?.terms_and_conditions_content?.items || data.terms_and_conditions_content.items.length === 0) {
-      console.log('Trying alternative query...');
-      // data = await client.fetch<TermsConditionsSection>(TERMS_CONDITIONS_QUERY_SIMPLE);
-      data = await proxyFetch<TermsConditionsSection>(TERMS_CONDITIONS_QUERY_SIMPLE);
-    }
-    
-    return data;
-  } catch (error) {
-    console.error('Error fetching Terms and Conditions data:', error);
-    return null;
-  }
+	try {
+		// let data = await client.fetch<TermsConditionsSection>(TERMS_CONDITIONS_QUERY);
+		let data = await proxyFetch<TermsConditionsSection>(TERMS_CONDITIONS_QUERY);
+
+		if (
+			!data?.terms_and_conditions_content?.items ||
+			data.terms_and_conditions_content.items.length === 0
+		) {
+			console.log("Trying alternative query...");
+			// data = await client.fetch<TermsConditionsSection>(TERMS_CONDITIONS_QUERY_SIMPLE);
+			data = await proxyFetch<TermsConditionsSection>(
+				TERMS_CONDITIONS_QUERY_SIMPLE,
+			);
+		}
+
+		return data;
+	} catch (error) {
+		console.error("Error fetching Terms and Conditions data:", error);
+		return null;
+	}
 }
 
 export function listenToTermsConditionsChanges(
-  callback: (data: TermsConditionsSection) => void
+	callback: (data: TermsConditionsSection) => void,
 ) {
-//   const subscription = client
-//     .listen<TermsConditionsSection>(TERMS_CONDITIONS_QUERY)
-//     .subscribe({
-//       next: (update) => {
-//         if (update.result) {
-//           callback(update.result);
-//         }
-//       },
-//       error: (err) => {
-//         console.error('Terms and Conditions subscription error:', err);
-//       },
-//     });
-//
-//   return () => subscription.unsubscribe();
-  console.log("listener disabled.");
-  return () => {}; 
+	//   const subscription = client
+	//     .listen<TermsConditionsSection>(TERMS_CONDITIONS_QUERY)
+	//     .subscribe({
+	//       next: (update) => {
+	//         if (update.result) {
+	//           callback(update.result);
+	//         }
+	//       },
+	//       error: (err) => {
+	//         console.error('Terms and Conditions subscription error:', err);
+	//       },
+	//     });
+	//
+	//   return () => subscription.unsubscribe();
+	console.log("listener disabled.");
+	return () => {};
 }
