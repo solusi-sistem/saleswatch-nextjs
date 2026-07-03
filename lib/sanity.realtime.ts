@@ -1,24 +1,24 @@
-import { createClient } from 'next-sanity';
-import imageUrlBuilder from '@sanity/image-url';
-import { proxyFetch } from '@/lib/sanityFetcher';
-import type { LayoutData } from '@/types';
+import { createClient } from "next-sanity";
+import imageUrlBuilder from "@sanity/image-url";
+import { proxyFetch } from "@/lib/sanityFetcher";
+import type { LayoutData } from "@/types";
 
 export const client = createClient({
-  projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID!,
-  dataset: process.env.NEXT_PUBLIC_SANITY_DATASET!,
-  apiVersion: process.env.NEXT_PUBLIC_SANITY_API_VERSION!,
-  useCdn: true,
-  // token: process.env.SANITY_API_TOKEN,
+	projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID!,
+	dataset: process.env.NEXT_PUBLIC_SANITY_DATASET!,
+	apiVersion: process.env.NEXT_PUBLIC_SANITY_API_VERSION!,
+	useCdn: true,
+	// token: process.env.SANITY_API_TOKEN,
 });
 
 const builder = imageUrlBuilder({
-  baseUrl: 'https://img.saleswatch.id',
-  projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID!,
-  dataset: process.env.NEXT_PUBLIC_SANITY_DATASET!,
+	baseUrl: "https://img.saleswatch.id",
+	projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID!,
+	dataset: process.env.NEXT_PUBLIC_SANITY_DATASET!,
 });
 
 export function urlFor(source: any) {
-  return builder.image(source);
+	return builder.image(source);
 }
 
 const LAYOUT_QUERY = `
@@ -101,29 +101,29 @@ const LAYOUT_QUERY = `
 `;
 
 export async function getLayoutData(): Promise<LayoutData | null> {
-  try {
-    // const data = await client.fetch<LayoutData>(LAYOUT_QUERY);
-    const data = await proxyFetch<LayoutData>(LAYOUT_QUERY);
-    return data;
-  } catch (error) {
-    return null;
-  }
+	try {
+		// const data = await client.fetch<LayoutData>(LAYOUT_QUERY);
+		const data = await proxyFetch<LayoutData>(LAYOUT_QUERY);
+		return data;
+	} catch (error) {
+		return null;
+	}
 }
 
 export function listenToLayoutChanges(callback: (data: LayoutData) => void) {
-//   const subscription = client.listen<LayoutData>(LAYOUT_QUERY).subscribe({
-//     next: (update) => {
-//       if (update.result) {
-//         callback(update.result);
-//       }
-//     },
-//     error: (err) => {},
-//   });
-//
-//   return () => subscription.unsubscribe();
-//
-// We've disabled the real-time listener to remove the token.
-// This function now returns a "do nothing" cleanup function.
-  console.log("Layout listener disabled.");
-  return () => {}; 
+	//   const subscription = client.listen<LayoutData>(LAYOUT_QUERY).subscribe({
+	//     next: (update) => {
+	//       if (update.result) {
+	//         callback(update.result);
+	//       }
+	//     },
+	//     error: (err) => {},
+	//   });
+	//
+	//   return () => subscription.unsubscribe();
+	//
+	// We've disabled the real-time listener to remove the token.
+	// This function now returns a "do nothing" cleanup function.
+	console.log("Layout listener disabled.");
+	return () => {};
 }

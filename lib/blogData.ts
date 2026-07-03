@@ -1,26 +1,28 @@
 export type BlogPost = {
-  id: number;
-  title: string;
-  slug: string;
-  excerpt: string;
-  date: string;
-  category: string;
-  author: string;
-  image: string;
-  content: string;
+	id: number;
+	title: string;
+	slug: string;
+	excerpt: string;
+	date: string;
+	category: string;
+	author: string;
+	image: string;
+	content: string;
 };
 
 export const blogPosts: BlogPost[] = [
-  {
-    id: 4,
-    title: '5 Businesses That Soared in 2025 — And What FMCG Distributors Can Learn',
-    slug: '5-businesses-that-soared-in-2025',
-    excerpt: "Amid economic uncertainty, five business sectors didn't just survive in 2025 — they thrived. Discover their secrets and how FMCG distributors can apply the same strategies to boost sales and efficiency.",
-    date: 'January 15, 2025',
-    category: 'Development',
-    author: 'Sales Watch Team',
-    image: '/assets/images/blog/blog4.webp',
-    content: `<p>2025 brought new challenges: volatile inflation, shifting consumer behavior, and intensifying competition. Yet amid this pressure, five business sectors didn’t just survive — they truly <strong>soared</strong>.</p>
+	{
+		id: 4,
+		title:
+			"5 Businesses That Soared in 2025 — And What FMCG Distributors Can Learn",
+		slug: "5-businesses-that-soared-in-2025",
+		excerpt:
+			"Amid economic uncertainty, five business sectors didn't just survive in 2025 — they thrived. Discover their secrets and how FMCG distributors can apply the same strategies to boost sales and efficiency.",
+		date: "January 15, 2025",
+		category: "Development",
+		author: "Sales Watch Team",
+		image: "/assets/images/blog/blog4.webp",
+		content: `<p>2025 brought new challenges: volatile inflation, shifting consumer behavior, and intensifying competition. Yet amid this pressure, five business sectors didn’t just survive — they truly <strong>soared</strong>.</p>
 
 <p>Below is Sales Watch’s in-depth analysis of these high-growth sectors — and the practical lessons FMCG distributors and field sales companies can apply immediately.</p>
 
@@ -59,17 +61,19 @@ export const blogPosts: BlogPost[] = [
 </blockquote>
 
 <p>Ready to transform your field sales team like these high-growth businesses?</p>`,
-  },
-  {
-    id: 5,
-    title: 'Essential Skills Marketing & Sales Professionals Must Have in 2026 — From Data to AI',
-    slug: 'essential-skills-marketing-sales-professionals-must-have-in-2026',
-    excerpt: 'In 2026, success in sales and marketing isn’t just about relationships—it’s about data fluency, AI collaboration, and adaptive execution. Discover the 5 non-negotiable skills for field teams and leaders alike.',
-    date: 'February 10, 2025',
-    category: 'Development',
-    author: 'Sales Watch Team',
-    image: '/assets/images/blog/blog5.webp',
-    content: `<p>The sales landscape is evolving faster than ever. In 2026, the most successful marketing and sales professionals aren’t just charismatic negotiators—they’re <strong>tech-savvy strategists</strong> who blend human insight with digital intelligence.</p>
+	},
+	{
+		id: 5,
+		title:
+			"Essential Skills Marketing & Sales Professionals Must Have in 2026 — From Data to AI",
+		slug: "essential-skills-marketing-sales-professionals-must-have-in-2026",
+		excerpt:
+			"In 2026, success in sales and marketing isn’t just about relationships—it’s about data fluency, AI collaboration, and adaptive execution. Discover the 5 non-negotiable skills for field teams and leaders alike.",
+		date: "February 10, 2025",
+		category: "Development",
+		author: "Sales Watch Team",
+		image: "/assets/images/blog/blog5.webp",
+		content: `<p>The sales landscape is evolving faster than ever. In 2026, the most successful marketing and sales professionals aren’t just charismatic negotiators—they’re <strong>tech-savvy strategists</strong> who blend human insight with digital intelligence.</p>
 
 <p>At Sales Watch, we work closely with FMCG distributors and field sales teams across Indonesia. Through this lens, we’ve identified five essential skills that separate high performers from the rest in 2026.</p>
 
@@ -105,18 +109,19 @@ export const blogPosts: BlogPost[] = [
 </blockquote>
 
 <p>Is your team ready for the future of field sales?</p>`,
-  },
-  {
-    id: 6,
-    title: 'Essential Marketing & Sales Skills for 2026 — From Data Literacy to AI Collaboration',
-    slug: 'essential-marketing-sales-skills-2026-data-ai',
-    excerpt:
-      'In 2026, success in marketing and sales no longer depends solely on relationships or negotiation skills. What truly matters is the ability to interpret data, collaborate with AI, and adapt in the field—even when the signal drops.',
-    date: 'February 10, 2025',
-    category: 'Development',
-    author: 'Sales Watch Team',
-    image: '/assets/images/blog/blog6.webp',
-    content: `<p>The world of sales and marketing is evolving faster than ever. In 2026, top performers aren’t just charismatic speakers or skilled negotiators—they are <strong>tech-savvy strategists</strong> who blend human insight with digital intelligence.</p>
+	},
+	{
+		id: 6,
+		title:
+			"Essential Marketing & Sales Skills for 2026 — From Data Literacy to AI Collaboration",
+		slug: "essential-marketing-sales-skills-2026-data-ai",
+		excerpt:
+			"In 2026, success in marketing and sales no longer depends solely on relationships or negotiation skills. What truly matters is the ability to interpret data, collaborate with AI, and adapt in the field—even when the signal drops.",
+		date: "February 10, 2025",
+		category: "Development",
+		author: "Sales Watch Team",
+		image: "/assets/images/blog/blog6.webp",
+		content: `<p>The world of sales and marketing is evolving faster than ever. In 2026, top performers aren’t just charismatic speakers or skilled negotiators—they are <strong>tech-savvy strategists</strong> who blend human insight with digital intelligence.</p>
 
 <p>At Sales Watch, we work closely with hundreds of FMCG distributors across Indonesia. From this hands-on experience, we’ve identified five essential skills that separate high-performing sales teams from the rest.</p>
 
@@ -152,17 +157,18 @@ export const blogPosts: BlogPost[] = [
 </blockquote>
 
 <p>Is your team ready for the future of field sales?</p>`,
-  },
-  {
-    id: 1,
-    title: 'How to Prevent Fraud in Field Sales Teams',
-    slug: 'how-to-prevent-fraud-in-field-sales-teams',
-    excerpt: 'Sales fraud can significantly damage your company. Discover effective strategies to prevent it.',
-    date: 'December 25, 2025',
-    category: 'Development',
-    author: 'Sales Watch Team',
-    image: '/assets/images/blog/blog1.webp',
-    content: `
+	},
+	{
+		id: 1,
+		title: "How to Prevent Fraud in Field Sales Teams",
+		slug: "how-to-prevent-fraud-in-field-sales-teams",
+		excerpt:
+			"Sales fraud can significantly damage your company. Discover effective strategies to prevent it.",
+		date: "December 25, 2025",
+		category: "Development",
+		author: "Sales Watch Team",
+		image: "/assets/images/blog/blog1.webp",
+		content: `
       <p>Sales fraud is a serious issue that can cause financial and reputational damage. From fake store visit reports to sales data manipulation, these actions are often hard to detect without the right system.</p>
       <h2>Why Does Fraud Happen?</h2>
       <p>Fraud often occurs due to lack of oversight and accountability. When field sales teams work without proper tracking systems, they have room to cheat.</p>
@@ -176,17 +182,18 @@ export const blogPosts: BlogPost[] = [
       <p>A distributor owner said: "Managing remotely used to be a headache. We relied on WhatsApp and photos, and fraud was a constant risk. With Sales Watch, productivity has been up 15% and we haven't had a single case of fraud since."</p>
       <p>With the right system, companies don't just prevent fraud – they boost productivity and trust between management and sales teams.</p>
     `,
-  },
-  {
-    id: 2,
-    title: '15% Productivity Boost: Secrets of Successful Distributors',
-    slug: '15-percent-productivity-boost-secrets-of-successful-distributors',
-    excerpt: 'How a distributor in Bojonegoro increased their sales team productivity by 15%.',
-    date: 'December 20, 2025',
-    category: 'Development',
-    author: 'Sales Watch Team',
-    image: '/assets/images/blog/blog2.webp',
-    content: `
+	},
+	{
+		id: 2,
+		title: "15% Productivity Boost: Secrets of Successful Distributors",
+		slug: "15-percent-productivity-boost-secrets-of-successful-distributors",
+		excerpt:
+			"How a distributor in Bojonegoro increased their sales team productivity by 15%.",
+		date: "December 20, 2025",
+		category: "Development",
+		author: "Sales Watch Team",
+		image: "/assets/images/blog/blog2.webp",
+		content: `
       <p>In distribution, sales team productivity is key to success. Yet many companies struggle to measure and improve field performance.</p>
       <h2>Success Story: Bojonegoro Distributor</h2>
       <p>A distributor in Bojonegoro achieved a 15% productivity increase in just weeks. How?</p>
@@ -200,17 +207,18 @@ export const blogPosts: BlogPost[] = [
       <p>"With Sales Watch, productivity has been up 15% and we haven't had a single case of fraud since," said the company owner.</p>
       <p>This productivity boost increased revenue while improving team morale and management-sales relationships.</p>
     `,
-  },
-  {
-    id: 3,
-    title: 'Why Offline Tracking is Crucial for Sales Teams Outside Java',
-    slug: 'why-offline-tracking-is-crucial-for-sales-teams-outside-java',
-    excerpt: 'Unstable signal? No problem. Learn why offline capability is essential for sales teams beyond Java.',
-    date: 'December 15, 2025',
-    category: 'Development',
-    author: 'Sales Watch Team',
-    image: '/assets/images/blog/blog3.webp',
-    content: `
+	},
+	{
+		id: 3,
+		title: "Why Offline Tracking is Crucial for Sales Teams Outside Java",
+		slug: "why-offline-tracking-is-crucial-for-sales-teams-outside-java",
+		excerpt:
+			"Unstable signal? No problem. Learn why offline capability is essential for sales teams beyond Java.",
+		date: "December 15, 2025",
+		category: "Development",
+		author: "Sales Watch Team",
+		image: "/assets/images/blog/blog3.webp",
+		content: `
       <p>Working outside Java often means facing connectivity challenges. Unstable signals can severely disrupt sales work, especially when apps require constant internet.</p>
       <h2>Field Challenges</h2>
       <p>An Operating Manager said: "It's tough tracking a sales team when signal is unreliable. Unfortunately, it's especially common outside Java. Other software forces them to be online, which forces them to stop and wait."</p>
@@ -224,6 +232,6 @@ export const blogPosts: BlogPost[] = [
       </ul>
       <p>With offline capability, companies ensure remote sales teams remain productive and connected to central management.</p>
     `,
-  },
-  // Add more posts as needed (ensure even total for clean pagination)
+	},
+	// Add more posts as needed (ensure even total for clean pagination)
 ];

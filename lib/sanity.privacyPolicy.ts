@@ -1,6 +1,6 @@
 // import { client } from './sanity.realtime';
-import { proxyFetch } from '@/lib/sanityFetcher';
-import type { PrivacyPolicySection } from '@/types/privacyPolicy';
+import { proxyFetch } from "@/lib/sanityFetcher";
+import type { PrivacyPolicySection } from "@/types/privacyPolicy";
 
 // Updated query with multiple fallback field names
 const PRIVACY_POLICY_QUERY = `
@@ -97,42 +97,47 @@ const PRIVACY_POLICY_QUERY_SIMPLE = `
 `;
 
 export async function getPrivacyPolicyData(): Promise<PrivacyPolicySection | null> {
-  try {
-    // Try the main query first
-    // let data = await client.fetch<PrivacyPolicySection>(PRIVACY_POLICY_QUERY);
-    let data = await proxyFetch<PrivacyPolicySection>(PRIVACY_POLICY_QUERY);
-   
-    // If privacy_policy_content is null or empty, try the simple query
-    if (!data?.privacy_policy_content?.items || data.privacy_policy_content.items.length === 0) {
-      console.log('Trying alternative query...');
-      // data = await client.fetch<PrivacyPolicySection>(PRIVACY_POLICY_QUERY_SIMPLE);
-     data = await proxyFetch<PrivacyPolicySection>(PRIVACY_POLICY_QUERY_SIMPLE);
-    }
-    
-    return data;
-  } catch (error) {
-    console.error('Error fetching Privacy Policy data:', error);
-    return null;
-  }
+	try {
+		// Try the main query first
+		// let data = await client.fetch<PrivacyPolicySection>(PRIVACY_POLICY_QUERY);
+		let data = await proxyFetch<PrivacyPolicySection>(PRIVACY_POLICY_QUERY);
+
+		// If privacy_policy_content is null or empty, try the simple query
+		if (
+			!data?.privacy_policy_content?.items ||
+			data.privacy_policy_content.items.length === 0
+		) {
+			console.log("Trying alternative query...");
+			// data = await client.fetch<PrivacyPolicySection>(PRIVACY_POLICY_QUERY_SIMPLE);
+			data = await proxyFetch<PrivacyPolicySection>(
+				PRIVACY_POLICY_QUERY_SIMPLE,
+			);
+		}
+
+		return data;
+	} catch (error) {
+		console.error("Error fetching Privacy Policy data:", error);
+		return null;
+	}
 }
 
 export function listenToPrivacyPolicyChanges(
-  callback: (data: PrivacyPolicySection) => void
+	callback: (data: PrivacyPolicySection) => void,
 ) {
-//   const subscription = client
-//     .listen<PrivacyPolicySection>(PRIVACY_POLICY_QUERY)
-//     .subscribe({
-//       next: (update) => {
-//         if (update.result) {
-//           callback(update.result);
-//         }
-//       },
-//       error: (err) => {
-//         console.error('Privacy Policy subscription error:', err);
-//       },
-//     });
-//
-//   return () => subscription.unsubscribe();
-  console.log("listener disabled.");
-  return () => {}; 
+	//   const subscription = client
+	//     .listen<PrivacyPolicySection>(PRIVACY_POLICY_QUERY)
+	//     .subscribe({
+	//       next: (update) => {
+	//         if (update.result) {
+	//           callback(update.result);
+	//         }
+	//       },
+	//       error: (err) => {
+	//         console.error('Privacy Policy subscription error:', err);
+	//       },
+	//     });
+	//
+	//   return () => subscription.unsubscribe();
+	console.log("listener disabled.");
+	return () => {};
 }

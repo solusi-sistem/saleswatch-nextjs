@@ -1,12 +1,12 @@
 // import { client } from './sanity.realtime';
-import { proxyFetch } from '@/lib/sanityFetcher';
-import type { 
-  StoryVisionMissionSection, 
-  RequestDemoSection, 
-  FaqSection, 
-  TestimonialSection,
-  WhyItWorksSection 
-} from '@/types/home';
+import { proxyFetch } from "@/lib/sanityFetcher";
+import type {
+	StoryVisionMissionSection,
+	RequestDemoSection,
+	FaqSection,
+	TestimonialSection,
+	WhyItWorksSection,
+} from "@/types/home";
 
 // ==========================================
 // STORY VISION MISSION
@@ -30,35 +30,37 @@ const STORY_VISION_MISSION_QUERY = `
 `;
 
 export async function getStoryVisionMissionData(): Promise<StoryVisionMissionSection | null> {
-  try {
-    // const data = await client.fetch<StoryVisionMissionSection>(STORY_VISION_MISSION_QUERY);
-    const data = await proxyFetch<StoryVisionMissionSection>(STORY_VISION_MISSION_QUERY);
-    return data;
-  } catch (error) {
-    console.error('Error fetching Story Vision Mission data:', error);
-    return null;
-  }
+	try {
+		// const data = await client.fetch<StoryVisionMissionSection>(STORY_VISION_MISSION_QUERY);
+		const data = await proxyFetch<StoryVisionMissionSection>(
+			STORY_VISION_MISSION_QUERY,
+		);
+		return data;
+	} catch (error) {
+		console.error("Error fetching Story Vision Mission data:", error);
+		return null;
+	}
 }
 
 export function listenToStoryVisionMissionChanges(
-  callback: (data: StoryVisionMissionSection) => void
+	callback: (data: StoryVisionMissionSection) => void,
 ) {
-//   const subscription = client
-//     .listen<StoryVisionMissionSection>(STORY_VISION_MISSION_QUERY)
-//     .subscribe({
-//       next: (update) => {
-//         if (update.result) {
-//           callback(update.result);
-//         }
-//       },
-//       error: (err) => {
-//         console.error('Story Vision Mission subscription error:', err);
-//       },
-//     });
-//
-//   return () => subscription.unsubscribe();
-  console.log("listener disabled.");
-  return () => {}; 
+	//   const subscription = client
+	//     .listen<StoryVisionMissionSection>(STORY_VISION_MISSION_QUERY)
+	//     .subscribe({
+	//       next: (update) => {
+	//         if (update.result) {
+	//           callback(update.result);
+	//         }
+	//       },
+	//       error: (err) => {
+	//         console.error('Story Vision Mission subscription error:', err);
+	//       },
+	//     });
+	//
+	//   return () => subscription.unsubscribe();
+	console.log("listener disabled.");
+	return () => {};
 }
 
 // ==========================================
@@ -92,35 +94,35 @@ const REQUEST_DEMO_QUERY = `
 `;
 
 export async function getRequestDemoData(): Promise<RequestDemoSection | null> {
-  try {
-    // const data = await client.fetch<RequestDemoSection>(REQUEST_DEMO_QUERY);
-    const data = await proxyFetch<RequestDemoSection>(REQUEST_DEMO_QUERY);
-    return data;
-  } catch (error) {
-    console.error('Error fetching Request Demo data:', error);
-    return null;
-  }
+	try {
+		// const data = await client.fetch<RequestDemoSection>(REQUEST_DEMO_QUERY);
+		const data = await proxyFetch<RequestDemoSection>(REQUEST_DEMO_QUERY);
+		return data;
+	} catch (error) {
+		console.error("Error fetching Request Demo data:", error);
+		return null;
+	}
 }
 
 export function listenToRequestDemoChanges(
-  callback: (data: RequestDemoSection) => void
+	callback: (data: RequestDemoSection) => void,
 ) {
-//   const subscription = client
-//     .listen<RequestDemoSection>(REQUEST_DEMO_QUERY)
-//     .subscribe({
-//       next: (update) => {
-//         if (update.result) {
-//           callback(update.result);
-//         }
-//       },
-//       error: (err) => {
-//         console.error('Request Demo subscription error:', err);
-//       },
-//     });
-//
-//   return () => subscription.unsubscribe();
-  console.log("listener disabled.");
-  return () => {}; 
+	//   const subscription = client
+	//     .listen<RequestDemoSection>(REQUEST_DEMO_QUERY)
+	//     .subscribe({
+	//       next: (update) => {
+	//         if (update.result) {
+	//           callback(update.result);
+	//         }
+	//       },
+	//       error: (err) => {
+	//         console.error('Request Demo subscription error:', err);
+	//       },
+	//     });
+	//
+	//   return () => subscription.unsubscribe();
+	console.log("listener disabled.");
+	return () => {};
 }
 
 // ==========================================
@@ -156,35 +158,33 @@ const FAQ_QUERY = `
 `;
 
 export async function getFaqData(): Promise<FaqSection | null> {
-  try {
-    // const data = await client.fetch<FaqSection>(FAQ_QUERY);
-    const data = await proxyFetch<FaqSection>(FAQ_QUERY);
-    return data;
-  } catch (error) {
-    console.error('Error fetching FAQ data:', error);
-    return null;
-  }
+	try {
+		// const data = await client.fetch<FaqSection>(FAQ_QUERY);
+		const data = await proxyFetch<FaqSection>(FAQ_QUERY);
+		return data;
+	} catch (error) {
+		console.error("Error fetching FAQ data:", error);
+		return null;
+	}
 }
 
-export function listenToFaqChanges(
-  callback: (data: FaqSection) => void
-) {
-//   const subscription = client
-//     .listen<FaqSection>(FAQ_QUERY)
-//     .subscribe({
-//       next: (update) => {
-//         if (update.result) {
-//           callback(update.result);
-//         }
-//       },
-//       error: (err) => {
-//         console.error('FAQ subscription error:', err);
-//       },
-//     });
-//
-//   return () => subscription.unsubscribe();
-  console.log("listener disabled.");
-  return () => {}; 
+export function listenToFaqChanges(callback: (data: FaqSection) => void) {
+	//   const subscription = client
+	//     .listen<FaqSection>(FAQ_QUERY)
+	//     .subscribe({
+	//       next: (update) => {
+	//         if (update.result) {
+	//           callback(update.result);
+	//         }
+	//       },
+	//       error: (err) => {
+	//         console.error('FAQ subscription error:', err);
+	//       },
+	//     });
+	//
+	//   return () => subscription.unsubscribe();
+	console.log("listener disabled.");
+	return () => {};
 }
 
 // ==========================================
@@ -219,35 +219,35 @@ const TESTIMONIAL_QUERY = `
 `;
 
 export async function getTestimonialData(): Promise<TestimonialSection | null> {
-  try {
-    // const data = await client.fetch<TestimonialSection>(TESTIMONIAL_QUERY);
-    const data = await proxyFetch<TestimonialSection>(TESTIMONIAL_QUERY);
-    return data;
-  } catch (error) {
-    console.error('Error fetching Testimonial data:', error);
-    return null;
-  }
+	try {
+		// const data = await client.fetch<TestimonialSection>(TESTIMONIAL_QUERY);
+		const data = await proxyFetch<TestimonialSection>(TESTIMONIAL_QUERY);
+		return data;
+	} catch (error) {
+		console.error("Error fetching Testimonial data:", error);
+		return null;
+	}
 }
 
 export function listenToTestimonialChanges(
-  callback: (data: TestimonialSection) => void
+	callback: (data: TestimonialSection) => void,
 ) {
-//   const subscription = client
-//     .listen<TestimonialSection>(TESTIMONIAL_QUERY)
-//     .subscribe({
-//       next: (update) => {
-//         if (update.result) {
-//           callback(update.result);
-//         }
-//       },
-//       error: (err) => {
-//         console.error('Testimonial subscription error:', err);
-//       },
-//     });
-//
-//   return () => subscription.unsubscribe();
-  console.log("listener disabled.");
-  return () => {}; 
+	//   const subscription = client
+	//     .listen<TestimonialSection>(TESTIMONIAL_QUERY)
+	//     .subscribe({
+	//       next: (update) => {
+	//         if (update.result) {
+	//           callback(update.result);
+	//         }
+	//       },
+	//       error: (err) => {
+	//         console.error('Testimonial subscription error:', err);
+	//       },
+	//     });
+	//
+	//   return () => subscription.unsubscribe();
+	console.log("listener disabled.");
+	return () => {};
 }
 
 // ==========================================
@@ -289,33 +289,33 @@ const WHY_IT_WORKS_QUERY = `
 `;
 
 export async function getWhyItWorksData(): Promise<WhyItWorksSection | null> {
-  try {
-    // const data = await client.fetch<WhyItWorksSection>(WHY_IT_WORKS_QUERY);
-    const data = await proxyFetch<WhyItWorksSection>(WHY_IT_WORKS_QUERY);
-    return data;
-  } catch (error) {
-    console.error('Error fetching Why It Works data:', error);
-    return null;
-  }
+	try {
+		// const data = await client.fetch<WhyItWorksSection>(WHY_IT_WORKS_QUERY);
+		const data = await proxyFetch<WhyItWorksSection>(WHY_IT_WORKS_QUERY);
+		return data;
+	} catch (error) {
+		console.error("Error fetching Why It Works data:", error);
+		return null;
+	}
 }
 
 export function listenToWhyItWorksChanges(
-  callback: (data: WhyItWorksSection) => void
+	callback: (data: WhyItWorksSection) => void,
 ) {
-//   const subscription = client
-//     .listen<WhyItWorksSection>(WHY_IT_WORKS_QUERY)
-//     .subscribe({
-//       next: (update) => {
-//         if (update.result) {
-//           callback(update.result);
-//         }
-//       },
-//       error: (err) => {
-//         console.error('Why It Works subscription error:', err);
-//       },
-//     });
-//
-//   return () => subscription.unsubscribe();
-  console.log("listener disabled.");
-  return () => {}; 
+	//   const subscription = client
+	//     .listen<WhyItWorksSection>(WHY_IT_WORKS_QUERY)
+	//     .subscribe({
+	//       next: (update) => {
+	//         if (update.result) {
+	//           callback(update.result);
+	//         }
+	//       },
+	//       error: (err) => {
+	//         console.error('Why It Works subscription error:', err);
+	//       },
+	//     });
+	//
+	//   return () => subscription.unsubscribe();
+	console.log("listener disabled.");
+	return () => {};
 }
