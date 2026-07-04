@@ -36,14 +36,19 @@ export async function POST(request) {
       );
     }
 
-    // Fetch settings dari Sanity
-    const smtpHost = process.env.MAIL_HOST;
-    const smtpPort = parseInt(process.env.MAIL_PORT || "587", 10);
-    const smtpUser = process.env.MAIL_USERNAME;
-    const smtpPass = process.env.MAIL_PASSWORD;
-    const mailTo = process.env.MAIL_TO_ADDRESS;
+    // Fetch settings
+    const smtpHost = process.env.MAIL_HOST || globalThis.MAIL_HOST;
+    const smtpPort = parseInt(process.env.MAIL_PORT || globalThis.MAIL_PORT || "587", 10);
+    const smtpUser = process.env.MAIL_USERNAME || globalThis.MAIL_USERNAME;
+    const smtpPass = process.env.MAIL_PASSWORD || globalThis.MAIL_PASSWORD;
+    const mailTo = process.env.MAIL_TO_ADDRESS || globalThis.MAIL_TO_ADDRESS;
 
-    console.log("🔍 Loading email config from ENV...");
+    // DEBUG LOG
+    console.log("Config Check:", { 
+      host: !!smtpHost, 
+      user: !!smtpUser, 
+      pass: !!smtpPass 
+    });
 
     if (!smtpHost || !smtpUser || !smtpPass || !mailTo) {
       console.error("❌ Email configuration missing in .env");
@@ -304,3 +309,4 @@ export async function POST(request) {
     );
   }
 }
+
